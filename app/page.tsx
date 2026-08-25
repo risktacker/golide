@@ -6,7 +6,7 @@ import { Footer, Header } from "./shared";
 
 const ventures = [
   { no:"01", icon:BarChart3, name:"SYLA", type:"AI analytics platform", state:"Rebuild in progress", text:"From raw files to visualisations, forecasts and decisions—with less friction between question and answer.", href:"/projects/syla", accent:"cyan" },
-  { no:"02", icon:Bot, name:"Market Systems", type:"Trading intelligence", state:"In development", text:"Risk, execution and performance tools designed around discipline—not promises or shortcuts.", href:"#", accent:"violet" },
+  { no:"02", icon:Bot, name:"Market Systems", type:"Trading intelligence", state:"In development", text:"Risk, execution and performance tools designed around discipline—not promises or shortcuts.", href:"/ventures/market-systems", accent:"violet" },
   { no:"03", icon:Dna, name:"Research Lab", type:"Bioinformatics + health", state:"Active", text:"Computational research and public-health systems that turn complex evidence into usable intelligence.", href:"/research", accent:"lime" },
 ];
 
