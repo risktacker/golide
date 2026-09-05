@@ -319,3 +319,17 @@ linear-gradient(90deg,#020304 0%,#030507 52%,#05080c 100%)}
   .origin-archive-mark{left:12px;right:12px;bottom:12px}
   .origin-archive-mark strong{font-size:9px}
 }
+
+
+/* APPROVED G$LIDE BRAND ASSETS 2026-09-05 */
+.brand-logo{display:inline-flex!important;align-items:center!important;gap:0!important;letter-spacing:0!important;line-height:1;flex:0 0 auto}
+.brand-wordmark{display:block;width:156px;height:auto;object-fit:contain;filter:drop-shadow(0 0 10px rgba(0,214,255,.12));transition:transform .28s ease,filter .28s ease}
+.brand-symbol{display:none;width:42px;height:42px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(0,214,255,.14))}
+.brand-logo:hover .brand-wordmark{transform:translateY(-1px);filter:drop-shadow(0 0 15px rgba(0,214,255,.2))}
+footer .brand-wordmark{width:176px}
+@media(max-width:620px){
+  .brand-wordmark{display:none}
+  .brand-symbol{display:block}
+  footer .brand-wordmark{display:block;width:150px}
+  footer .brand-symbol{display:none}
+}
