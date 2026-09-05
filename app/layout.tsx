@@ -1,16 +1,22 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://golide-hub.esiahkapinga.chatgpt.site"),
-  title: { default: "GOLIDE — Where ideas become systems", template: "%s — GOLIDE" },
-  description: "A founder-led ecosystem building practical software, intelligent trading tools and research-driven digital products.",
-  openGraph: { title: "GOLIDE — Where ideas become systems", description: "Software, intelligent trading tools and research-driven digital products.", images: ["/og.webp"] },
-  twitter: { card: "summary_large_image", title: "GOLIDE — Where ideas become systems", description: "Software, intelligent trading tools and research-driven digital products.", images: ["/og.webp"] },
+  title: { default: "GOLIDE — Build what comes next", template: "%s — GOLIDE" },
+  description: "The GOLIDE hub for software, intelligence, scientific research and the people building what comes next.",
+  openGraph: { title: "GOLIDE — Build what comes next", description: "Software, intelligence, scientific research and connected digital products.", images: ["/og.webp"] },
+  twitter: { card: "summary_large_image", title: "GOLIDE — Build what comes next", description: "Software, intelligence, scientific research and connected digital products.", images: ["/og.webp"] },
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
   },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
