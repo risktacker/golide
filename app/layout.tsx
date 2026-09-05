@@ -3,10 +3,10 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://golide-hub.esiahkapinga.chatgpt.site"),
-  title: { default: "G$LIDE — Build what comes next", template: "%s — G$LIDE" },
+  title: { default: "GOLIDE — Build what comes next", template: "%s — GOLIDE" },
   description: "The GOLIDE hub for software, intelligence, scientific research and the people building what comes next.",
-  openGraph: { title: "G$LIDE — Build what comes next", description: "Software, intelligence, scientific research and connected digital products.", images: ["/og.webp"] },
-  twitter: { card: "summary_large_image", title: "G$LIDE — Build what comes next", description: "Software, intelligence, scientific research and connected digital products.", images: ["/og.webp"] },
+  openGraph: { title: "GOLIDE — Build what comes next", description: "Software, intelligence, scientific research and connected digital products.", images: ["/og.webp"] },
+  twitter: { card: "summary_large_image", title: "GOLIDE — Build what comes next", description: "Software, intelligence, scientific research and connected digital products.", images: ["/og.webp"] },
   icons: {
     icon: "/brand/favicon.png",
     shortcut: "/brand/favicon.png",
