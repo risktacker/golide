@@ -1,16 +1,41 @@
 import assert from "node:assert/strict";
+import { access } from "node:fs/promises";
 import test from "node:test";
 
-const developmentPreviewMeta =
-  /<meta(?=[^>]*\bname=["']codex-preview["'])(?=[^>]*\bcontent=["']development["'])[^>]*>/i;
+const routes = [
+  "/",
+  "/founder",
+  "/portfolio",
+  "/projects/child-mortality",
+  "/projects/malaria",
+  "/projects/syla",
+  "/projects/tinospora",
+  "/research",
+  "/ventures/market-systems",
+];
 
-test("renders development preview metadata", async () => {
+const criticalAssets = [
+  "brand/wordmark.png",
+  "brand/symbol.png",
+  "brand/favicon.png",
+  "favicon.ico",
+  "apple-touch-icon.png",
+  "founder/hero-white-shirt-studio.webp",
+  "founder/profile-suit-standing.webp",
+  "founder/profile-auditorium-bw.webp",
+  "founder/origin-childhood-clean.webp",
+  "experience/qa-boardroom.webp",
+  "experience/bsc-graduation.webp",
+  "experience/laboratory-standing.webp",
+];
+
+async function render(route) {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
-  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
+  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}-${route}`);
   const { default: worker } = await import(workerUrl.href);
 
-  const response = await worker.fetch(
-    new Request("http://localhost/", {
+  return worker.fetch(
+    new Request(`http://localhost${route}`, {
       headers: { accept: "text/html" },
     }),
     {
@@ -23,11 +48,28 @@ test("renders development preview metadata", async () => {
       passThroughOnException() {},
     },
   );
+}
 
-  assert.equal(response.status, 200);
-  assert.match(
-    response.headers.get("content-type") ?? "",
-    /^text\/html\b/i,
-  );
-  assert.match(await response.text(), developmentPreviewMeta);
+test("renders every public route", async () => {
+  for (const route of routes) {
+    const response = await render(route);
+    assert.equal(response.status, 200, route);
+    assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
+  }
+});
+
+test("renders the approved G$LIDE branding and hero assets", async () => {
+  const response = await render("/");
+  const html = await response.text();
+
+  assert.match(html, /href="https:\/\/golide-hub\.esiahkapinga\.chatgpt\.site\/favicon\.ico\?v=20260907-final"/);
+  assert.match(html, /src="\/brand\/wordmark\.png\?v=20260907-final" alt="G\$LIDE"/);
+  assert.match(html, /src="\/founder\/hero-white-shirt-studio\.webp\?v=20260907-ribbon"/);
+  assert.match(html, /class="hero-ribbons"/);
+});
+
+test("packages every critical media file", async () => {
+  for (const asset of criticalAssets) {
+    await access(new URL(`../dist/client/${asset}`, import.meta.url));
+  }
 });

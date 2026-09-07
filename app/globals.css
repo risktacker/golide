@@ -457,3 +457,126 @@ footer .brand-wordmark{width:176px}
   .brand-wordmark{width:132px!important;max-height:44px!important}
   .research-page .research-note{padding:26px;margin-bottom:90px}
 }
+
+/* FINAL FULL-BLEED HERO + PORTRAIT PASS 2026-09-07 */
+.neo-hero.hero-banner{
+  width:100%;
+  max-width:none;
+  min-height:clamp(680px,76vh,860px);
+  margin:0;
+  padding:0;
+  border:0;
+  border-radius:0;
+  overflow:hidden;
+  isolation:isolate;
+}
+.hero-visual{position:absolute;inset:0;z-index:2;pointer-events:none}
+.hero-real-portrait{
+  right:-1%;
+  bottom:-5%;
+  width:min(56%,820px);
+  height:109%;
+  opacity:0;
+  transform:translateX(34%) scale(1.035);
+  animation:none;
+  will-change:transform,opacity;
+}
+.hero-real-portrait:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(2,3,4,.88),transparent 24%),linear-gradient(0deg,rgba(2,3,4,.8),transparent 18%);mix-blend-mode:multiply;pointer-events:none}
+.hero-real-portrait img{
+  mix-blend-mode:screen;
+  filter:contrast(1.1) brightness(.96) drop-shadow(0 0 32px rgba(69,230,255,.13))!important;
+  transform-origin:70% 72%;
+}
+.hero-visual.is-visible .hero-real-portrait{animation:portraitEnter 1.55s cubic-bezier(.16,.82,.24,1) forwards}
+.hero-visual.is-visible .hero-real-portrait img{animation:portraitSettle 9s ease-in-out 1.55s infinite alternate}
+.hero-ribbons{position:absolute;z-index:0;right:1.5%;top:10%;width:min(53%,780px);height:78%;filter:drop-shadow(0 0 24px rgba(69,230,255,.14))}
+.hero-ribbon{
+  position:absolute;
+  right:0;
+  height:clamp(18px,2.3vw,34px);
+  border:1px solid rgba(202,232,242,.54);
+  border-radius:4px 18px 18px 4px;
+  background:linear-gradient(180deg,#f4fbff 0%,#8da6b9 20%,#182c3a 47%,#67edff 53%,#d8f7ff 61%,#263c4a 100%);
+  box-shadow:inset 0 2px rgba(255,255,255,.62),inset 0 -3px rgba(1,11,19,.68),0 0 22px rgba(69,230,255,.25);
+  opacity:0;
+  transform-origin:right center;
+  transform:translateX(20%) scaleX(.08) rotate(var(--ribbon-angle));
+  clip-path:polygon(0 18%,94% 0,100% 50%,94% 100%,0 82%,4% 50%);
+}
+.ribbon-a{--ribbon-angle:-8deg;top:9%;width:72%}
+.ribbon-b{--ribbon-angle:5deg;top:32%;width:94%;height:clamp(24px,3vw,46px)}
+.ribbon-c{--ribbon-angle:-4deg;top:57%;width:82%}
+.ribbon-d{--ribbon-angle:9deg;top:77%;width:61%;height:clamp(12px,1.7vw,25px)}
+.hero-visual.is-visible .hero-ribbon{animation:ribbonReveal 1.05s cubic-bezier(.15,.8,.22,1) forwards}
+.hero-visual.is-visible .ribbon-a{animation-delay:1.55s}.hero-visual.is-visible .ribbon-b{animation-delay:1.68s}.hero-visual.is-visible .ribbon-c{animation-delay:1.81s}.hero-visual.is-visible .ribbon-d{animation-delay:1.94s}
+.hero-banner-copy{
+  width:min(760px,62%)!important;
+  padding-left:max(28px,calc((100vw - 1180px)/2 + 24px))!important;
+  padding-right:24px!important;
+}
+
+/* The dashboard founder feature is a full-width cinematic section; the founder page keeps its seated hero. */
+.founder-window{
+  width:100%;
+  max-width:none;
+  min-height:680px;
+  margin:0 0 130px;
+  border:0!important;
+  border-radius:0;
+  grid-template-columns:minmax(0,1.12fr) minmax(420px,.88fr);
+  background:#05080d!important;
+  box-shadow:none!important;
+  overflow:hidden;
+}
+.founder-window:hover{transform:none!important;box-shadow:none!important}
+.founder-window-image{min-height:680px}
+.founder-window-image img{object-position:center 42%!important;filter:grayscale(1) contrast(1.08) brightness(.76)!important;transform:scale(1.03)}
+.founder-window:hover .founder-window-image img{transform:scale(1.055);filter:grayscale(.86) contrast(1.06) brightness(.82)!important}
+.founder-window-image:after{background:linear-gradient(90deg,rgba(5,8,13,.25) 0%,transparent 42%,rgba(5,8,13,.93) 100%),linear-gradient(180deg,rgba(5,8,13,.4),transparent 22%,transparent 72%,rgba(5,8,13,.76))}
+.founder-window-copy{padding:clamp(48px,6vw,92px) max(28px,calc((100vw - 1180px)/2 + 24px)) clamp(48px,6vw,92px) clamp(38px,5vw,78px)}
+
+/* Preserve complete faces and bodies inside the small archival cards. */
+.origin-opening{grid-template-columns:minmax(280px,.62fr) minmax(0,1fr);align-items:center;min-height:0}
+.origin-opening-media{min-height:440px;background:radial-gradient(circle at 50% 44%,rgba(69,230,255,.08),transparent 45%),#060a10}
+.origin-opening-media img{object-fit:contain;object-position:center center;padding:8px 0 0;transform:none}
+.origin-opening:hover .origin-opening-media img{transform:scale(1.018)}
+.origin-opening-copy{padding:26px 28px 26px 0}
+.timeline-media img{object-position:center}
+
+@keyframes portraitEnter{0%{opacity:0;transform:translateX(34%) scale(1.035);filter:blur(5px)}62%{opacity:1}100%{opacity:1;transform:translateX(0) scale(1);filter:blur(0)}}
+@keyframes portraitSettle{from{transform:translateX(0) scale(1)}to{transform:translateX(-1.1%) scale(1.018)}}
+@keyframes ribbonReveal{0%{opacity:0;transform:translateX(20%) scaleX(.08) rotate(var(--ribbon-angle))}65%{opacity:.92}100%{opacity:.72;transform:translateX(0) scaleX(1) rotate(var(--ribbon-angle))}}
+
+@media(max-width:950px){
+  .neo-hero.hero-banner{min-height:700px}
+  .hero-banner-copy{width:73%!important}
+  .hero-real-portrait{width:64%;right:-9%;height:103%;bottom:-3%}
+  .hero-ribbons{width:62%;right:-5%}
+  .founder-window{grid-template-columns:1fr;min-height:0}
+  .founder-window-image{min-height:620px}
+  .founder-window-image:after{background:linear-gradient(180deg,rgba(5,8,13,.12),transparent 45%,#05080d 100%)}
+  .founder-window-copy{padding:12px 7vw 72px}
+}
+@media(max-width:620px){
+  .neo-hero.hero-banner{width:100%;min-height:590px;margin:0;border-radius:0;aspect-ratio:auto;padding:0}
+  .hero-banner-copy{width:92%!important;padding:48px 20px 36px!important;justify-content:flex-start}
+  .hero-banner-copy h1{font-size:clamp(39px,11.5vw,58px)!important;max-width:92%!important;margin-top:28px!important}
+  .hero-prompt{font-size:12px!important;max-width:76%!important}
+  .hero-banner .hero-undertext{font-size:8.5px!important;max-width:72%!important}
+  .hero-real-portrait{width:82%;height:76%;right:-23%;bottom:-1%}
+  .hero-ribbons{width:72%;height:56%;right:-9%;top:38%}
+  .hero-ribbon{height:14px}.ribbon-b{height:22px}.ribbon-d{height:10px}
+  .hero-banner:after{background:linear-gradient(90deg,rgba(2,3,4,.97) 0%,rgba(2,3,4,.77) 45%,rgba(2,3,4,.08) 78%),linear-gradient(0deg,rgba(2,3,4,.72),transparent 60%)}
+  .founder-window{margin-bottom:90px}
+  .founder-window-image{min-height:500px}
+  .founder-window-image img{object-position:48% 42%!important}
+  .founder-window-copy{padding:8px 22px 58px}
+  .origin-opening{grid-template-columns:1fr;gap:18px;padding:14px}
+  .origin-opening-media{min-height:420px}
+  .origin-opening-copy{padding:8px 6px 12px}
+}
+@media(prefers-reduced-motion:reduce){
+  .hero-real-portrait,.hero-visual.is-visible .hero-real-portrait{opacity:1;transform:none;animation:none!important}
+  .hero-real-portrait img,.hero-visual.is-visible .hero-real-portrait img{animation:none!important}
+  .hero-ribbon,.hero-visual.is-visible .hero-ribbon{opacity:.72;transform:rotate(var(--ribbon-angle));animation:none!important}
+}

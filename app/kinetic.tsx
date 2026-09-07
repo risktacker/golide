@@ -1,6 +1,37 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { Activity, ArrowDownRight, BarChart3, Bot, Code2, Dna, Gauge, Radar, Sparkles } from "lucide-react";
+
+export function HeroPortrait() {
+  const visualRef = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const node = visualRef.current;
+    if (!node) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setVisible(true);
+        observer.disconnect();
+      }
+    }, { threshold: 0.24 });
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
+  return <div ref={visualRef} className={`hero-visual${visible ? " is-visible" : ""}`} aria-hidden="true">
+    <div className="hero-ribbons">
+      <span className="hero-ribbon ribbon-a" />
+      <span className="hero-ribbon ribbon-b" />
+      <span className="hero-ribbon ribbon-c" />
+      <span className="hero-ribbon ribbon-d" />
+    </div>
+    <div className="hero-real-portrait">
+      <img src="/founder/hero-white-shirt-studio.webp?v=20260907-ribbon" alt="" />
+    </div>
+  </div>;
+}
 
 export function KineticHero() {
   return <div className="kinetic-stage" aria-label="Animated GOLIDE technology ecosystem">

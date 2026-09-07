@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, BarChart3, Beaker, Bot, ChevronRight, CircleDot, Dna, Globe2, MoveUpRight, Play, Radio, Workflow } from "lucide-react";
-import { CodePulse, FloatingBadge, KineticHero, Marquee } from "./kinetic";
+import { CodePulse, FloatingBadge, HeroPortrait, KineticHero, Marquee } from "./kinetic";
 import { Footer, Header } from "./shared";
 
 const ventures = [
@@ -17,7 +17,7 @@ const projects = [
 ];
 
 export default function Home(){return <main className="neo-site"><Header/>
-  <section className="neo-hero hero-banner shell">
+  <section className="neo-hero hero-banner">
     <div className="hero-future-field" aria-hidden="true">
       <span className="future-line future-1">IDEAS → SYSTEMS</span>
       <span className="future-line future-2">GLOBAL BY DESIGN</span>
@@ -33,9 +33,7 @@ export default function Home(){return <main className="neo-site"><Header/>
       <div className="future-wire wire-b"/>
       <div className="future-noise"/>
     </div>
-    <div className="hero-real-portrait" aria-hidden="true">
-      <img src="/founder/hero-standing-bw.webp?v=20260907-final" alt="" />
-    </div>
+    <HeroPortrait />
     <div className="hero-banner-grid"/>
     <div className="hero-banner-scan"/>
     <div className="neo-copy hero-banner-copy">
@@ -55,7 +53,7 @@ export default function Home(){return <main className="neo-site"><Header/>
 
   <section className="neo-section shell" id="projects"><div className="neo-section-head"><div><p className="neo-kicker"><Globe2/> SELECTED OUTPUT</p><h2>Projects that work<br/><span>beyond the thumbnail.</span></h2></div><Link className="neo-text-link" href="/research">All research <ArrowRight/></Link></div><div className="project-deck">{projects.map(p=><Link href={p.href} className="neo-project" key={p.no}><div className="project-media"><img className="raw-fill" src={p.image+"?v=20260907"} alt={p.title} loading="lazy"/><div className="project-scan"/>{p.video&&<span className="video-pill"><Play fill="currentColor"/> Video inside</span>}</div><div className="project-caption"><span>{p.no}</span><div><small>{p.area}</small><h3>{p.title}</h3></div><MoveUpRight/></div></Link>)}</div></section>
 
-  <section className="founder-window shell"><div className="founder-window-image"><img className="raw-fill" src="/founder/profile-auditorium-bw.webp?v=20260907-final" alt="Esiah Kapinga, GOLIDE founder"/></div><div className="founder-window-copy"><p className="neo-kicker"><Beaker/> 01 / PROFILE / FOUNDER NODE</p><h2>Built by someone who refuses to stay in one box.</h2><p>Esiah Kapinga connects microbiology, software development, quality systems, data and digital business into one operating vision.</p><blockquote>Science trains the questions. Technology scales the answer.</blockquote><Link className="neo-button solid" href="/founder">Open full portfolio <ArrowRight/></Link></div></section>
+  <section className="founder-window"><div className="founder-window-image"><img className="raw-fill" src="/founder/profile-suit-standing.webp?v=20260907-wide" alt="Esiah Kapinga, GOLIDE founder"/></div><div className="founder-window-copy"><p className="neo-kicker"><Beaker/> 01 / PROFILE / FOUNDER NODE</p><h2>Built by someone who refuses to stay in one box.</h2><p>Esiah Kapinga connects microbiology, software development, quality systems, data and digital business into one operating vision.</p><blockquote>Science trains the questions. Technology scales the answer.</blockquote><Link className="neo-button solid" href="/founder">Open full portfolio <ArrowRight/></Link></div></section>
 
   <section className="journey-showcase">
     <div className="shell journey-showcase-head">
