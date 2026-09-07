@@ -8,9 +8,12 @@ export const metadata: Metadata = {
   openGraph: { title: "GOLIDE — Build what comes next", description: "Software, intelligence, scientific research and connected digital products.", images: ["/og.webp"] },
   twitter: { card: "summary_large_image", title: "GOLIDE — Build what comes next", description: "Software, intelligence, scientific research and connected digital products.", images: ["/og.webp"] },
   icons: {
-    icon: "/brand/favicon.png?v=20260907",
-    shortcut: "/brand/favicon.png?v=20260907",
-    apple: "/brand/favicon.png?v=20260907",
+    icon: [
+      { url: "/favicon.ico?v=20260907-final", sizes: "64x64", type: "image/x-icon" },
+      { url: "/brand/favicon.png?v=20260907-final", sizes: "1254x1254", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico?v=20260907-final",
+    apple: "/apple-touch-icon.png?v=20260907-final",
   },
 };
 

@@ -394,3 +394,66 @@ footer .brand-wordmark{width:176px}
   .ecosystem-kinetic .kinetic-stage{height:430px;transform:scale(.6)}
   .site-header .brand-logo{height:50px}
 }
+
+/* FINAL ASSET + VISUAL CONSISTENCY PASS 2026-09-07 */
+/* The supplied wordmark remains complete at every breakpoint; the symbol is reserved for favicon use. */
+.site-header .brand-logo{width:auto;min-width:174px;overflow:visible!important}
+.brand-wordmark{display:block!important;width:174px!important;height:auto!important;max-height:58px!important;max-width:none!important;object-fit:contain!important;object-position:left center!important}
+.brand-symbol{display:none!important}
+
+/* Keep the real hero portrait visible and independently sized from legacy image rules. */
+.hero-real-portrait{overflow:visible}
+.hero-real-portrait img{display:block!important;width:100%!important;height:100%!important;object-fit:contain!important;object-position:right bottom!important}
+
+/* Research uses the same GOLIDE system as the Hub and Founder pages. */
+.research-page{position:relative}
+.research-page:before{content:"";position:absolute;top:90px;right:-230px;width:520px;height:520px;border-radius:50%;background:var(--violet);filter:blur(210px);opacity:.08;pointer-events:none}
+.research-page .inner-hero{position:relative;z-index:1}
+.research-page .eyebrow{color:#8fa0b6}
+.research-page .eyebrow>span{background:var(--cyan);box-shadow:0 0 14px rgba(69,230,255,.55)}
+.research-page .inner-hero h1{font-family:Arial,Helvetica,sans-serif;font-weight:850;letter-spacing:-.075em;line-height:.87}
+.research-page .inner-hero h1 em{font-family:inherit;font-style:normal;font-weight:850;background:linear-gradient(90deg,var(--cyan),#83e0ff 45%,var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}
+.research-page .inner-hero>p:last-child{color:#96a6ba}
+.research-page .research-grid{position:relative;z-index:1;gap:22px}
+.research-page .research-card{border-color:var(--neo-line);border-radius:20px;overflow:hidden}
+.research-page .research-card:nth-child(2){box-shadow:0 24px 65px rgba(0,0,0,.34),0 0 34px rgba(156,124,255,.075)}
+.research-page .research-card:nth-child(3){box-shadow:0 24px 65px rgba(0,0,0,.34),0 0 34px rgba(184,243,91,.065)}
+.research-page .research-card:nth-child(2):after{background:radial-gradient(circle,rgba(156,124,255,.17),transparent 70%)}
+.research-page .research-card:nth-child(3):after{background:radial-gradient(circle,rgba(184,243,91,.14),transparent 70%)}
+.research-page .research-visual img{filter:saturate(.82) contrast(1.025);transition:transform .8s ease,filter .8s ease}
+.research-page .research-card:hover .research-visual img{transform:scale(1.045);filter:saturate(1)}
+.research-page .research-meta{color:var(--cyan)}
+.research-page .research-card:nth-child(2) .research-meta{color:var(--violet)}
+.research-page .research-card:nth-child(3) .research-meta{color:var(--lime)}
+.research-page .research-body h2{font-family:Arial,Helvetica,sans-serif;font-weight:800;letter-spacing:-.035em}
+.research-page .research-body p{color:#8d9caf}
+.research-page .coming-link{color:#708198}
+.research-page .research-note{position:relative;border:1px solid var(--neo-line);border-radius:20px;padding:38px;margin-bottom:130px;background:radial-gradient(circle at 0 100%,rgba(69,230,255,.08),transparent 36%),linear-gradient(145deg,#0b111b,#080c13);box-shadow:0 26px 70px rgba(0,0,0,.34),0 0 34px rgba(69,230,255,.055)}
+.research-page .research-note span{color:var(--cyan)}
+.research-page .research-note p{font-family:Arial,Helvetica,sans-serif;font-weight:750;letter-spacing:-.035em}
+
+/* Every card surface has separation, ambient brand light and a restrained lift. */
+.video-console,.founder-window,.product-copy,.project-hero-media,.case-grid article,.outcome-panel,.coming-modules article,.origin-opening,.origin-storyboard article,.founder-page .discipline-grid article,.founder-page .project-row,.founder-page .timeline-list article,.founder-page .credentials>div{
+  border-color:var(--neo-line)!important;
+  background-color:#090e16;
+  box-shadow:0 22px 58px rgba(0,0,0,.32),0 0 30px rgba(69,230,255,.05);
+}
+.video-console,.founder-window,.project-hero-media,.case-grid article,.outcome-panel,.coming-modules article,.origin-opening,.origin-storyboard article,.founder-page .discipline-grid article,.founder-page .project-row,.founder-page .timeline-list article{
+  transition:transform .35s ease,border-color .35s ease,box-shadow .35s ease;
+}
+.video-console:hover,.founder-window:hover,.project-hero-media:hover,.case-grid article:hover,.outcome-panel:hover,.coming-modules article:hover,.origin-opening:hover,.origin-storyboard article:hover,.founder-page .discipline-grid article:hover,.founder-page .project-row:hover,.founder-page .timeline-list article:hover{
+  transform:translateY(-7px);
+  border-color:rgba(69,230,255,.34)!important;
+  box-shadow:0 32px 78px rgba(0,0,0,.42),0 0 42px rgba(69,230,255,.11);
+}
+.case-grid article:nth-child(2),.coming-modules article:nth-child(2),.coming-modules article:nth-child(4),.founder-page .timeline-list article:nth-child(2),.founder-page .credentials>div:nth-child(2){box-shadow:0 22px 58px rgba(0,0,0,.32),0 0 32px rgba(156,124,255,.07)}
+.coming-modules article:nth-child(3),.founder-page .timeline-list article:nth-child(3),.founder-page .credentials>div:nth-child(3){box-shadow:0 22px 58px rgba(0,0,0,.32),0 0 32px rgba(184,243,91,.06)}
+.founder-page .timeline-list{display:grid;gap:18px}
+.founder-page .timeline-list article{padding:24px;border:1px solid var(--neo-line);border-radius:17px;background:linear-gradient(135deg,#0b111b,#080c13)}
+.founder-page .timeline-media{box-shadow:0 15px 38px rgba(0,0,0,.3),0 0 28px rgba(69,230,255,.075)}
+
+@media(max-width:620px){
+  .site-header .brand-logo{height:50px;min-width:132px}
+  .brand-wordmark{width:132px!important;max-height:44px!important}
+  .research-page .research-note{padding:26px;margin-bottom:90px}
+}
