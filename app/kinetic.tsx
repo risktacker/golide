@@ -22,7 +22,8 @@ export function HeroPortrait() {
         node.style.setProperty("--portrait-shift", `${(1 - progress) * maximumShift}px`);
         node.style.setProperty("--ribbon-opacity", `${ribbonProgress * 0.78}`);
         node.style.setProperty("--ribbon-scale", `${0.12 + ribbonProgress * 0.88}`);
-        node.style.setProperty("--ribbon-shift", `${(1 - ribbonProgress) * 84}px`);
+        node.style.setProperty("--ribbon-rise", `${(1 - ribbonProgress) * 58}px`);
+        node.classList.toggle("ribbons-visible", ribbonProgress > 0.02);
       });
     };
     update();
@@ -41,9 +42,12 @@ export function HeroPortrait() {
       <span className="hero-ribbon ribbon-b" />
       <span className="hero-ribbon ribbon-c" />
       <span className="hero-ribbon ribbon-d" />
+      <span className="hero-ribbon ribbon-e" />
+      <span className="hero-ribbon ribbon-f" />
+      <span className="hero-ribbon ribbon-g" />
     </div>
     <div className="hero-real-portrait">
-      <img src="/founder/hero-white-shirt-cutout.webp?v=20260908-scroll" alt="" />
+      <img src="/founder/hero-white-shirt-cutout.webp?v=20260908-final" alt="" />
     </div>
   </div>;
 }

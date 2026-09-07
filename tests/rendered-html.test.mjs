@@ -64,8 +64,9 @@ test("renders the approved G$LIDE branding and hero assets", async () => {
 
   assert.match(html, /href="https:\/\/golide-hub\.esiahkapinga\.chatgpt\.site\/favicon\.ico\?v=20260907-final"/);
   assert.match(html, /src="\/brand\/wordmark\.png\?v=20260907-final" alt="G\$LIDE"/);
-  assert.match(html, /src="\/founder\/hero-white-shirt-cutout\.webp\?v=20260908-scroll"/);
+  assert.match(html, /src="\/founder\/hero-white-shirt-cutout\.webp\?v=20260908-final"/);
   assert.match(html, /class="hero-ribbons"/);
+  assert.match(html, /class="hero-ribbon ribbon-g"/);
 });
 
 test("packages every critical media file", async () => {
