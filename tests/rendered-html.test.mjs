@@ -20,7 +20,7 @@ const criticalAssets = [
   "brand/favicon.png",
   "favicon.ico",
   "apple-touch-icon.png",
-  "founder/hero-white-shirt-studio.webp",
+  "founder/hero-white-shirt-cutout.webp",
   "founder/profile-suit-standing.webp",
   "founder/profile-auditorium-bw.webp",
   "founder/origin-childhood-clean.webp",
@@ -64,7 +64,7 @@ test("renders the approved G$LIDE branding and hero assets", async () => {
 
   assert.match(html, /href="https:\/\/golide-hub\.esiahkapinga\.chatgpt\.site\/favicon\.ico\?v=20260907-final"/);
   assert.match(html, /src="\/brand\/wordmark\.png\?v=20260907-final" alt="G\$LIDE"/);
-  assert.match(html, /src="\/founder\/hero-white-shirt-studio\.webp\?v=20260907-ribbon"/);
+  assert.match(html, /src="\/founder\/hero-white-shirt-cutout\.webp\?v=20260908-scroll"/);
   assert.match(html, /class="hero-ribbons"/);
 });
 

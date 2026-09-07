@@ -1,26 +1,41 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Activity, ArrowDownRight, BarChart3, Bot, Code2, Dna, Gauge, Radar, Sparkles } from "lucide-react";
 
 export function HeroPortrait() {
   const visualRef = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const node = visualRef.current;
     if (!node) return;
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        setVisible(true);
-        observer.disconnect();
-      }
-    }, { threshold: 0.24 });
-    observer.observe(node);
-    return () => observer.disconnect();
+    let frame = 0;
+    const update = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const rect = node.getBoundingClientRect();
+        const travelled = Math.max(0, 78 - rect.top);
+        const distance = Math.max(280, rect.height * 0.5);
+        const progress = Math.min(1, travelled / distance);
+        const ribbonProgress = Math.min(1, Math.max(0, (progress - 0.58) / 0.42));
+        const maximumShift = Math.min(window.innerWidth * 0.18, 300);
+        node.style.setProperty("--portrait-shift", `${(1 - progress) * maximumShift}px`);
+        node.style.setProperty("--ribbon-opacity", `${ribbonProgress * 0.78}`);
+        node.style.setProperty("--ribbon-scale", `${0.12 + ribbonProgress * 0.88}`);
+        node.style.setProperty("--ribbon-shift", `${(1 - ribbonProgress) * 84}px`);
+      });
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
   }, []);
 
-  return <div ref={visualRef} className={`hero-visual${visible ? " is-visible" : ""}`} aria-hidden="true">
+  return <div ref={visualRef} className="hero-visual" aria-hidden="true">
     <div className="hero-ribbons">
       <span className="hero-ribbon ribbon-a" />
       <span className="hero-ribbon ribbon-b" />
@@ -28,7 +43,7 @@ export function HeroPortrait() {
       <span className="hero-ribbon ribbon-d" />
     </div>
     <div className="hero-real-portrait">
-      <img src="/founder/hero-white-shirt-studio.webp?v=20260907-ribbon" alt="" />
+      <img src="/founder/hero-white-shirt-cutout.webp?v=20260908-scroll" alt="" />
     </div>
   </div>;
 }
