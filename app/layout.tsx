@@ -8,9 +8,9 @@ export const metadata: Metadata = {
   openGraph: { title: "GOLIDE — Build what comes next", description: "Software, intelligence, scientific research and connected digital products.", images: ["/og.webp"] },
   twitter: { card: "summary_large_image", title: "GOLIDE — Build what comes next", description: "Software, intelligence, scientific research and connected digital products.", images: ["/og.webp"] },
   icons: {
-    icon: "/brand/favicon.png",
-    shortcut: "/brand/favicon.png",
-    apple: "/brand/favicon.png",
+    icon: "/brand/favicon.png?v=20260907",
+    shortcut: "/brand/favicon.png?v=20260907",
+    apple: "/brand/favicon.png?v=20260907",
   },
 };
 

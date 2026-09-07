@@ -333,3 +333,64 @@ footer .brand-wordmark{width:176px}
   footer .brand-wordmark{display:block;width:150px}
   footer .brand-symbol{display:none}
 }
+
+
+/* HUB RENDER + MOTION FIX 2026-09-07 */
+/* Keep approved media readable even when the Sites image optimiser is not involved. */
+.project-media .raw-fill,.research-visual .raw-fill,.project-hero-media .raw-fill{position:absolute!important;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+
+/* Hero: one strong question, one supporting thought, then the quiet descriptor. */
+.hero-banner-copy{width:min(760px,66%)!important;padding-left:clamp(34px,5.2vw,78px)!important}
+.hero-banner-copy h1{max-width:720px!important;font-size:clamp(48px,5.7vw,84px)!important;line-height:.93!important;margin-bottom:16px!important}
+.hero-prompt{margin:0 0 8px!important;color:#e4edf8!important;font-size:clamp(14px,1.2vw,18px)!important;line-height:1.5!important;font-weight:500;max-width:610px}
+.hero-banner .hero-undertext{margin:0 0 22px!important;color:#7f8da0!important;font-size:clamp(10px,.9vw,13px)!important;line-height:1.55!important;max-width:610px!important}
+.hero-real-portrait img{width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;object-fit:contain!important;object-position:right bottom!important;filter:grayscale(1) contrast(1.13) brightness(.94) drop-shadow(0 30px 60px rgba(0,0,0,.5))!important}
+
+/* Put the original orbital/shell ecosystem motion where the marked paragraph was. */
+.ecosystem-head{grid-template-columns:minmax(0,1fr) minmax(420px,.82fr)!important;align-items:center!important;gap:42px!important}
+.ecosystem-kinetic{min-width:0;height:430px;display:grid;place-items:center;overflow:visible;position:relative}
+.ecosystem-kinetic .kinetic-stage{width:100%;height:520px;transform:scale(.8);transform-origin:center;pointer-events:none}
+.ecosystem-kinetic .kinetic-glow{opacity:.9}
+
+/* Venture cards: luminous, separated and visibly floating rather than one sticky list. */
+.venture-stack{border-top:0!important;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:24px!important;perspective:1400px;padding:8px 0 16px}
+.neo-venture{display:flex!important;flex-direction:column;align-items:flex-start!important;gap:14px!important;min-height:350px;padding:28px!important;border:1px solid rgba(255,255,255,.1)!important;border-radius:24px!important;overflow:hidden;background:linear-gradient(145deg,rgba(10,18,28,.96),rgba(5,9,15,.94))!important;box-shadow:0 28px 70px rgba(0,0,0,.42),inset 0 1px rgba(255,255,255,.035),0 0 34px rgba(69,230,255,.055);animation:ventureFloat 7s ease-in-out infinite;transition:border-color .35s ease,box-shadow .35s ease,transform .35s ease!important}
+.neo-venture:nth-child(2){animation-delay:-2.2s}.neo-venture:nth-child(3){animation-delay:-4.4s}
+.neo-venture:before{content:""!important;position:absolute!important;left:-70px!important;bottom:-105px!important;top:auto!important;width:280px!important;height:280px!important;border-radius:50%!important;background:var(--cyan)!important;filter:blur(70px)!important;opacity:.16!important;transform:none!important;pointer-events:none;transition:opacity .35s ease!important}
+.neo-venture.violet:before{background:var(--violet)!important}.neo-venture.lime:before{background:var(--lime)!important}
+.neo-venture:after{content:"";position:absolute;right:-70px;top:-90px;width:230px;height:230px;border-radius:50%;background:radial-gradient(circle,rgba(69,230,255,.16),transparent 70%);pointer-events:none}
+.neo-venture.violet:after{background:radial-gradient(circle,rgba(156,124,255,.19),transparent 70%)}.neo-venture.lime:after{background:radial-gradient(circle,rgba(184,243,91,.14),transparent 70%)}
+.neo-venture:hover{transform:translateY(-10px) rotateX(1deg)!important;border-color:rgba(69,230,255,.38)!important;box-shadow:0 38px 95px rgba(0,0,0,.5),0 0 50px rgba(69,230,255,.13)!important}
+.neo-venture:hover:before{opacity:.28!important}
+.venture-no{position:absolute;right:24px;top:24px;z-index:2}.venture-icon,.venture-name,.neo-venture>p,.venture-state,.neo-venture>svg{position:relative;z-index:2}
+.venture-name{margin-top:6px}.venture-name h3{font-size:30px!important;margin-top:8px!important}.neo-venture>p{font-size:14px!important;line-height:1.65!important;margin:0!important}.venture-state{margin-top:auto}.neo-venture>svg{position:absolute;right:24px;bottom:24px}
+
+/* Project/research surfaces also carry ambient light and lift. */
+.neo-project,.research-card{position:relative;background:linear-gradient(145deg,#0b111b,#080c13)!important;box-shadow:0 24px 65px rgba(0,0,0,.34),0 0 30px rgba(69,230,255,.045);transition:transform .35s ease,border-color .35s ease,box-shadow .35s ease!important}
+.neo-project:after,.research-card:after{content:"";position:absolute;inset:auto -80px -100px auto;width:230px;height:230px;border-radius:50%;background:radial-gradient(circle,rgba(69,230,255,.13),transparent 70%);pointer-events:none}
+.neo-project:hover,.research-card:hover{transform:translateY(-9px)!important;border-color:rgba(69,230,255,.35)!important;box-shadow:0 34px 85px rgba(0,0,0,.44),0 0 45px rgba(69,230,255,.1)!important}
+
+/* Give the approved wordmark enough room and never clip it inside the header. */
+.site-header .brand-logo{height:60px;overflow:visible;position:relative;z-index:3}
+.brand-wordmark{width:174px!important;max-height:58px;object-fit:contain!important;object-position:left center!important}
+.brand-symbol{object-fit:contain!important}
+
+@keyframes ventureFloat{0%,100%{translate:0 0}50%{translate:0 -8px}}
+
+@media(max-width:950px){
+  .hero-banner-copy{width:min(720px,76%)!important}
+  .ecosystem-head{grid-template-columns:1fr!important}
+  .ecosystem-kinetic{height:390px;margin-top:-20px}
+  .ecosystem-kinetic .kinetic-stage{height:480px;transform:scale(.72)}
+  .venture-stack{grid-template-columns:1fr!important}
+  .neo-venture{min-height:280px}
+}
+@media(max-width:620px){
+  .hero-banner-copy{width:76%!important;padding:24px!important}
+  .hero-banner-copy h1{font-size:clamp(38px,10vw,58px)!important}
+  .hero-prompt{font-size:13px!important}
+  .hero-banner .hero-undertext{font-size:9px!important}
+  .ecosystem-kinetic{height:340px;overflow:hidden}
+  .ecosystem-kinetic .kinetic-stage{height:430px;transform:scale(.6)}
+  .site-header .brand-logo{height:50px}
+}

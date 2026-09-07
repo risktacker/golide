@@ -3,8 +3,8 @@ import { ArrowUpRight, Menu } from "lucide-react";
 
 export function Logo() {
   return <Link className="logo brand-logo" href="/" aria-label="G$LIDE home">
-    <img className="brand-wordmark" src="/brand/wordmark.png?v=20260905" alt="G$LIDE"/>
-    <img className="brand-symbol" src="/brand/symbol.png?v=20260905" alt="" aria-hidden="true"/>
+    <img className="brand-wordmark" src="/brand/wordmark.png?v=20260907" alt="G$LIDE"/>
+    <img className="brand-symbol" src="/brand/symbol.png?v=20260907" alt="" aria-hidden="true"/>
   </Link>;
 }
 

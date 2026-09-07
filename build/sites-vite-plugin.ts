@@ -1,4 +1,4 @@
-import { access, cp, mkdir, rm } from "node:fs/promises";
+import { access, cp, mkdir, readdir, rm } from "node:fs/promises";
 import { resolve } from "node:path";
 import type { Plugin } from "vite";
 
@@ -25,9 +25,11 @@ export function sites(): Plugin {
       root = config.root;
     },
     async closeBundle() {
-      const outputDirectory = resolve(root, "dist", ".openai");
+      const distRoot = resolve(root, "dist");
+      const outputDirectory = resolve(distRoot, ".openai");
       const hostingConfig = resolve(root, ".openai", "hosting.json");
       const drizzleSource = resolve(root, "drizzle");
+      const publicSource = resolve(root, "public");
 
       await rm(outputDirectory, { recursive: true, force: true });
       await mkdir(outputDirectory, { recursive: true });
@@ -39,6 +41,18 @@ export function sites(): Plugin {
         await cp(drizzleSource, resolve(outputDirectory, "drizzle"), {
           recursive: true,
         });
+      }
+
+      // Sites deploys the dist artifact. Copy every committed public asset into
+      // the artifact root so /brand, /founder, /experience, project images,
+      // videos and the favicon resolve on the published site.
+      if (await exists(publicSource)) {
+        for (const entry of await readdir(publicSource)) {
+          await cp(resolve(publicSource, entry), resolve(distRoot, entry), {
+            recursive: true,
+            force: true,
+          });
+        }
       }
     },
   };
