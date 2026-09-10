@@ -474,7 +474,7 @@ footer .brand-wordmark{width:176px}
 .hero-visual{--portrait-shift:min(18vw,300px);--ribbon-opacity:0;--ribbon-scale:.12;--ribbon-rise:58px;position:absolute;inset:0;z-index:2;pointer-events:none}
 .hero-real-portrait{
   right:2%;
-  bottom:-26px;
+  bottom:-28px;
   width:clamp(520px,45vw,980px);
   height:104%;
   opacity:1;
@@ -555,7 +555,7 @@ footer .brand-wordmark{width:176px}
 }
 @media(max-width:620px){
   .neo-hero.hero-banner{width:100%;min-height:590px;margin:0;border-radius:0;aspect-ratio:auto;padding:0}
-  .hero-banner-copy{width:92%!important;padding:48px 20px 36px!important;justify-content:flex-start}
+  .hero-banner-copy{width:92%!important;padding:36px 20px!important;justify-content:center}
   .hero-banner-copy h1{font-size:clamp(39px,11.5vw,58px)!important;max-width:92%!important;margin-top:28px!important}
   .hero-prompt{font-size:12px!important;max-width:76%!important}
   .hero-banner .hero-undertext{font-size:8.5px!important;max-width:72%!important}
