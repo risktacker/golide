@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowUpRight, BriefcaseBusiness, Layers3, Sparkles, X } from "lucide-react";
+import { ArrowUpRight, BriefcaseBusiness, Layers3, Pencil, Sparkles, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { MarketProduct } from "./market-data";
 import styles from "./market.module.css";
@@ -19,7 +19,7 @@ const shelves = [
   { name: "Learning", label: "LEARNING" },
 ];
 
-function ProductObject({ product, onOpen }: { product: MarketProduct; onOpen: () => void }) {
+function ProductObject({ product, onOpen, canManage }: { product: MarketProduct; onOpen: () => void; canManage: boolean }) {
   const format = product.format.toLowerCase();
   const shapeClass = format.includes("tool") || format.includes("template")
     ? styles.toolkit
@@ -28,18 +28,42 @@ function ProductObject({ product, onOpen }: { product: MarketProduct; onOpen: ()
       : styles.book;
 
   return (
-    <button className={`${styles.productObject} ${shapeClass}`} onClick={onOpen} aria-label={`Open ${product.name}`}>
-      {product.imageUrl ? (
-        <img src={product.imageUrl} alt="" />
-      ) : (
-        <span className={styles.generatedCover}>
-          <small>{product.format}</small>
-          <strong>{product.name}</strong>
-          <em>G$LIDE</em>
-        </span>
+    <div style={{ position: "relative", display: "inline-flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
+      <button className={`${styles.productObject} ${shapeClass}`} onClick={onOpen} aria-label={`Open ${product.name}`}>
+        {product.imageUrl ? (
+          <img src={product.imageUrl} alt="" />
+        ) : (
+          <span className={styles.generatedCover}>
+            <small>{product.format}</small>
+            <strong>{product.name}</strong>
+            <em>G$LIDE</em>
+          </span>
+        )}
+        {product.featured && <span className={styles.featuredTag}>FEATURED</span>}
+      </button>
+      {canManage && (
+        <Link
+          href={`/ventures/market-systems/manage?edit=${encodeURIComponent(product.id)}`}
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 5,
+            padding: "7px 10px",
+            borderRadius: 999,
+            border: "1px solid rgba(113,239,255,.28)",
+            background: "rgba(113,239,255,.08)",
+            color: "#71efff",
+            textDecoration: "none",
+            fontSize: 10,
+            fontWeight: 900,
+            letterSpacing: ".05em",
+            whiteSpace: "nowrap",
+          }}
+        >
+          <Pencil size={11}/> Edit product
+        </Link>
       )}
-      {product.featured && <span className={styles.featuredTag}>FEATURED</span>}
-    </button>
+    </div>
   );
 }
 
@@ -85,7 +109,7 @@ export default function MarketClient({ products, canManage }: Props) {
               </div>
               <div className={styles.shelfStage}>
                 <div className={styles.shelfProducts}>
-                  {items.map((product) => <ProductObject key={product.id} product={product} onOpen={() => setSelected(product)}/>) }
+                  {items.map((product) => <ProductObject key={product.id} product={product} canManage={canManage} onOpen={() => setSelected(product)}/>) }
                   {!items.length && (
                     canManage ? (
                       <Link
@@ -132,6 +156,7 @@ export default function MarketClient({ products, canManage }: Props) {
               {selected.transformation && <blockquote>{selected.transformation}</blockquote>}
               <div className={styles.modalActions}>
                 {selected.priceText && <strong>{selected.priceText}</strong>}
+                {canManage && <Link href={`/ventures/market-systems/manage?edit=${encodeURIComponent(selected.id)}`}>Edit product <Pencil size={14}/></Link>}
                 <Link href={`/ventures/market-systems/${selected.slug}`}>View system <ArrowUpRight size={16}/></Link>
                 {selected.whopUrl && <a href={selected.whopUrl} target="_blank" rel="noreferrer">Get it on Whop <ArrowUpRight size={16}/></a>}
               </div>
