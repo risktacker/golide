@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { ArrowLeft, ExternalLink, RefreshCw, Trash2 } from "lucide-react";
 import { FormEvent, useState } from "react";
 import type { MarketProduct } from "../market-data";
@@ -9,10 +10,15 @@ import styles from "../market.module.css";
 const shelves = ["Career", "Creator", "Business", "Productivity", "Learning"];
 
 export default function ManagerClient() {
+  const searchParams = useSearchParams();
+  const requestedShelf = searchParams.get("shelf") || "Career";
+  const initialShelf = shelves.includes(requestedShelf) ? requestedShelf : "Career";
+
   const [passcode, setPasscode] = useState("");
   const [products, setProducts] = useState<MarketProduct[]>([]);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [shelf, setShelf] = useState(initialShelf);
 
   async function api(payload: Record<string, unknown>) {
     const response = await fetch("/api/market-products", {
@@ -45,7 +51,7 @@ export default function ManagerClient() {
         action: "create",
         product: {
           name: form.get("name"),
-          shelf: form.get("shelf"),
+          shelf,
           format: form.get("format"),
           priceText: form.get("priceText"),
           summary: form.get("summary"),
@@ -58,6 +64,7 @@ export default function ManagerClient() {
         },
       });
       event.currentTarget.reset();
+      setShelf(initialShelf);
       setMessage(data.published ? `Published: ${data.slug}` : `Saved as draft: ${data.slug}`);
       const refreshed = await api({ action: "list" });
       setProducts(refreshed.products || []);
@@ -92,7 +99,7 @@ export default function ManagerClient() {
 
   return <main className={styles.managerPage}>
     <div className={styles.managerShell}>
-      <Link className={styles.detailBack} href="/ventures/market-systems"><ArrowLeft size={15}/> Back to market</Link>
+      <Link className={styles.detailBack} href="/ventures/market-systems?publisher=1"><ArrowLeft size={15}/> Back to market</Link>
       <div className={styles.managerHead}>
         <div><p className={styles.eyebrow}>G$LIDE MARKET PUBLISHER</p><h1>Add once.<br/>Place it on the shelf.</h1></div>
         <p>Use this publisher for every new digital product. Add the Whop purchase link, optional merchandising image, choose the shelf, then publish. The public marketplace and product page update from the same catalog.</p>
@@ -107,7 +114,7 @@ export default function ManagerClient() {
 
       <form className={styles.managerForm} onSubmit={submit}>
         <label>Product name<input name="name" required placeholder="Job Search Conversion System"/></label>
-        <label>Shelf<select name="shelf" defaultValue="Career">{shelves.map((shelf)=><option key={shelf}>{shelf}</option>)}</select></label>
+        <label>Shelf<select name="shelf" value={shelf} onChange={(event)=>setShelf(event.target.value)}>{shelves.map((shelfName)=><option key={shelfName}>{shelfName}</option>)}</select></label>
         <label>Format<input name="format" placeholder="Toolkit" defaultValue="Toolkit"/></label>
         <label>Price display<input name="priceText" placeholder="$29"/></label>
         <label className={styles.full}>Short promise / summary<textarea name="summary" required placeholder="What the buyer gets and the problem it solves."/></label>
