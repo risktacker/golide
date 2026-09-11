@@ -48,6 +48,22 @@ function safeImageUrl(value: unknown) {
   }
 }
 
+function productValues(product: Record<string, unknown>) {
+  return {
+    name: text(product.name, 120),
+    shelf: text(product.shelf, 40) || "Business",
+    format: text(product.format, 60) || "Toolkit",
+    priceText: text(product.priceText, 40),
+    summary: text(product.summary, 700),
+    transformation: text(product.transformation, 1000),
+    imageUrl: safeImageUrl(product.imageUrl),
+    whopUrl: safeWhopUrl(product.whopUrl),
+    featured: Boolean(product.featured),
+    published: Boolean(product.published),
+    sortOrder: Number.isFinite(Number(product.sortOrder)) ? Math.trunc(Number(product.sortOrder)) : 0,
+  };
+}
+
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null) as Record<string, unknown> | null;
   if (!body || !(await authorized(body.passcode))) {
@@ -64,35 +80,39 @@ export async function POST(request: Request) {
 
   if (action === "create") {
     const product = (body.product ?? {}) as Record<string, unknown>;
-    const name = text(product.name, 120);
-    const summary = text(product.summary, 700);
-    if (!name || !summary) return NextResponse.json({ error: "Name and summary are required." }, { status: 400 });
+    const values = productValues(product);
+    if (!values.name || !values.summary) return NextResponse.json({ error: "Name and summary are required." }, { status: 400 });
 
     const now = Date.now();
-    const baseSlug = slugify(text(product.slug, 90) || name) || `product-${now}`;
+    const baseSlug = slugify(text(product.slug, 90) || values.name) || `product-${now}`;
     const slug = `${baseSlug}-${String(now).slice(-5)}`;
     const id = crypto.randomUUID();
-    const published = Boolean(product.published);
 
     await db.insert(marketProducts).values({
       id,
       slug,
-      name,
-      shelf: text(product.shelf, 40) || "Business",
-      format: text(product.format, 60) || "Toolkit",
-      priceText: text(product.priceText, 40),
-      summary,
-      transformation: text(product.transformation, 1000),
-      imageUrl: safeImageUrl(product.imageUrl),
-      whopUrl: safeWhopUrl(product.whopUrl),
-      featured: Boolean(product.featured),
-      published,
-      sortOrder: Number.isFinite(Number(product.sortOrder)) ? Math.trunc(Number(product.sortOrder)) : 0,
+      ...values,
       createdAt: now,
       updatedAt: now,
     });
 
-    return NextResponse.json({ ok: true, id, slug, published });
+    return NextResponse.json({ ok: true, id, slug, published: values.published });
+  }
+
+  if (action === "update") {
+    const id = text(body.id, 80);
+    if (!id) return NextResponse.json({ error: "Missing product id." }, { status: 400 });
+
+    const product = (body.product ?? {}) as Record<string, unknown>;
+    const values = productValues(product);
+    if (!values.name || !values.summary) return NextResponse.json({ error: "Name and summary are required." }, { status: 400 });
+
+    await db.update(marketProducts).set({
+      ...values,
+      updatedAt: Date.now(),
+    }).where(eq(marketProducts.id, id));
+
+    return NextResponse.json({ ok: true, id, published: values.published });
   }
 
   if (action === "toggle") {
