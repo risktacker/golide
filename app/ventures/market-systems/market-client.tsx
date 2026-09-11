@@ -87,10 +87,22 @@ export default function MarketClient({ products, canManage }: Props) {
                 <div className={styles.shelfProducts}>
                   {items.map((product) => <ProductObject key={product.id} product={product} onOpen={() => setSelected(product)}/>) }
                   {!items.length && (
-                    <div className={styles.emptyDisplay}>
-                      <div className={styles.emptyObject}><span>+</span></div>
-                      <div><strong>First release slot</strong><small>New systems will appear here automatically when published.</small></div>
-                    </div>
+                    canManage ? (
+                      <Link
+                        className={styles.emptyDisplay}
+                        href={`/ventures/market-systems/manage?shelf=${encodeURIComponent(shelf.name)}`}
+                        style={{ textDecoration: "none" }}
+                        aria-label={`Add first product to ${shelf.name}`}
+                      >
+                        <div className={styles.emptyObject}><span>+</span></div>
+                        <div><strong>Add first release</strong><small>Open the publisher with {shelf.name} selected.</small></div>
+                      </Link>
+                    ) : (
+                      <div className={styles.emptyDisplay}>
+                        <div className={styles.emptyObject}><span>+</span></div>
+                        <div><strong>First release slot</strong><small>New systems will appear here automatically when published.</small></div>
+                      </div>
+                    )
                   )}
                 </div>
                 <div className={styles.shelfBoard}/>
