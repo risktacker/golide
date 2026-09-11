@@ -44,7 +44,8 @@ export default function ManagerClient() {
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const form = new FormData(event.currentTarget);
+    const formElement = event.currentTarget;
+    const form = new FormData(formElement);
     setLoading(true); setMessage("");
     try {
       const data = await api({
@@ -63,7 +64,7 @@ export default function ManagerClient() {
           sortOrder: form.get("sortOrder"),
         },
       });
-      event.currentTarget.reset();
+      formElement.reset();
       setShelf(initialShelf);
       setMessage(data.published ? `Published: ${data.slug}` : `Saved as draft: ${data.slug}`);
       const refreshed = await api({ action: "list" });
