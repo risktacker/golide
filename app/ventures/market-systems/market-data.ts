@@ -28,6 +28,15 @@ export async function ensureMarketTable() {
       updated_at INTEGER NOT NULL
     )
   `).run();
+  await env.DB.prepare(`
+    CREATE TABLE IF NOT EXISTS market_images (
+      id TEXT PRIMARY KEY NOT NULL,
+      content_type TEXT NOT NULL,
+      data BLOB NOT NULL,
+      created_at INTEGER NOT NULL,
+      updated_at INTEGER NOT NULL
+    )
+  `).run();
   await env.DB.prepare("CREATE INDEX IF NOT EXISTS market_products_published_idx ON market_products (published, shelf, sort_order)").run();
 }
 
