@@ -132,7 +132,9 @@ export async function POST(request: Request) {
     if (!id) return NextResponse.json({ error: "Missing product id." }, { status: 400 });
     if (!name || !summary) return NextResponse.json({ error: "Name and summary are required." }, { status: 400 });
 
-    const imageUrl = await persistImage(product.imageUrl, id);
+    const currentRows = await db.select({ imageUrl: marketProducts.imageUrl }).from(marketProducts).where(eq(marketProducts.id, id)).limit(1);
+    const incomingImage = typeof product.imageUrl === "string" ? product.imageUrl.trim() : "";
+    const imageUrl = incomingImage ? await persistImage(incomingImage, id) : (currentRows[0]?.imageUrl || "");
 
     await db.update(marketProducts).set({
       name,
