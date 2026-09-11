@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { ArrowLeft, ExternalLink, RefreshCw, Trash2 } from "lucide-react";
+import { ArrowLeft, ExternalLink, Pencil, RefreshCw, Trash2, X } from "lucide-react";
 import { FormEvent, useState } from "react";
 import type { MarketProduct } from "../market-data";
 import styles from "../market.module.css";
@@ -19,6 +19,8 @@ export default function ManagerClient() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [shelf, setShelf] = useState(initialShelf);
+  const [editing, setEditing] = useState<MarketProduct | null>(null);
+  const [editShelf, setEditShelf] = useState("Career");
 
   async function api(payload: Record<string, unknown>) {
     const response = await fetch("/api/market-products", {
@@ -31,12 +33,16 @@ export default function ManagerClient() {
     return data;
   }
 
+  async function refreshProducts(successMessage?: string) {
+    const data = await api({ action: "list" });
+    setProducts(data.products || []);
+    if (successMessage) setMessage(successMessage);
+  }
+
   async function loadProducts() {
     setLoading(true); setMessage("");
     try {
-      const data = await api({ action: "list" });
-      setProducts(data.products || []);
-      setMessage("Publisher unlocked.");
+      await refreshProducts("Publisher unlocked.");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not unlock publisher.");
     } finally { setLoading(false); }
@@ -66,11 +72,47 @@ export default function ManagerClient() {
       });
       formElement.reset();
       setShelf(initialShelf);
-      setMessage(data.published ? `Published: ${data.slug}` : `Saved as draft: ${data.slug}`);
-      const refreshed = await api({ action: "list" });
-      setProducts(refreshed.products || []);
+      await refreshProducts(data.published ? `Published: ${data.slug}` : `Saved as draft: ${data.slug}`);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not save product.");
+    } finally { setLoading(false); }
+  }
+
+  function startEdit(product: MarketProduct) {
+    setEditing(product);
+    setEditShelf(product.shelf);
+    setMessage(`Editing: ${product.name}`);
+    requestAnimationFrame(() => document.getElementById("market-edit-form")?.scrollIntoView({ behavior: "smooth", block: "start" }));
+  }
+
+  async function submitEdit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!editing) return;
+    const form = new FormData(event.currentTarget);
+    setLoading(true); setMessage("");
+    try {
+      await api({
+        action: "update",
+        id: editing.id,
+        product: {
+          name: form.get("name"),
+          shelf: editShelf,
+          format: form.get("format"),
+          priceText: form.get("priceText"),
+          summary: form.get("summary"),
+          transformation: form.get("transformation"),
+          imageUrl: form.get("imageUrl"),
+          whopUrl: form.get("whopUrl"),
+          featured: form.get("featured") === "on",
+          published: form.get("published") === "on",
+          sortOrder: form.get("sortOrder"),
+        },
+      });
+      const name = String(form.get("name") || editing.name);
+      setEditing(null);
+      await refreshProducts(`Updated: ${name}`);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not update product.");
     } finally { setLoading(false); }
   }
 
@@ -78,9 +120,7 @@ export default function ManagerClient() {
     setLoading(true); setMessage("");
     try {
       await api({ action: "toggle", id: product.id, published: !product.published });
-      const refreshed = await api({ action: "list" });
-      setProducts(refreshed.products || []);
-      setMessage(product.published ? "Product moved to draft." : "Product published to the shelf.");
+      await refreshProducts(product.published ? "Product moved to draft." : "Product published to the shelf.");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not update product.");
     } finally { setLoading(false); }
@@ -92,6 +132,7 @@ export default function ManagerClient() {
     try {
       await api({ action: "delete", id: product.id });
       setProducts((current) => current.filter((item) => item.id !== product.id));
+      if (editing?.id === product.id) setEditing(null);
       setMessage("Product deleted.");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not delete product.");
@@ -103,7 +144,7 @@ export default function ManagerClient() {
       <Link className={styles.detailBack} href="/ventures/market-systems?publisher=1"><ArrowLeft size={15}/> Back to market</Link>
       <div className={styles.managerHead}>
         <div><p className={styles.eyebrow}>G$LIDE MARKET PUBLISHER</p><h1>Add once.<br/>Place it on the shelf.</h1></div>
-        <p>Use this publisher for every new digital product. Add the Whop purchase link, optional merchandising image, choose the shelf, then publish. The public marketplace and product page update from the same catalog.</p>
+        <p>Use this publisher for every new digital product. Add the Whop purchase link, image path or image URL, choose the shelf, then publish. Published products can be edited below without recreating them.</p>
       </div>
 
       <div className={styles.managerForm} style={{marginBottom:16}}>
@@ -117,11 +158,11 @@ export default function ManagerClient() {
         <label>Product name<input name="name" required placeholder="Job Search Conversion System"/></label>
         <label>Shelf<select name="shelf" value={shelf} onChange={(event)=>setShelf(event.target.value)}>{shelves.map((shelfName)=><option key={shelfName}>{shelfName}</option>)}</select></label>
         <label>Format<input name="format" placeholder="Toolkit" defaultValue="Toolkit"/></label>
-        <label>Price display<input name="priceText" placeholder="$29"/></label>
+        <label>Price display<input name="priceText" placeholder="$27"/></label>
         <label className={styles.full}>Short promise / summary<textarea name="summary" required placeholder="What the buyer gets and the problem it solves."/></label>
         <label className={styles.full}>Transformation<textarea name="transformation" placeholder="From scattered applications to a repeatable job-search system."/></label>
         <label>Whop purchase URL<input name="whopUrl" type="url" placeholder="https://whop.com/..."/></label>
-        <label>Merchandising image URL<input name="imageUrl" placeholder="https://... or /market/..."/></label>
+        <label>Image path / URL<input name="imageUrl" placeholder="/market/job-search-conversion-system.png or https://..."/></label>
         <label>Sort order<input name="sortOrder" type="number" defaultValue="0"/></label>
         <div className={styles.publishRow}>
           <label><input name="featured" type="checkbox"/> Featured</label>
@@ -129,7 +170,7 @@ export default function ManagerClient() {
           <button type="submit" disabled={loading}>Save product</button>
         </div>
       </form>
-      <p className={styles.managerNote}>If no product image is supplied, GOLIDE automatically renders a branded digital-product object so the shelf never breaks.</p>
+      <p className={styles.managerNote}>Image paths can point to files inside the Hub public folder, for example <strong>/market/job-search-conversion-system.png</strong>. HTTPS image URLs also work. Leave it blank to use the generated GOLIDE fallback cover.</p>
 
       {products.length > 0 && <div className={styles.productTable}>
         {products.map((product)=><div className={styles.productRow} key={product.id}>
@@ -138,11 +179,36 @@ export default function ManagerClient() {
           <span className={product.published ? styles.statusLive : styles.statusDraft}>{product.published ? "LIVE" : "DRAFT"}</span>
           <div className={styles.rowActions}>
             {product.published && <Link href={`/ventures/market-systems/${product.slug}`} target="_blank" aria-label="Open product"><ExternalLink size={14}/></Link>}
+            <button type="button" onClick={()=>startEdit(product)}><Pencil size={12}/> Edit</button>
             <button type="button" onClick={()=>toggle(product)}>{product.published ? "Unpublish" : "Publish"}</button>
             <button className={styles.danger} type="button" onClick={()=>remove(product)}><Trash2 size={12}/></button>
           </div>
         </div>)}
       </div>}
+
+      {editing && <section id="market-edit-form" style={{marginTop:28}}>
+        <div className={styles.managerHead} style={{marginBottom:16}}>
+          <div><p className={styles.eyebrow}>EDIT PRODUCT</p><h1 style={{fontSize:"clamp(34px,5vw,58px)"}}>{editing.name}</h1></div>
+          <button type="button" onClick={()=>setEditing(null)} aria-label="Cancel editing" style={{width:42,height:42,borderRadius:"50%",border:"1px solid rgba(255,255,255,.12)",background:"#0b151b",color:"#dcebef",display:"grid",placeItems:"center",cursor:"pointer"}}><X size={18}/></button>
+        </div>
+        <form key={editing.id} className={styles.managerForm} onSubmit={submitEdit}>
+          <label>Product name<input name="name" required defaultValue={editing.name}/></label>
+          <label>Shelf<select name="shelf" value={editShelf} onChange={(event)=>setEditShelf(event.target.value)}>{shelves.map((shelfName)=><option key={shelfName}>{shelfName}</option>)}</select></label>
+          <label>Format<input name="format" defaultValue={editing.format}/></label>
+          <label>Price display<input name="priceText" defaultValue={editing.priceText || ""}/></label>
+          <label className={styles.full}>Short promise / summary<textarea name="summary" required defaultValue={editing.summary}/></label>
+          <label className={styles.full}>Transformation<textarea name="transformation" defaultValue={editing.transformation || ""}/></label>
+          <label>Whop purchase URL<input name="whopUrl" type="url" defaultValue={editing.whopUrl || ""} placeholder="https://whop.com/..."/></label>
+          <label>Image path / URL<input name="imageUrl" defaultValue={editing.imageUrl || ""} placeholder="/market/job-search-conversion-system.png or https://..."/></label>
+          <label>Sort order<input name="sortOrder" type="number" defaultValue={editing.sortOrder ?? 0}/></label>
+          <div className={styles.publishRow}>
+            <label><input name="featured" type="checkbox" defaultChecked={editing.featured}/> Featured</label>
+            <label><input name="published" type="checkbox" defaultChecked={editing.published}/> Published</label>
+            <button type="button" onClick={()=>setEditing(null)} style={{marginLeft:"auto",background:"#0b151b",color:"#dcebef",border:"1px solid rgba(255,255,255,.12)"}}>Cancel</button>
+            <button type="submit" disabled={loading} style={{marginLeft:0}}>Save changes</button>
+          </div>
+        </form>
+      </section>}
     </div>
   </main>;
 }
