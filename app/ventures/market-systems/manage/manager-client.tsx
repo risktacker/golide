@@ -2,12 +2,30 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { ArrowLeft, ExternalLink, Pencil, RefreshCw, Trash2, X } from "lucide-react";
+import { ArrowLeft, ExternalLink, Pencil, RefreshCw, Trash2, Upload, X } from "lucide-react";
 import { FormEvent, useState } from "react";
 import type { MarketProduct } from "../market-data";
 import styles from "../market.module.css";
 
 const shelves = ["Career", "Creator", "Business", "Productivity", "Learning"];
+const MAX_IMAGE_BYTES = 2_000_000;
+
+function readImage(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    if (!['image/png','image/jpeg','image/webp'].includes(file.type)) {
+      reject(new Error('Use a PNG, JPG or WEBP image.'));
+      return;
+    }
+    if (file.size > MAX_IMAGE_BYTES) {
+      reject(new Error('Image is too large. Keep it under 2 MB.'));
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ''));
+    reader.onerror = () => reject(new Error('Could not read that image.'));
+    reader.readAsDataURL(file);
+  });
+}
 
 export default function ManagerClient() {
   const searchParams = useSearchParams();
@@ -21,6 +39,8 @@ export default function ManagerClient() {
   const [shelf, setShelf] = useState(initialShelf);
   const [editing, setEditing] = useState<MarketProduct | null>(null);
   const [editShelf, setEditShelf] = useState("Career");
+  const [createImageData, setCreateImageData] = useState("");
+  const [editImageData, setEditImageData] = useState("");
 
   async function api(payload: Record<string, unknown>) {
     const response = await fetch("/api/market-products", {
@@ -48,6 +68,28 @@ export default function ManagerClient() {
     } finally { setLoading(false); }
   }
 
+  async function chooseCreateImage(file?: File) {
+    if (!file) return;
+    try {
+      setCreateImageData(await readImage(file));
+      setMessage("Image ready to upload with this product.");
+    } catch (error) {
+      setCreateImageData("");
+      setMessage(error instanceof Error ? error.message : "Could not use that image.");
+    }
+  }
+
+  async function chooseEditImage(file?: File) {
+    if (!file) return;
+    try {
+      setEditImageData(await readImage(file));
+      setMessage("Replacement image ready. Save changes to apply it.");
+    } catch (error) {
+      setEditImageData("");
+      setMessage(error instanceof Error ? error.message : "Could not use that image.");
+    }
+  }
+
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const formElement = event.currentTarget;
@@ -63,7 +105,7 @@ export default function ManagerClient() {
           priceText: form.get("priceText"),
           summary: form.get("summary"),
           transformation: form.get("transformation"),
-          imageUrl: form.get("imageUrl"),
+          imageUrl: createImageData || form.get("imageUrl"),
           whopUrl: form.get("whopUrl"),
           featured: form.get("featured") === "on",
           published: form.get("published") === "on",
@@ -71,6 +113,7 @@ export default function ManagerClient() {
         },
       });
       formElement.reset();
+      setCreateImageData("");
       setShelf(initialShelf);
       await refreshProducts(data.published ? `Published: ${data.slug}` : `Saved as draft: ${data.slug}`);
     } catch (error) {
@@ -81,6 +124,7 @@ export default function ManagerClient() {
   function startEdit(product: MarketProduct) {
     setEditing(product);
     setEditShelf(product.shelf);
+    setEditImageData("");
     setMessage(`Editing: ${product.name}`);
     requestAnimationFrame(() => document.getElementById("market-edit-form")?.scrollIntoView({ behavior: "smooth", block: "start" }));
   }
@@ -101,7 +145,7 @@ export default function ManagerClient() {
           priceText: form.get("priceText"),
           summary: form.get("summary"),
           transformation: form.get("transformation"),
-          imageUrl: form.get("imageUrl"),
+          imageUrl: editImageData || form.get("imageUrl"),
           whopUrl: form.get("whopUrl"),
           featured: form.get("featured") === "on",
           published: form.get("published") === "on",
@@ -110,6 +154,7 @@ export default function ManagerClient() {
       });
       const name = String(form.get("name") || editing.name);
       setEditing(null);
+      setEditImageData("");
       await refreshProducts(`Updated: ${name}`);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not update product.");
@@ -144,7 +189,7 @@ export default function ManagerClient() {
       <Link className={styles.detailBack} href="/ventures/market-systems?publisher=1"><ArrowLeft size={15}/> Back to market</Link>
       <div className={styles.managerHead}>
         <div><p className={styles.eyebrow}>G$LIDE MARKET PUBLISHER</p><h1>Add once.<br/>Place it on the shelf.</h1></div>
-        <p>Use this publisher for every new digital product. Add the Whop purchase link, image path or image URL, choose the shelf, then publish. Published products can be edited below without recreating them.</p>
+        <p>Use this publisher for every new digital product. Upload the product image directly, add the Whop purchase link, choose the shelf, then publish. Published products can be edited below without recreating them.</p>
       </div>
 
       <div className={styles.managerForm} style={{marginBottom:16}}>
@@ -162,7 +207,9 @@ export default function ManagerClient() {
         <label className={styles.full}>Short promise / summary<textarea name="summary" required placeholder="What the buyer gets and the problem it solves."/></label>
         <label className={styles.full}>Transformation<textarea name="transformation" placeholder="From scattered applications to a repeatable job-search system."/></label>
         <label>Whop purchase URL<input name="whopUrl" type="url" placeholder="https://whop.com/..."/></label>
-        <label>Image path / URL<input name="imageUrl" placeholder="/market/job-search-conversion-system.png or https://..."/></label>
+        <label>Upload product image<input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event)=>chooseCreateImage(event.currentTarget.files?.[0])}/></label>
+        <label>Or image path / URL<input name="imageUrl" placeholder="Optional: /market/... or https://..."/></label>
+        {createImageData && <div className={styles.full} style={{display:"flex",alignItems:"center",gap:14}}><img src={createImageData} alt="Selected product preview" style={{width:110,height:110,objectFit:"contain",background:"#071016",border:"1px solid rgba(255,255,255,.1)",borderRadius:12}}/><span style={{color:"#91a7b1",fontSize:12}}>Direct image selected <Upload size={14} style={{display:"inline",verticalAlign:"middle"}}/></span></div>}
         <label>Sort order<input name="sortOrder" type="number" defaultValue="0"/></label>
         <div className={styles.publishRow}>
           <label><input name="featured" type="checkbox"/> Featured</label>
@@ -170,7 +217,7 @@ export default function ManagerClient() {
           <button type="submit" disabled={loading}>Save product</button>
         </div>
       </form>
-      <p className={styles.managerNote}>Image paths can point to files inside the Hub public folder, for example <strong>/market/job-search-conversion-system.png</strong>. HTTPS image URLs also work. Leave it blank to use the generated GOLIDE fallback cover.</p>
+      <p className={styles.managerNote}>Direct upload accepts PNG, JPG or WEBP up to 2 MB. A path or HTTPS URL is still available as a fallback.</p>
 
       {products.length > 0 && <div className={styles.productTable}>
         {products.map((product)=><div className={styles.productRow} key={product.id}>
@@ -199,7 +246,9 @@ export default function ManagerClient() {
           <label className={styles.full}>Short promise / summary<textarea name="summary" required defaultValue={editing.summary}/></label>
           <label className={styles.full}>Transformation<textarea name="transformation" defaultValue={editing.transformation || ""}/></label>
           <label>Whop purchase URL<input name="whopUrl" type="url" defaultValue={editing.whopUrl || ""} placeholder="https://whop.com/..."/></label>
-          <label>Image path / URL<input name="imageUrl" defaultValue={editing.imageUrl || ""} placeholder="/market/job-search-conversion-system.png or https://..."/></label>
+          <label>Upload replacement image<input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event)=>chooseEditImage(event.currentTarget.files?.[0])}/></label>
+          <label>Or image path / URL<input name="imageUrl" defaultValue={editing.imageUrl?.startsWith('data:image/') ? '' : (editing.imageUrl || '')} placeholder="Optional: /market/... or https://..."/></label>
+          {(editImageData || editing.imageUrl) && <div className={styles.full} style={{display:"flex",alignItems:"center",gap:14}}><img src={editImageData || editing.imageUrl} alt="Product preview" style={{width:130,height:130,objectFit:"contain",background:"#071016",border:"1px solid rgba(255,255,255,.1)",borderRadius:12}}/><span style={{color:"#91a7b1",fontSize:12}}>{editImageData ? 'Replacement ready — save changes.' : 'Current product image'}</span></div>}
           <label>Sort order<input name="sortOrder" type="number" defaultValue={editing.sortOrder ?? 0}/></label>
           <div className={styles.publishRow}>
             <label><input name="featured" type="checkbox" defaultChecked={editing.featured}/> Featured</label>
