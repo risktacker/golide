@@ -5,6 +5,7 @@ import { marketProducts } from "../../../db/schema";
 import { ensureMarketTable, listAllProducts } from "../../ventures/market-systems/market-data";
 
 const ADMIN_HASH = "16cf4262b92f96f9cb9ee70cd3b538b8f499ea8a2d02bb4c0a5588cd8927e9ef";
+const MAX_IMAGE_DATA_LENGTH = 3_000_000;
 
 async function sha256(value: string) {
   const bytes = new TextEncoder().encode(value);
@@ -37,8 +38,16 @@ function safeWhopUrl(value: unknown) {
 }
 
 function safeImageUrl(value: unknown) {
-  const raw = text(value, 1200);
+  if (typeof value !== "string") return "";
+  const raw = value.trim();
   if (!raw) return "";
+
+  if (raw.startsWith("data:image/")) {
+    if (raw.length > MAX_IMAGE_DATA_LENGTH) return "";
+    return /^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/i.test(raw) ? raw : "";
+  }
+
+  if (raw.length > 1200) return "";
   if (raw.startsWith("/")) return raw;
   try {
     const url = new URL(raw);
@@ -46,22 +55,6 @@ function safeImageUrl(value: unknown) {
   } catch {
     return "";
   }
-}
-
-function productValues(product: Record<string, unknown>) {
-  return {
-    name: text(product.name, 120),
-    shelf: text(product.shelf, 40) || "Business",
-    format: text(product.format, 60) || "Toolkit",
-    priceText: text(product.priceText, 40),
-    summary: text(product.summary, 700),
-    transformation: text(product.transformation, 1000),
-    imageUrl: safeImageUrl(product.imageUrl),
-    whopUrl: safeWhopUrl(product.whopUrl),
-    featured: Boolean(product.featured),
-    published: Boolean(product.published),
-    sortOrder: Number.isFinite(Number(product.sortOrder)) ? Math.trunc(Number(product.sortOrder)) : 0,
-  };
 }
 
 export async function POST(request: Request) {
@@ -80,39 +73,61 @@ export async function POST(request: Request) {
 
   if (action === "create") {
     const product = (body.product ?? {}) as Record<string, unknown>;
-    const values = productValues(product);
-    if (!values.name || !values.summary) return NextResponse.json({ error: "Name and summary are required." }, { status: 400 });
+    const name = text(product.name, 120);
+    const summary = text(product.summary, 700);
+    if (!name || !summary) return NextResponse.json({ error: "Name and summary are required." }, { status: 400 });
 
     const now = Date.now();
-    const baseSlug = slugify(text(product.slug, 90) || values.name) || `product-${now}`;
+    const baseSlug = slugify(text(product.slug, 90) || name) || `product-${now}`;
     const slug = `${baseSlug}-${String(now).slice(-5)}`;
     const id = crypto.randomUUID();
+    const published = Boolean(product.published);
 
     await db.insert(marketProducts).values({
       id,
       slug,
-      ...values,
+      name,
+      shelf: text(product.shelf, 40) || "Business",
+      format: text(product.format, 60) || "Toolkit",
+      priceText: text(product.priceText, 40),
+      summary,
+      transformation: text(product.transformation, 1000),
+      imageUrl: safeImageUrl(product.imageUrl),
+      whopUrl: safeWhopUrl(product.whopUrl),
+      featured: Boolean(product.featured),
+      published,
+      sortOrder: Number.isFinite(Number(product.sortOrder)) ? Math.trunc(Number(product.sortOrder)) : 0,
       createdAt: now,
       updatedAt: now,
     });
 
-    return NextResponse.json({ ok: true, id, slug, published: values.published });
+    return NextResponse.json({ ok: true, id, slug, published });
   }
 
   if (action === "update") {
     const id = text(body.id, 80);
-    if (!id) return NextResponse.json({ error: "Missing product id." }, { status: 400 });
-
     const product = (body.product ?? {}) as Record<string, unknown>;
-    const values = productValues(product);
-    if (!values.name || !values.summary) return NextResponse.json({ error: "Name and summary are required." }, { status: 400 });
+    const name = text(product.name, 120);
+    const summary = text(product.summary, 700);
+    if (!id) return NextResponse.json({ error: "Missing product id." }, { status: 400 });
+    if (!name || !summary) return NextResponse.json({ error: "Name and summary are required." }, { status: 400 });
 
     await db.update(marketProducts).set({
-      ...values,
+      name,
+      shelf: text(product.shelf, 40) || "Business",
+      format: text(product.format, 60) || "Toolkit",
+      priceText: text(product.priceText, 40),
+      summary,
+      transformation: text(product.transformation, 1000),
+      imageUrl: safeImageUrl(product.imageUrl),
+      whopUrl: safeWhopUrl(product.whopUrl),
+      featured: Boolean(product.featured),
+      published: Boolean(product.published),
+      sortOrder: Number.isFinite(Number(product.sortOrder)) ? Math.trunc(Number(product.sortOrder)) : 0,
       updatedAt: Date.now(),
     }).where(eq(marketProducts.id, id));
 
-    return NextResponse.json({ ok: true, id, published: values.published });
+    return NextResponse.json({ ok: true });
   }
 
   if (action === "toggle") {
