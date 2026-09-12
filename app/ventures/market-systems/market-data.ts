@@ -7,6 +7,34 @@ export type MarketProduct = typeof marketProducts.$inferSelect;
 
 export const MARKET_SHELVES = ["Career", "Creator", "Business", "Productivity", "Learning"] as const;
 
+type LegacyImageRow = { id: string; image_url: string; updated_at: number };
+
+async function migrateLegacyMarketImages() {
+  const result = await env.DB.prepare(
+    "SELECT id, image_url, updated_at FROM market_products WHERE image_url LIKE 'data:image/%' LIMIT 20"
+  ).all<LegacyImageRow>();
+
+  for (const row of result.results ?? []) {
+    const match = row.image_url.match(/^data:image\/(png|jpeg|webp);base64,([A-Za-z0-9+/=]+)$/i);
+    if (!match) continue;
+    const contentType = `image/${match[1].toLowerCase()}`;
+    const binary = Uint8Array.from(atob(match[2]), (character) => character.charCodeAt(0));
+    const imageUrl = `/api/market-images/${encodeURIComponent(row.id)}?v=${row.updated_at}`;
+
+    await env.DB.batch([
+      env.DB.prepare(`
+        INSERT INTO market_images (id, content_type, data, created_at, updated_at)
+        VALUES (?1, ?2, ?3, ?4, ?5)
+        ON CONFLICT(id) DO UPDATE SET
+          content_type = excluded.content_type,
+          data = excluded.data,
+          updated_at = excluded.updated_at
+      `).bind(row.id, contentType, binary.buffer, row.updated_at, row.updated_at),
+      env.DB.prepare("UPDATE market_products SET image_url = ?1 WHERE id = ?2").bind(imageUrl, row.id),
+    ]);
+  }
+}
+
 export async function ensureMarketTable() {
   if (!env.DB) throw new Error("Marketplace database is unavailable.");
   await env.DB.prepare(`
@@ -38,6 +66,7 @@ export async function ensureMarketTable() {
     )
   `).run();
   await env.DB.prepare("CREATE INDEX IF NOT EXISTS market_products_published_idx ON market_products (published, shelf, sort_order)").run();
+  await migrateLegacyMarketImages();
 }
 
 export async function listPublishedProducts(): Promise<MarketProduct[]> {

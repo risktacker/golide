@@ -577,3 +577,8 @@ footer .brand-wordmark{width:176px}
   .hero-ribbons{opacity:.72;transform:none}
   .hero-ribbon{opacity:.72;transform:none;animation:none!important}
 }
+
+.route-loading{position:fixed;z-index:2000;inset:0;display:grid;place-content:center;justify-items:center;gap:14px;background:#03070b;color:#bfefff;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+.route-loading img{width:54px;height:54px;object-fit:contain;animation:routePulse 1s ease-in-out infinite}
+@keyframes routePulse{0%,100%{opacity:.55;transform:scale(.94)}50%{opacity:1;transform:scale(1.04)}}
+@media(prefers-reduced-motion:reduce){.route-loading img{animation:none}}
