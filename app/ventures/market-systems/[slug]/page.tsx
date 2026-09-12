@@ -13,9 +13,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const product = await getPublishedProduct(slug);
   if (!product) return { title: "Product — G$LIDE Market" };
   return {
-    title: `${product.name} — G$LIDE Market`,
+    title: product.name,
     description: product.summary,
-    openGraph: product.imageUrl ? { images: [product.imageUrl] } : undefined,
+    alternates: { canonical: `/ventures/market-systems/${product.slug}` },
+    openGraph: { type: "website", url: `/ventures/market-systems/${product.slug}`, title: product.name, description: product.summary, ...(product.imageUrl ? { images: [product.imageUrl] } : {}) },
+    twitter: { card: "summary_large_image", title: product.name, description: product.summary, ...(product.imageUrl ? { images: [product.imageUrl] } : {}) },
   };
 }
 
@@ -24,7 +26,19 @@ export default async function ProductPage({ params }: Props) {
   const product = await getPublishedProduct(slug);
   if (!product) notFound();
 
+  const productData = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.summary,
+    url: `https://golidee.com/ventures/market-systems/${product.slug}`,
+    ...(product.imageUrl ? { image: product.imageUrl.startsWith("http") ? product.imageUrl : `https://golidee.com${product.imageUrl}` } : {}),
+    brand: { "@type": "Brand", name: "GOLIDE" },
+    ...(product.whopUrl ? { offers: { "@type": "Offer", url: product.whopUrl, availability: "https://schema.org/InStock" } } : {}),
+  };
+
   return <main className={styles.detailPage}>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productData).replace(/</g, "\\u003c") }} />
     <Header/>
     <div className={styles.detailShell}>
       <Link className={styles.detailBack} href="/ventures/market-systems"><ArrowLeft size={15}/> Back to digital market</Link>

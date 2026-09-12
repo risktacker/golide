@@ -4,7 +4,7 @@ import { ArrowDown, ArrowRight, BrainCircuit, Code2, Dna, Download, Globe2, Shie
 import { Footer, Header } from "../shared";
 import { MediaSlot } from "../media-slot";
 
-export const metadata: Metadata = { title: "Esiah Kapinga, Founder", description: "The founder story, experience and selected work behind GOLIDE." };
+export const metadata: Metadata = { title: "Esiah Kapinga — Founder, Developer & Scientist", description: "Meet Esiah Kapinga, the founder of GOLIDE, and explore his work across software, microbiology, data intelligence and digital products.", alternates: { canonical: "/founder" }, openGraph: { url: "/founder", images: ["/founder/profile-suit-standing.webp"] } };
 
 const projects = [
   { title: "SYLA Analytics", type: "AI / Data platform", image: "/syla-card.webp", href:"/projects/syla", copy: "Automated visualisation, forecasting and file intelligence designed to shorten the distance between data and a decision." },

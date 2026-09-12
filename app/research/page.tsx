@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Beaker, Database, Dna, ExternalLink } from "lucide-react";
 import { Footer, Header } from "../shared";
 
-export const metadata: Metadata = { title: "Research", description: "GOLIDE research across public health data, bioinformatics and scientific computing." };
+export const metadata: Metadata = { title: "Scientific Research & Data Intelligence", description: "Explore GOLIDE research in public-health data, bioinformatics and scientific computing.", alternates: { canonical: "/research" }, openGraph: { url: "/research", images: ["/tinospora.webp"] } };
 
 const work = [
   { icon: Database, title: "Malaria facility intelligence", field: "Public health data", image: "/dhis2-card.webp", text: "A DHIS2-style system integrating WHO data with facility monitoring, KPI tracking, quality checks and automated alerting." },
