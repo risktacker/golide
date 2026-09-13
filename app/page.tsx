@@ -1,7 +1,13 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { ArrowRight, BarChart3, Beaker, Bot, ChevronRight, CircleDot, Dna, Globe2, MoveUpRight, Play, Radio, Workflow } from "lucide-react";
 import { CodePulse, FloatingBadge, HeroPortrait, KineticHero, Marquee } from "./kinetic";
 import { Footer, Header } from "./shared";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+  openGraph: { url: "/" },
+};
 
 const ventures = [
   { no:"01", icon:BarChart3, name:"SYLA", type:"AI analytics platform", state:"Rebuild in progress", text:"From raw files to visualisations, forecasts and decisions—with less friction between question and answer.", href:"/projects/syla", accent:"cyan" },
@@ -38,10 +44,10 @@ export default function Home(){return <main className="neo-site"><Header/>
     <div className="hero-banner-scan"/>
     <div className="neo-copy hero-banner-copy">
       <p className="neo-kicker"><Radio/> GOLIDE NETWORK / ACTIVE</p>
-      <h1>What if you could be <span>the next big thing?</span></h1>
-      <p className="hero-prompt">For a moment, think about what you could become.</p>
-      <p className="hero-undertext">GOLIDE, the hub for software, intelligence, scientific research and the people building what comes next.</p>
-      <div className="neo-actions"><Link className="neo-button solid" href="#ecosystem">Explore GOLIDE <ArrowRight/></Link><Link className="neo-button bare" href="/founder">Founder profile <MoveUpRight/></Link></div>
+      <h1>What if you could become <span>what you always wanted?</span></h1>
+      <p className="hero-prompt">Visit our marketplace.</p>
+      <p className="hero-undertext">Discover practical digital products, tools, templates, software and learning systems built to turn ideas into action.</p>
+      <div className="neo-actions"><Link className="neo-button solid" href="/ventures/market-systems">Visit marketplace <ArrowRight/></Link><Link className="neo-button bare" href="/founder">Founder profile <MoveUpRight/></Link></div>
     </div>
     <FloatingBadge/>
   </section>

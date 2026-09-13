@@ -5,8 +5,10 @@ const base = "https://golidee.com";
 const publicRoutes = [
   "",
   "/founder",
-  "/portfolio",
   "/research",
+  "/content-engine",
+  "/privacy",
+  "/terms",
   "/projects/syla",
   "/projects/malaria",
   "/projects/tinospora",

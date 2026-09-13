@@ -3,11 +3,20 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://golidee.com"),
-  title: { default: "GOLIDE — Build what comes next", template: "%s — GOLIDE" },
-  description: "The GOLIDE hub for software, intelligence, scientific research and the people building what comes next.",
-  alternates: { canonical: "/" },
-  openGraph: { type: "website", url: "/", siteName: "GOLIDE", title: "GOLIDE — Build what comes next", description: "Software, intelligence, scientific research and connected digital products.", images: [{ url: "/og.webp", width: 1200, height: 630, alt: "GOLIDE" }] },
-  twitter: { card: "summary_large_image", title: "GOLIDE — Build what comes next", description: "Software, intelligence, scientific research and connected digital products.", images: ["/og.webp"] },
+  title: { default: "Digital Products, Software & Practical Tools | GOLIDE", template: "%s | GOLIDE" },
+  description: "Discover digital products, practical tools, templates, software, learning systems and research-driven technology from GOLIDE.",
+  keywords: [
+    "digital products", "digital marketplace", "online tools", "digital toolkits",
+    "business templates", "productivity tools", "creator tools", "career tools",
+    "learning resources", "AI software", "data analytics tools", "trading tools",
+    "research software", "bioinformatics tools", "public health data analytics",
+  ],
+  applicationName: "GOLIDE",
+  creator: "Esiah Kapinga",
+  authors: [{ name: "Esiah Kapinga", url: "https://golidee.com/founder" }],
+  robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 } },
+  openGraph: { type: "website", siteName: "GOLIDE", title: "Digital Products, Software & Practical Tools | GOLIDE", description: "Digital products, practical tools, templates, software and research-driven technology built for real problems.", images: [{ url: "/og.webp", width: 1200, height: 630, alt: "GOLIDE digital products, software and technology" }] },
+  twitter: { card: "summary_large_image", title: "Digital Products, Software & Practical Tools | GOLIDE", description: "Digital products, practical tools, templates, software and research-driven technology built for real problems.", images: ["/og.webp"] },
 };
 
 export const viewport: Viewport = {
@@ -32,8 +41,9 @@ export default function RootLayout({
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
           "@context": "https://schema.org",
           "@graph": [
-            { "@type": "Organization", "@id": "https://golidee.com/#organization", name: "GOLIDE", url: "https://golidee.com", logo: "https://golidee.com/brand/favicon.png", founder: { "@type": "Person", name: "Esiah Kapinga", url: "https://golidee.com/founder" } },
-            { "@type": "WebSite", "@id": "https://golidee.com/#website", url: "https://golidee.com", name: "GOLIDE", publisher: { "@id": "https://golidee.com/#organization" } }
+            { "@type": "Organization", "@id": "https://golidee.com/#organization", name: "GOLIDE", url: "https://golidee.com", logo: "https://golidee.com/brand/favicon.png", description: "A digital products, software, research and technology platform.", founder: { "@id": "https://golidee.com/founder#person" } },
+            { "@type": "Person", "@id": "https://golidee.com/founder#person", name: "Esiah Kapinga", url: "https://golidee.com/founder", jobTitle: "Founder of GOLIDE", sameAs: ["https://github.com/risktacker", "https://www.youtube.com/@esiah.1"] },
+            { "@type": "WebSite", "@id": "https://golidee.com/#website", url: "https://golidee.com", name: "GOLIDE", description: "Digital products, software, practical tools and research-driven technology.", publisher: { "@id": "https://golidee.com/#organization" }, inLanguage: "en" }
           ]
         }).replace(/</g, "\\u003c") }} />
         {children}

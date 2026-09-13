@@ -3,26 +3,28 @@ import { Footer, Header } from "../../shared";
 import MarketClient from "./market-client";
 import { listPublishedProducts } from "./market-data";
 import styles from "./market.module.css";
+import { getGolideUser, isAdminUser } from "../../chatgpt-auth";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Digital Marketplace",
-  description: "A curated marketplace of practical digital toolkits, playbooks and learning systems, delivered through Whop.",
+  title: "Digital Products Marketplace: Tools, Templates & Software",
+  description: "Explore practical digital products, toolkits, templates, playbooks, software and learning resources for career, business, creators and productivity.",
+  keywords: ["digital products marketplace", "digital tools", "online toolkits", "business templates", "creator tools", "career tools", "productivity tools", "learning resources", "digital downloads", "software tools"],
   alternates: { canonical: "/ventures/market-systems" },
-  openGraph: { url: "/ventures/market-systems", title: "GOLIDE Digital Marketplace", description: "Practical digital toolkits, playbooks and learning systems built to help people decide, act and improve.", images: ["/og.webp"] },
-  twitter: { card: "summary_large_image", title: "GOLIDE Digital Marketplace", description: "Practical digital toolkits, playbooks and learning systems.", images: ["/og.webp"] },
+  openGraph: { url: "/ventures/market-systems", title: "Digital Products Marketplace | GOLIDE", description: "Practical digital products, tools, templates, software and learning resources built for real problems.", images: ["/og.webp"] },
+  twitter: { card: "summary_large_image", title: "Digital Products Marketplace | GOLIDE", description: "Practical digital products, tools, templates, software and learning resources.", images: ["/og.webp"] },
 };
 
-type Props = { searchParams: Promise<{ publisher?: string }> };
-
-export default async function Page({ searchParams }: Props) {
+export default async function Page() {
   const products = await listPublishedProducts();
-  const query = await searchParams;
-  const canManage = query.publisher === "1";
+  const canManage = isAdminUser(await getGolideUser());
 
   const marketplaceData = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    name: "GOLIDE Digital Marketplace",
+    name: "GOLIDE Digital Products Marketplace",
+    description: "A marketplace for practical digital products, tools, templates, software and learning resources.",
     url: "https://golidee.com/ventures/market-systems",
     mainEntity: { "@type": "ItemList", itemListElement: products.map((product, index) => ({ "@type": "ListItem", position: index + 1, url: `https://golidee.com/ventures/market-systems/${product.slug}`, name: product.name })) },
   };

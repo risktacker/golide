@@ -80,9 +80,9 @@ export default function MarketClient({ products, canManage }: Props) {
     <>
       <section className={styles.marketHero}>
         <div>
-          <p className={styles.eyebrow}><Sparkles size={14}/> G$LIDE DIGITAL MARKET</p>
-          <h1>Useful systems.<br/><span>Built for real problems.</span></h1>
-          <p className={styles.intro}>A curated shelf of digital toolkits, playbooks and learning systems. Browse here. Checkout and delivery are handled securely through Whop.</p>
+          <p className={styles.eyebrow}><Sparkles size={14}/> GOLIDE DIGITAL PRODUCTS MARKETPLACE</p>
+          <h1>Digital products.<br/><span>Built for real problems.</span></h1>
+          <p className={styles.intro}>Explore practical tools, templates, toolkits, playbooks, software and learning resources for careers, creators, business and productivity. Checkout and delivery are handled securely through Whop.</p>
         </div>
         <div className={styles.heroMeta}>
           <span><Layers3 size={16}/>{products.length || "00"} live products</span>

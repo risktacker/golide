@@ -11,6 +11,9 @@ const routes = [
   "/projects/syla",
   "/projects/tinospora",
   "/research",
+  "/content-engine",
+  "/privacy",
+  "/terms",
   "/ventures/market-systems",
 ];
 
@@ -58,15 +61,29 @@ test("renders every public route", async () => {
   }
 });
 
-test("renders the approved G$LIDE branding and hero assets", async () => {
+test("renders the approved GOLIDE branding, marketplace hero and search metadata", async () => {
   const response = await render("/");
   const html = await response.text();
 
-  assert.match(html, /href="https:\/\/golide-hub\.esiahkapinga\.chatgpt\.site\/favicon\.ico\?v=20260907-final"/);
-  assert.match(html, /src="\/brand\/wordmark\.png\?v=20260907-final" alt="G\$LIDE"/);
-  assert.match(html, /src="\/founder\/hero-white-shirt-cutout\.webp\?v=20260908-final"/);
-  assert.match(html, /class="hero-ribbons"/);
-  assert.match(html, /class="hero-ribbon ribbon-g"/);
+  assert.match(html, /Digital Products, Software &amp; Practical Tools \| GOLIDE/);
+  assert.match(html, /What if you could become/);
+  assert.match(html, /what you always wanted\?/);
+  assert.match(html, /Visit our marketplace\./);
+  assert.match(html, /href="\/ventures\/market-systems"/);
+  assert.match(html, /rel="canonical" href="https:\/\/golidee\.com\/"/);
+  assert.match(html, /src="\/brand\/wordmark\.png[^\"]*" alt="G\$LIDE"/);
+  assert.match(html, /src="\/founder\/hero-white-shirt-cutout\.webp[^\"]*"/);
+});
+
+test("renders marketplace language for the complete catalog", async () => {
+  const response = await render("/ventures/market-systems");
+  const html = await response.text();
+
+  assert.match(html, /Digital Products Marketplace: Tools, Templates &amp; Software/);
+  assert.match(html, /GOLIDE DIGITAL PRODUCTS MARKETPLACE/);
+  assert.match(html, /Digital products\./);
+  assert.match(html, /careers, creators, business and productivity/);
+  assert.match(html, /rel="canonical" href="https:\/\/golidee\.com\/ventures\/market-systems"/);
 });
 
 test("packages every critical media file", async () => {
