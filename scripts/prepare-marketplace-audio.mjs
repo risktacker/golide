@@ -1,7 +1,7 @@
 import { mkdir, rename, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 
-const source = "https://assets.mixkit.co/music/preview/mixkit-easy-monday-1025.mp3";
+const source = "https://assets.mixkit.co/music/download/mixkit-easy-monday-1025.mp3";
 const target = path.resolve("public/audio/marketplace/easy-monday.mp3");
 const temp = `${target}.tmp`;
 
@@ -17,7 +17,10 @@ async function existsWithData(file) {
 if (!(await existsWithData(target))) {
   await mkdir(path.dirname(target), { recursive: true });
   const response = await fetch(source, {
-    headers: { "user-agent": "GOLIDE-Marketplace/1.0" },
+    headers: {
+      "user-agent": "Mozilla/5.0 (compatible; GOLIDE-Marketplace/1.0)",
+      accept: "audio/mpeg,audio/*;q=0.9,*/*;q=0.1",
+    },
     redirect: "follow",
   });
   if (!response.ok) throw new Error(`Easy Monday download failed: ${response.status}`);
