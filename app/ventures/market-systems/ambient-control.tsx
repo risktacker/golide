@@ -4,10 +4,8 @@ import { Music2, Volume2, VolumeX } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./storefront.module.css";
 
-// Mixkit — “Easy Monday” by Michael Ramir C.
-// This is the exact Mixkit asset supplied for the marketplace atmosphere.
-const TRACK_URL = "https://assets.mixkit.co/music/preview/mixkit-easy-monday-1025.mp3";
-const TRACK_VOLUME = 0.58;
+const TRACK_URL = "/audio/marketplace/easy-monday.mp3";
+const TRACK_VOLUME = 0.62;
 
 export default function AmbientControl() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -24,19 +22,27 @@ export default function AmbientControl() {
     setStarted(false);
   }, []);
 
-  const startAmbient = useCallback(async () => {
-    if (!enabledRef.current || typeof window === "undefined") return;
-
+  const ensureAudio = useCallback(() => {
     let audio = audioRef.current;
     if (!audio) {
       audio = new Audio(TRACK_URL);
       audio.loop = true;
       audio.preload = "auto";
       audio.volume = TRACK_VOLUME;
+      audio.addEventListener("error", () => {
+        startedRef.current = false;
+        setStarted(false);
+        setFailed(true);
+      });
       audioRef.current = audio;
     }
-
     audio.volume = TRACK_VOLUME;
+    return audio;
+  }, []);
+
+  const startAmbient = useCallback(async () => {
+    if (!enabledRef.current || typeof window === "undefined") return;
+    const audio = ensureAudio();
     try {
       await audio.play();
       startedRef.current = true;
@@ -47,7 +53,7 @@ export default function AmbientControl() {
       setStarted(false);
       setFailed(true);
     }
-  }, []);
+  }, [ensureAudio]);
 
   useEffect(() => {
     const saved = window.localStorage.getItem("golide-market-ambient");
@@ -56,37 +62,38 @@ export default function AmbientControl() {
     setEnabled(shouldEnable);
     if (!shouldEnable) return;
 
-    // Audible autoplay is blocked by browsers. Start the track on the first
-    // normal interaction anywhere in the marketplace, while letting the audio
-    // control handle its own click without immediately switching itself off.
-    const unlockClick = (event: MouseEvent) => {
+    // Browsers block audible autoplay until the visitor interacts. Prime the
+    // local track immediately, then start it on the first normal interaction.
+    ensureAudio().load();
+
+    const unlockPointer = (event: PointerEvent) => {
       const target = event.target instanceof Element ? event.target : null;
       if (target?.closest("[data-market-audio-control]")) return;
-      window.removeEventListener("click", unlockClick);
+      window.removeEventListener("pointerdown", unlockPointer);
       window.removeEventListener("keydown", unlockKey);
       void startAmbient();
     };
     const unlockKey = (event: KeyboardEvent) => {
       const target = event.target instanceof Element ? event.target : null;
       if (target?.closest("[data-market-audio-control]")) return;
-      window.removeEventListener("click", unlockClick);
+      window.removeEventListener("pointerdown", unlockPointer);
       window.removeEventListener("keydown", unlockKey);
       void startAmbient();
     };
 
-    window.addEventListener("click", unlockClick);
+    window.addEventListener("pointerdown", unlockPointer);
     window.addEventListener("keydown", unlockKey);
     return () => {
-      window.removeEventListener("click", unlockClick);
+      window.removeEventListener("pointerdown", unlockPointer);
       window.removeEventListener("keydown", unlockKey);
     };
-  }, [startAmbient]);
+  }, [ensureAudio, startAmbient]);
 
   useEffect(() => () => {
     const audio = audioRef.current;
     if (audio) {
       audio.pause();
-      audio.src = "";
+      audio.removeAttribute("src");
       audio.load();
     }
     audioRef.current = null;
