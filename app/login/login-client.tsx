@@ -39,11 +39,11 @@ export default function LoginClient({ returnTo, alreadySignedIn }: Props) {
       <p className={styles.lead}>Sign in once, then keep your toolkit progress and account state when you return.</p>
 
       {alreadySignedIn ? <a className={styles.continueButton} href={returnTo}>Continue to GOLIDE</a> : <>
-        <a className={styles.googleButton} href={googleUrl}><span className={styles.googleMark}>G</span> Continue with Google</a>
+        <a className={styles.googleButton} href={googleUrl}><img className={styles.googleLogo} src="/brand/google-g.svg" alt="" aria-hidden="true"/> Continue with Google</a>
         <div className={styles.divider}><span/>or<span/></div>
         <form onSubmit={submit}>
-          <label>Email<input name="email" type="email" autoComplete="email" required/></label>
-          <label>Password<input name="password" type="password" autoComplete={mode === "signin" ? "current-password" : "new-password"} minLength={6} required/></label>
+          <label>Email<input name="email" type="email" autoComplete="email" inputMode="email" placeholder="Enter your email" aria-label="Email address" required/></label>
+          <label>Password<input name="password" type="password" autoComplete={mode === "signin" ? "current-password" : "new-password"} placeholder={mode === "signin" ? "Enter your password" : "Create a password (6+ characters)"} aria-label="Password" minLength={6} required/></label>
           <button className={styles.submit} type="submit" disabled={loading}>{loading ? "Working…" : mode === "signin" ? "Sign in" : "Create account"}</button>
         </form>
         <button className={styles.switch} type="button" onClick={() => { setMode(mode === "signin" ? "signup" : "signin"); setMessage(""); }}>{mode === "signin" ? "New to GOLIDE? Create an account" : "Already have an account? Sign in"}</button>
