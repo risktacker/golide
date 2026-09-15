@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/api/", "/ventures/market-systems/manage"],
+      disallow: ["/api/", "/manage", "/ventures/market-systems/manage"],
     },
     sitemap: "https://golidee.com/sitemap.xml",
     host: "https://golidee.com",

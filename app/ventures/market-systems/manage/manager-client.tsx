@@ -199,7 +199,7 @@ export default function ManagerClient() {
 
   return <main className={styles.managerPage}>
     <div className={styles.managerShell}>
-      <Link className={styles.detailBack} href="/ventures/market-systems?publisher=1"><ArrowLeft size={15}/> Back to market</Link>
+      <Link className={styles.detailBack} href="/?publisher=1"><ArrowLeft size={15}/> Back to market</Link>
       <div className={styles.managerHead}>
         <div><p className={styles.eyebrow}>G$LIDE MARKET PUBLISHER</p><h1>Add once.<br/>Place it on the shelf.</h1></div>
         <p>Use this publisher for every new digital product. Upload the product image directly, add the Whop purchase link, choose the shelf, then publish. Published products can be edited below without recreating them.</p>

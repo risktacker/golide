@@ -78,7 +78,7 @@ function ProductCard({ product, accent, rgb, onOpen, canManage }: { product: Mar
       </div>
 
       {canManage && (
-        <Link className={styles.editProduct} href={`/ventures/market-systems/manage?edit=${encodeURIComponent(product.id)}`} aria-label={`Edit ${product.name}`}>
+        <Link className={styles.editProduct} href={`/manage?edit=${encodeURIComponent(product.id)}`} aria-label={`Edit ${product.name}`}>
           <Pencil size={12}/> Edit
         </Link>
       )}
@@ -115,7 +115,7 @@ export default function MarketClient({ products, canManage }: Props) {
           <p className={styles.intro}>Practical tools, playbooks and software for career, business, creativity, productivity and learning.</p>
           <div className={styles.heroActions}>
             <a className={styles.primaryHeroButton} href="#market-shelves">Browse products <ArrowRight size={17}/></a>
-            {canManage && <Link className={styles.secondaryHeroButton} href="/ventures/market-systems/manage">Add product <ArrowUpRight size={16}/></Link>}
+            {canManage && <Link className={styles.secondaryHeroButton} href="/manage">Add product <ArrowUpRight size={16}/></Link>}
           </div>
           <div className={styles.heroNotes}>
             <span>Instant digital access</span>
@@ -196,7 +196,7 @@ export default function MarketClient({ products, canManage }: Props) {
                       <div>
                         <strong>{query ? "No matching products" : "Next release is being prepared"}</strong>
                         <small>{query ? "Try a different search or category." : `${shelf.name} products will appear here when released.`}</small>
-                        {canManage && !query && <Link href={`/ventures/market-systems/manage?shelf=${encodeURIComponent(shelf.name)}`}>Add first release <ArrowUpRight size={13}/></Link>}
+                        {canManage && !query && <Link href={`/manage?shelf=${encodeURIComponent(shelf.name)}`}>Add first release <ArrowUpRight size={13}/></Link>}
                       </div>
                     </div>
                   )}
