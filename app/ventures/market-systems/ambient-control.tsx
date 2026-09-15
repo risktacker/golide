@@ -5,21 +5,20 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./storefront.module.css";
 
 const TRACK_URL = "/audio/marketplace/easy-monday.mp3";
-const TRACK_VOLUME = 0.62;
+const TRACK_VOLUME = 0.34;
 
 export default function AmbientControl() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const enabledRef = useRef(true);
   const startedRef = useRef(false);
+  const pausedByBackgroundRef = useRef(false);
   const [enabled, setEnabled] = useState(true);
   const [started, setStarted] = useState(false);
   const [failed, setFailed] = useState(false);
 
-  const stopAmbient = useCallback(() => {
-    const audio = audioRef.current;
-    if (audio) audio.pause();
-    startedRef.current = false;
-    setStarted(false);
+  const setPlayingState = useCallback((playing: boolean) => {
+    startedRef.current = playing;
+    setStarted(playing);
   }, []);
 
   const ensureAudio = useCallback(() => {
@@ -30,30 +29,50 @@ export default function AmbientControl() {
       audio.preload = "auto";
       audio.volume = TRACK_VOLUME;
       audio.addEventListener("error", () => {
-        startedRef.current = false;
-        setStarted(false);
+        setPlayingState(false);
         setFailed(true);
       });
       audioRef.current = audio;
     }
     audio.volume = TRACK_VOLUME;
     return audio;
-  }, []);
+  }, [setPlayingState]);
 
   const startAmbient = useCallback(async () => {
-    if (!enabledRef.current || typeof window === "undefined") return;
+    if (!enabledRef.current || typeof window === "undefined" || document.hidden) return false;
     const audio = ensureAudio();
     try {
       await audio.play();
-      startedRef.current = true;
-      setStarted(true);
+      setPlayingState(true);
       setFailed(false);
+      return true;
     } catch {
-      startedRef.current = false;
-      setStarted(false);
+      setPlayingState(false);
       setFailed(true);
+      return false;
     }
-  }, [ensureAudio]);
+  }, [ensureAudio, setPlayingState]);
+
+  const stopAmbient = useCallback(() => {
+    const audio = audioRef.current;
+    if (audio) audio.pause();
+    pausedByBackgroundRef.current = false;
+    setPlayingState(false);
+  }, [setPlayingState]);
+
+  const pauseForBackground = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio || audio.paused) return;
+    pausedByBackgroundRef.current = enabledRef.current;
+    audio.pause();
+    setPlayingState(false);
+  }, [setPlayingState]);
+
+  const resumeFromBackground = useCallback(async () => {
+    if (!pausedByBackgroundRef.current || !enabledRef.current || document.hidden) return;
+    const resumed = await startAmbient();
+    if (resumed) pausedByBackgroundRef.current = false;
+  }, [startAmbient]);
 
   useEffect(() => {
     const saved = window.localStorage.getItem("golide-market-ambient");
@@ -62,8 +81,6 @@ export default function AmbientControl() {
     setEnabled(shouldEnable);
     if (!shouldEnable) return;
 
-    // Browsers block audible autoplay until the visitor interacts. Prime the
-    // local track immediately, then start it on the first normal interaction.
     ensureAudio().load();
 
     const unlockPointer = (event: PointerEvent) => {
@@ -89,6 +106,31 @@ export default function AmbientControl() {
     };
   }, [ensureAudio, startAmbient]);
 
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (document.hidden) pauseForBackground();
+      else void resumeFromBackground();
+    };
+    const handleBlur = () => pauseForBackground();
+    const handleFocus = () => void resumeFromBackground();
+    const handlePageHide = () => pauseForBackground();
+    const handlePageShow = () => void resumeFromBackground();
+
+    document.addEventListener("visibilitychange", handleVisibility);
+    window.addEventListener("blur", handleBlur);
+    window.addEventListener("focus", handleFocus);
+    window.addEventListener("pagehide", handlePageHide);
+    window.addEventListener("pageshow", handlePageShow);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibility);
+      window.removeEventListener("blur", handleBlur);
+      window.removeEventListener("focus", handleFocus);
+      window.removeEventListener("pagehide", handlePageHide);
+      window.removeEventListener("pageshow", handlePageShow);
+    };
+  }, [pauseForBackground, resumeFromBackground]);
+
   useEffect(() => () => {
     const audio = audioRef.current;
     if (audio) {
@@ -97,11 +139,13 @@ export default function AmbientControl() {
       audio.load();
     }
     audioRef.current = null;
+    pausedByBackgroundRef.current = false;
     startedRef.current = false;
   }, []);
 
   async function toggle() {
     if (enabledRef.current && !startedRef.current) {
+      pausedByBackgroundRef.current = false;
       await startAmbient();
       return;
     }
@@ -110,8 +154,12 @@ export default function AmbientControl() {
     enabledRef.current = next;
     setEnabled(next);
     window.localStorage.setItem("golide-market-ambient", next ? "on" : "off");
-    if (next) await startAmbient();
-    else stopAmbient();
+    if (next) {
+      pausedByBackgroundRef.current = false;
+      await startAmbient();
+    } else {
+      stopAmbient();
+    }
   }
 
   const stateLabel = !enabled ? "OFF" : started ? "ON" : failed ? "PLAY" : "READY";
