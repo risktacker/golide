@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { ArrowRight, BarChart3, Beaker, Bot, ChevronRight, CircleDot, Dna, Globe2, MoveUpRight, Play, Radio, Workflow } from "lucide-react";
+import { ArrowRight, BarChart3, Beaker, Bot, ChevronRight, CircleDot, Dna, Globe2, MousePointerClick, MoveUpRight, Play, Radio, Workflow } from "lucide-react";
 import { CodePulse, FloatingBadge, HeroPortrait, KineticHero, Marquee } from "./kinetic";
 import { Footer, Header } from "./shared";
 
@@ -10,8 +10,8 @@ export const metadata: Metadata = {
 };
 
 const ventures = [
+  { no:"02", icon:Bot, name:"Market Systems", type:"Trading intelligence", state:"In development", text:"Risk, execution and performance tools designed around discipline—not promises or shortcuts.", href:"/ventures/market-systems", accent:"violet", featured:true },
   { no:"01", icon:BarChart3, name:"SYLA", type:"AI analytics platform", state:"Rebuild in progress", text:"From raw files to visualisations, forecasts and decisions—with less friction between question and answer.", href:"/projects/syla", accent:"cyan" },
-  { no:"02", icon:Bot, name:"Market Systems", type:"Trading intelligence", state:"In development", text:"Risk, execution and performance tools designed around discipline—not promises or shortcuts.", href:"/ventures/market-systems", accent:"violet" },
   { no:"03", icon:Dna, name:"Research Lab", type:"Bioinformatics + health", state:"Active", text:"Computational research and public-health systems that turn complex evidence into usable intelligence.", href:"/research", accent:"lime" },
 ];
 
@@ -53,7 +53,7 @@ export default function Home(){return <main className="neo-site"><Header/>
   </section>
   <Marquee items={["SOFTWARE","INTELLIGENCE","SCIENCE","MEDIA","CONNECTION"]}/>
 
-  <section className="neo-section shell" id="ecosystem"><div className="neo-section-head ecosystem-head"><div><p className="neo-kicker"><CircleDot/> ECOSYSTEM MAP</p><h2>Different disciplines.<br/><span>One compounding engine.</span></h2></div><div className="ecosystem-kinetic"><KineticHero/></div></div><div className="venture-stack">{ventures.map(({icon:Icon,...v})=><Link className={"neo-venture "+v.accent} href={v.href} key={v.no}><span className="venture-no">{v.no}</span><div className="venture-icon"><Icon/></div><div className="venture-name"><small>{v.type}</small><h3>{v.name}</h3></div><p>{v.text}</p><div className="venture-state"><i/>{v.state}</div><ChevronRight/></Link>)}</div></section>
+  <section className="neo-section shell" id="ecosystem"><div className="neo-section-head ecosystem-head"><div><p className="neo-kicker"><CircleDot/> ECOSYSTEM MAP</p><h2>Different disciplines.<br/><span>One compounding engine.</span></h2></div><div className="ecosystem-kinetic"><KineticHero/></div></div><div className="venture-stack">{ventures.map(({icon:Icon,...v})=><Link className={"neo-venture "+v.accent+(v.featured?" market-feature":"")} href={v.href} key={v.no}>{v.featured&&<span className="market-beams" aria-hidden="true"><i/><i/></span>}<span className="venture-no">{v.no}</span><div className="venture-icon"><Icon/></div><div className="venture-name"><small>{v.type}</small><h3>{v.name}</h3></div><p>{v.text}</p><div className="venture-state"><i/>{v.state}</div>{v.featured&&<span className="market-click-hint"><MousePointerClick/> Click to explore</span>}<ChevronRight/></Link>)}</div></section>
 
   <section className="product-signal"><div className="shell product-grid"><div className="product-copy"><p className="neo-kicker"><Workflow/> PRODUCT SIGNAL / 01</p><h2>SYLA is being rebuilt to make analysis feel immediate.</h2><p>The first GOLIDE SaaS product will bring visualisation, forecasting and file intelligence into one focused workspace.</p><Link className="neo-button solid" href="/projects/syla">See the product story <ArrowRight/></Link><CodePulse/></div><div className="video-console"><div className="console-bar"><span><i/><i/><i/></span><small>SYLA / PRODUCT ARCHIVE</small><strong>01:18</strong></div><video controls playsInline preload="metadata" poster="/syla-card.webp"><source src="/videos/projects/syla-demo-full.mp4" type="video/mp4"/></video><div className="console-overlay"><Play fill="currentColor"/><span>Platform walkthrough</span></div></div></div></section>
 
