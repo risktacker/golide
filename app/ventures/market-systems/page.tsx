@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Footer, Header } from "../../shared";
+import AmbientControl from "./ambient-control";
 import MarketClient from "./market-client";
 import { listPublishedProducts } from "./market-data";
-import styles from "./market.module.css";
+import styles from "./storefront.module.css";
 import { getGolideUser, isAdminUser } from "../../chatgpt-auth";
 import { MARKETPLACE_ORIGIN, marketplaceProductUrl } from "./market-links";
 
@@ -32,7 +33,7 @@ export default async function Page() {
 
   return <main className={styles.marketPage}>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(marketplaceData).replace(/</g, "\\u003c") }} />
-    <Header/>
+    <Header utility={<AmbientControl/>}/>
     <div className={styles.marketShell}>
       <MarketClient products={products} canManage={canManage}/>
     </div>
