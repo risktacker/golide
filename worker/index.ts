@@ -19,12 +19,6 @@ interface ExecutionContext {
   passThroughOnException(): void;
 }
 
-// Image security config. SVG sources with .svg extension auto-skip the
-// optimization endpoint on the client side (served directly, no proxy).
-// To route SVGs through the optimizer (with security headers), set
-// dangerouslyAllowSVG: true in next.config.js and uncomment below:
-// const imageConfig: ImageConfig = { dangerouslyAllowSVG: true };
-
 const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
@@ -32,6 +26,15 @@ const worker = {
     const marketplaceHost = hostname === "marketplace.golidee.com";
     const legacyMarketPath = "/ventures/market-systems";
     const jobSearchSlug = "job-search-conversion-system-62224";
+
+    // Migration safety: any stale GOLIDE link that still points at the old
+    // ChatGPT-hosted auth route is redirected into the first-party login page.
+    if (url.pathname === "/signin-with-chatgpt") {
+      const returnTo = url.searchParams.get("return_to") || "/";
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("returnTo", returnTo.startsWith("/") && !returnTo.startsWith("//") ? returnTo : "/");
+      return Response.redirect(loginUrl, 307);
+    }
 
     if (!marketplaceHost && url.pathname.startsWith(legacyMarketPath) && !url.pathname.startsWith(`${legacyMarketPath}/manage`)) {
       const suffix = url.pathname.slice(legacyMarketPath.length).replace(/^\/+|\/+$/g, "");
@@ -47,7 +50,14 @@ const worker = {
       }
 
       if (url.pathname === "/jobsearch/jobsearch-toolkit" || url.pathname === "/jobsearch/jobsearch-toolkit/") {
-        return env.ASSETS.fetch(new Request(new URL("/marketplace/jobsearch/jobsearch-toolkit/", request.url), request));
+        const assetResponse = await env.ASSETS.fetch(new Request(new URL("/marketplace/jobsearch/jobsearch-toolkit/", request.url), request));
+        if (!assetResponse.ok) return assetResponse;
+        const html = (await assetResponse.text()).replaceAll("/signin-with-chatgpt?return_to=", "/login?returnTo=");
+        const headers = new Headers(assetResponse.headers);
+        headers.set("content-type", "text/html; charset=utf-8");
+        headers.set("cache-control", "no-cache");
+        headers.delete("content-length");
+        return new Response(html, { status: assetResponse.status, statusText: assetResponse.statusText, headers });
       }
 
       const marketplaceAssets: Record<string, string> = {

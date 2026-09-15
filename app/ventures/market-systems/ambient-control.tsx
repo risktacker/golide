@@ -39,7 +39,7 @@ export default function AmbientControl() {
     compressor.release.value = 0.35;
 
     const master = context.createGain();
-    master.gain.value = 0.24;
+    master.gain.value = 0.38;
     compressor.connect(master);
     master.connect(context.destination);
 
