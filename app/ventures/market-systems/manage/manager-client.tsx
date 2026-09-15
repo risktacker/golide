@@ -33,7 +33,6 @@ export default function ManagerClient() {
   const requestedEdit = searchParams.get("edit") || "";
   const initialShelf = shelves.includes(requestedShelf) ? requestedShelf : "Career";
 
-  const [passcode, setPasscode] = useState("");
   const [products, setProducts] = useState<MarketProduct[]>([]);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -47,7 +46,7 @@ export default function ManagerClient() {
     const response = await fetch("/api/market-products", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ ...payload, passcode }),
+      body: JSON.stringify(payload),
     });
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || "Publisher request failed.");
@@ -79,7 +78,7 @@ export default function ManagerClient() {
   async function loadProducts() {
     setLoading(true); setMessage("");
     try {
-      await refreshProducts("Publisher unlocked.");
+      await refreshProducts("Catalog refreshed.");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not unlock publisher.");
     } finally { setLoading(false); }
@@ -206,8 +205,7 @@ export default function ManagerClient() {
       </div>
 
       <div className={styles.managerForm} style={{marginBottom:16}}>
-        <label className={styles.full}>Publisher passcode<input type="password" value={passcode} onChange={(e)=>setPasscode(e.target.value)} placeholder="Enter publisher passcode" autoComplete="current-password"/></label>
-        <div className={styles.publishRow}><button type="button" onClick={loadProducts} disabled={loading}>{loading ? "Working…" : "Unlock / refresh catalog"} <RefreshCw size={14}/></button></div>
+        <div className={styles.publishRow}><span>Signed in as G$LIDE administrator.</span><button type="button" onClick={loadProducts} disabled={loading}>{loading ? "Working…" : "Refresh catalog"} <RefreshCw size={14}/></button></div>
       </div>
 
       {message && <p className={styles.message}>{message}</p>}

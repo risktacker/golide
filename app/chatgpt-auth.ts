@@ -1,98 +1,77 @@
-import { headers } from "next/headers";
+import { createServerClient } from "@supabase/ssr";
+import type { User } from "@supabase/supabase-js";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-export type ChatGPTUser = {
-  displayName: string;
-  email: string;
-  fullName: string | null;
-};
+export type GolideUser = { displayName: string; email: string; id: string };
+const ADMIN_EMAIL = "esiahkapinga@gmail.com";
 
-const USER_EMAIL_HEADER = "oai-authenticated-user-email";
-const USER_FULL_NAME_HEADER = "oai-authenticated-user-full-name";
-const USER_FULL_NAME_ENCODING_HEADER =
-  "oai-authenticated-user-full-name-encoding";
-const PERCENT_ENCODED_UTF8 = "percent-encoded-utf-8";
-const SIGN_IN_PATH = "/signin-with-chatgpt";
-const SIGN_OUT_PATH = "/signout-with-chatgpt";
-const CALLBACK_PATH = "/callback";
-const ADMIN_EMAILS = new Set([
-  "esiahkapinga@gmail.com",
-  "esiahsbusiness@gmail.com",
-]);
+export function getSupabasePublicConfig() {
+  const rawUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  if (!rawUrl || !key) throw new Error("GOLIDE authentication is not configured.");
+  const url = rawUrl.replace(/\/+$/, "").replace(/\/rest\/v1$/i, "");
+  return { url, publishableKey: key };
+}
 
-export async function getChatGPTUser(): Promise<ChatGPTUser | null> {
-  const requestHeaders = await headers();
-  const email = requestHeaders.get(USER_EMAIL_HEADER);
+export async function createSupabaseServerClient() {
+  const { url, publishableKey } = getSupabasePublicConfig();
+  const cookieStore = await cookies();
+  return createServerClient(url, publishableKey, {
+    cookieOptions: { domain: ".golidee.com", path: "/", sameSite: "lax", secure: true },
+    cookies: {
+      getAll: () => cookieStore.getAll(),
+      setAll: (items) => {
+        try {
+          items.forEach(({ name, value, options }) => cookieStore.set(name, value, options));
+        } catch {
+          // Server Components cannot write cookies. Route handlers can.
+        }
+      },
+    },
+  });
+}
+
+function toGolideUser(user: User): GolideUser | null {
+  const email = user.email?.trim().toLowerCase();
   if (!email) return null;
-
-  const encodedFullName = requestHeaders.get(USER_FULL_NAME_HEADER);
-  const fullName =
-    encodedFullName &&
-    requestHeaders.get(USER_FULL_NAME_ENCODING_HEADER) === PERCENT_ENCODED_UTF8
-      ? safeDecodeURIComponent(encodedFullName)
-      : null;
-
-  return {
-    displayName: fullName ?? email,
-    email,
-    fullName,
-  };
+  const fullName = typeof user.user_metadata?.full_name === "string" ? user.user_metadata.full_name.trim() : "";
+  return { id: user.id, email, displayName: fullName || email };
 }
 
-export async function getGolideUser(): Promise<ChatGPTUser | null> {
-  return getChatGPTUser();
+export async function getGolideUser(): Promise<GolideUser | null> {
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase.auth.getUser();
+  if (error || !data.user) return null;
+  return toGolideUser(data.user);
 }
 
-export function isAdminUser(user: ChatGPTUser | null): boolean {
-  return Boolean(user && ADMIN_EMAILS.has(user.email.trim().toLowerCase()));
+export function isAdminUser(user: GolideUser | null): boolean {
+  return user?.email === ADMIN_EMAIL;
 }
 
-export async function requireChatGPTUser(
-  returnTo: string,
-): Promise<ChatGPTUser> {
-  const user = await getChatGPTUser();
+export async function requireGolideUser(returnTo: string): Promise<GolideUser> {
+  const user = await getGolideUser();
   if (user) return user;
-
-  redirect(chatGPTSignInPath(returnTo));
+  redirect(loginPath(returnTo));
 }
 
-export function chatGPTSignInPath(returnTo: string): string {
-  const safeReturnTo = safeRelativeReturnPath(returnTo);
-  return `${SIGN_IN_PATH}?return_to=${encodeURIComponent(safeReturnTo)}`;
+export async function requireAdmin(returnTo: string): Promise<GolideUser> {
+  const user = await requireGolideUser(returnTo);
+  if (!isAdminUser(user)) redirect("/admin-only");
+  return user;
 }
 
-export function chatGPTSignOutPath(returnTo = "/"): string {
-  const safeReturnTo = safeRelativeReturnPath(returnTo);
-  return `${SIGN_OUT_PATH}?return_to=${encodeURIComponent(safeReturnTo)}`;
+export function loginPath(returnTo = "/"): string {
+  return `/login?returnTo=${encodeURIComponent(safeRelativePath(returnTo))}`;
 }
 
-function safeRelativeReturnPath(value: string): string {
-  if (!value.startsWith("/") || value.startsWith("//")) return "/";
-
-  let url: URL;
+export function safeRelativePath(value: string | null): string {
+  if (!value || !value.startsWith("/") || value.startsWith("//")) return "/";
   try {
-    url = new URL(value, "https://app.local");
+    const url = new URL(value, "https://golidee.com");
+    return url.origin === "https://golidee.com" ? `${url.pathname}${url.search}${url.hash}` : "/";
   } catch {
     return "/";
-  }
-  if (url.origin !== "https://app.local") return "/";
-  if (isReservedAuthPath(url.pathname)) return "/";
-
-  return `${url.pathname}${url.search}${url.hash}`;
-}
-
-function isReservedAuthPath(pathname: string): boolean {
-  return (
-    pathname === SIGN_IN_PATH ||
-    pathname === SIGN_OUT_PATH ||
-    pathname === CALLBACK_PATH
-  );
-}
-
-function safeDecodeURIComponent(value: string): string | null {
-  try {
-    return decodeURIComponent(value);
-  } catch {
-    return null;
   }
 }
