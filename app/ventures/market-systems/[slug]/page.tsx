@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { notFound } from "next/navigation";
 import { Footer, Header } from "../../../shared";
 import { getPublishedProduct } from "../market-data";
-import styles from "../market.module.css";
-import { MARKETPLACE_ORIGIN, marketplaceProductUrl, marketplaceToolkitPath } from "../market-links";
+import styles from "../storefront.module.css";
+import { MARKETPLACE_ORIGIN, marketplaceProductUrl, marketplaceToolkitCheckoutUrl } from "../market-links";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -33,31 +32,34 @@ export default async function ProductPage({ params }: Props) {
     name: product.name,
     description: product.summary,
     url: marketplaceProductUrl(product.slug),
-    ...(product.imageUrl ? { image: product.imageUrl.startsWith("http") ? product.imageUrl : `https://golidee.com${product.imageUrl}` } : {}),
+    ...(product.imageUrl ? { image: product.imageUrl.startsWith("http") ? product.imageUrl : `${MARKETPLACE_ORIGIN}${product.imageUrl}` } : {}),
     brand: { "@type": "Brand", name: "GOLIDE" },
     ...(product.whopUrl ? { offers: { "@type": "Offer", url: product.whopUrl, availability: "https://schema.org/InStock" } } : {}),
   };
-  const toolkitPath = marketplaceToolkitPath(product.slug);
+  const toolkitCheckout = marketplaceToolkitCheckoutUrl(product.slug);
 
   return <main className={styles.detailPage}>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productData).replace(/</g, "\\u003c") }} />
     <Header/>
     <div className={styles.detailShell}>
-      <Link className={styles.detailBack} href={`${MARKETPLACE_ORIGIN}/`}><ArrowLeft size={15}/> Back to digital market</Link>
+      <a className={styles.detailBack} href={`${MARKETPLACE_ORIGIN}/`}><ArrowLeft size={15}/> Back to marketplace</a>
       <div className={styles.detailGrid}>
         <div className={styles.detailVisual}>
-          {product.imageUrl ? <img src={product.imageUrl} alt={`${product.name} product preview`}/> : <span className={styles.generatedCover}><small>{product.format}</small><strong>{product.name}</strong><em>G$LIDE</em></span>}
+          {product.imageUrl ? <img src={product.imageUrl} alt={`${product.name} product preview`}/> : <span className={styles.generatedCover}><small>{product.format}</small><strong>{product.name}</strong><em>GOLIDE</em></span>}
         </div>
         <article className={styles.detailCopy}>
           <p className={styles.eyebrow}>{product.shelf} / {product.format}</p>
           <h1>{product.name}</h1>
-          <p className={styles.lead}>{product.summary}</p>
-          {product.transformation && <div className={styles.detailTransformation}><strong>Transformation</strong><br/>{product.transformation}</div>}
+          <p className={styles.detailLead}>{product.summary}</p>
+          {product.transformation && <div className={styles.detailTransformation}><strong>What changes</strong><br/>{product.transformation}</div>}
           <div className={styles.detailActions}>
             {product.priceText && <strong>{product.priceText}</strong>}
-            {product.whopUrl ? <a href={product.whopUrl} target="_blank" rel="noreferrer">Get the system <ArrowUpRight size={17}/></a> : <span>Checkout opening soon</span>}
-            {toolkitPath && <Link href={toolkitPath}>Open interactive toolkit <ArrowUpRight size={17}/></Link>}
+            {product.whopUrl ? <a className={styles.detailPrimary} href={product.whopUrl} target="_blank" rel="noreferrer">Get the system <ArrowUpRight size={17}/></a> : <span>Checkout opening soon</span>}
           </div>
+          {toolkitCheckout && <aside className={styles.toolkitUpsell}>
+            <div><small>INTERACTIVE UPGRADE</small><h2>Want the live workspace?</h2><p>Move from the manual system into the interactive score, map, build and tracking toolkit.</p></div>
+            <a href={toolkitCheckout} target="_blank" rel="noreferrer">Get Toolkit Pro · $29.99 <ArrowUpRight size={16}/></a>
+          </aside>}
         </article>
       </div>
     </div>

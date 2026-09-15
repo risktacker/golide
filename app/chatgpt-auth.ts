@@ -1,59 +1,42 @@
-import { createServerClient } from "@supabase/ssr";
-import type { User } from "@supabase/supabase-js";
-import { cookies } from "next/headers";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 export type GolideUser = { displayName: string; email: string; id: string };
-const ADMIN_EMAIL = "esiahkapinga@gmail.com";
 
-export function getSupabasePublicConfig() {
-  const rawUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-  if (!rawUrl || !key) throw new Error("GOLIDE authentication is not configured.");
-  const url = rawUrl.replace(/\/+$/, "").replace(/\/rest\/v1$/i, "");
-  return { url, publishableKey: key };
-}
-
-export async function createSupabaseServerClient() {
-  const { url, publishableKey } = getSupabasePublicConfig();
-  const cookieStore = await cookies();
-  return createServerClient(url, publishableKey, {
-    cookieOptions: { domain: ".golidee.com", path: "/", sameSite: "lax", secure: true },
-    cookies: {
-      getAll: () => cookieStore.getAll(),
-      setAll: (items) => {
-        try {
-          items.forEach(({ name, value, options }) => cookieStore.set(name, value, options));
-        } catch {
-          // Server Components cannot write cookies. Route handlers can.
-        }
-      },
-    },
-  });
-}
-
-function toGolideUser(user: User): GolideUser | null {
-  const email = user.email?.trim().toLowerCase();
-  if (!email) return null;
-  const fullName = typeof user.user_metadata?.full_name === "string" ? user.user_metadata.full_name.trim() : "";
-  return { id: user.id, email, displayName: fullName || email };
-}
+const USER_EMAIL_HEADER = "oai-authenticated-user-email";
+const USER_FULL_NAME_HEADER = "oai-authenticated-user-full-name";
+const USER_FULL_NAME_ENCODING_HEADER = "oai-authenticated-user-full-name-encoding";
+const PERCENT_ENCODED_UTF8 = "percent-encoded-utf-8";
+const SIGN_IN_PATH = "/signin-with-chatgpt";
+const SIGN_OUT_PATH = "/signout-with-chatgpt";
+const CALLBACK_PATH = "/callback";
+const ADMIN_EMAILS = new Set(["esiahkapinga@gmail.com", "esiahsbusiness@gmail.com"]);
 
 export async function getGolideUser(): Promise<GolideUser | null> {
-  const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase.auth.getUser();
-  if (error || !data.user) return null;
-  return toGolideUser(data.user);
+  const requestHeaders = await headers();
+  const rawEmail = requestHeaders.get(USER_EMAIL_HEADER)?.trim().toLowerCase();
+  if (!rawEmail) return null;
+
+  const encodedFullName = requestHeaders.get(USER_FULL_NAME_HEADER);
+  const fullName = encodedFullName && requestHeaders.get(USER_FULL_NAME_ENCODING_HEADER) === PERCENT_ENCODED_UTF8
+    ? safeDecodeURIComponent(encodedFullName)
+    : encodedFullName;
+
+  return {
+    id: rawEmail,
+    email: rawEmail,
+    displayName: fullName?.trim() || rawEmail,
+  };
 }
 
 export function isAdminUser(user: GolideUser | null): boolean {
-  return user?.email === ADMIN_EMAIL;
+  return Boolean(user && ADMIN_EMAILS.has(user.email));
 }
 
 export async function requireGolideUser(returnTo: string): Promise<GolideUser> {
   const user = await getGolideUser();
   if (user) return user;
-  redirect(loginPath(returnTo));
+  redirect(chatGPTSignInPath(returnTo));
 }
 
 export async function requireAdmin(returnTo: string): Promise<GolideUser> {
@@ -62,16 +45,30 @@ export async function requireAdmin(returnTo: string): Promise<GolideUser> {
   return user;
 }
 
-export function loginPath(returnTo = "/"): string {
-  return `/login?returnTo=${encodeURIComponent(safeRelativePath(returnTo))}`;
+export function chatGPTSignInPath(returnTo = "/"): string {
+  return `${SIGN_IN_PATH}?return_to=${encodeURIComponent(safeRelativePath(returnTo))}`;
+}
+
+export function chatGPTSignOutPath(returnTo = "/"): string {
+  return `${SIGN_OUT_PATH}?return_to=${encodeURIComponent(safeRelativePath(returnTo))}`;
 }
 
 export function safeRelativePath(value: string | null): string {
   if (!value || !value.startsWith("/") || value.startsWith("//")) return "/";
   try {
     const url = new URL(value, "https://golidee.com");
-    return url.origin === "https://golidee.com" ? `${url.pathname}${url.search}${url.hash}` : "/";
+    if (url.origin !== "https://golidee.com") return "/";
+    if ([SIGN_IN_PATH, SIGN_OUT_PATH, CALLBACK_PATH].includes(url.pathname)) return "/";
+    return `${url.pathname}${url.search}${url.hash}`;
   } catch {
     return "/";
+  }
+}
+
+function safeDecodeURIComponent(value: string): string | null {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return null;
   }
 }
