@@ -15,6 +15,10 @@ const PERCENT_ENCODED_UTF8 = "percent-encoded-utf-8";
 const SIGN_IN_PATH = "/signin-with-chatgpt";
 const SIGN_OUT_PATH = "/signout-with-chatgpt";
 const CALLBACK_PATH = "/callback";
+const ADMIN_EMAILS = new Set([
+  "esiahkapinga@gmail.com",
+  "esiahsbusiness@gmail.com",
+]);
 
 export async function getChatGPTUser(): Promise<ChatGPTUser | null> {
   const requestHeaders = await headers();
@@ -33,6 +37,14 @@ export async function getChatGPTUser(): Promise<ChatGPTUser | null> {
     email,
     fullName,
   };
+}
+
+export async function getGolideUser(): Promise<ChatGPTUser | null> {
+  return getChatGPTUser();
+}
+
+export function isAdminUser(user: ChatGPTUser | null): boolean {
+  return Boolean(user && ADMIN_EMAILS.has(user.email.trim().toLowerCase()));
 }
 
 export async function requireChatGPTUser(
