@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { Footer, Header } from "../../../shared";
 import { getPublishedProduct } from "../market-data";
 import styles from "../market.module.css";
+import { MARKETPLACE_ORIGIN, marketplaceProductUrl, marketplaceToolkitPath } from "../market-links";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -15,8 +16,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: product.name,
     description: product.summary,
-    alternates: { canonical: `/ventures/market-systems/${product.slug}` },
-    openGraph: { type: "website", url: `/ventures/market-systems/${product.slug}`, title: product.name, description: product.summary, ...(product.imageUrl ? { images: [product.imageUrl] } : {}) },
+    alternates: { canonical: marketplaceProductUrl(product.slug) },
+    openGraph: { type: "website", url: marketplaceProductUrl(product.slug), title: product.name, description: product.summary, ...(product.imageUrl ? { images: [product.imageUrl] } : {}) },
     twitter: { card: "summary_large_image", title: product.name, description: product.summary, ...(product.imageUrl ? { images: [product.imageUrl] } : {}) },
   };
 }
@@ -31,17 +32,18 @@ export default async function ProductPage({ params }: Props) {
     "@type": "Product",
     name: product.name,
     description: product.summary,
-    url: `https://golidee.com/ventures/market-systems/${product.slug}`,
+    url: marketplaceProductUrl(product.slug),
     ...(product.imageUrl ? { image: product.imageUrl.startsWith("http") ? product.imageUrl : `https://golidee.com${product.imageUrl}` } : {}),
     brand: { "@type": "Brand", name: "GOLIDE" },
     ...(product.whopUrl ? { offers: { "@type": "Offer", url: product.whopUrl, availability: "https://schema.org/InStock" } } : {}),
   };
+  const toolkitPath = marketplaceToolkitPath(product.slug);
 
   return <main className={styles.detailPage}>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productData).replace(/</g, "\\u003c") }} />
     <Header/>
     <div className={styles.detailShell}>
-      <Link className={styles.detailBack} href="/ventures/market-systems"><ArrowLeft size={15}/> Back to digital market</Link>
+      <Link className={styles.detailBack} href={`${MARKETPLACE_ORIGIN}/`}><ArrowLeft size={15}/> Back to digital market</Link>
       <div className={styles.detailGrid}>
         <div className={styles.detailVisual}>
           {product.imageUrl ? <img src={product.imageUrl} alt={`${product.name} product preview`}/> : <span className={styles.generatedCover}><small>{product.format}</small><strong>{product.name}</strong><em>G$LIDE</em></span>}
@@ -54,6 +56,7 @@ export default async function ProductPage({ params }: Props) {
           <div className={styles.detailActions}>
             {product.priceText && <strong>{product.priceText}</strong>}
             {product.whopUrl ? <a href={product.whopUrl} target="_blank" rel="noreferrer">Get the system <ArrowUpRight size={17}/></a> : <span>Checkout opening soon</span>}
+            {toolkitPath && <Link href={toolkitPath}>Open interactive toolkit <ArrowUpRight size={17}/></Link>}
           </div>
         </article>
       </div>

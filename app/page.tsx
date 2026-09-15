@@ -47,7 +47,7 @@ export default function Home(){return <main className="neo-site"><Header/>
       <h1>What if you could become <span>what you always wanted?</span></h1>
       <p className="hero-prompt">Visit our marketplace.</p>
       <p className="hero-undertext">Discover practical digital products, tools, templates, software and learning systems built to turn ideas into action.</p>
-      <div className="neo-actions"><Link className="neo-button solid" href="/ventures/market-systems">Visit marketplace <ArrowRight/></Link><Link className="neo-button bare" href="/founder">Founder profile <MoveUpRight/></Link></div>
+      <div className="neo-actions"><Link className="neo-button solid" href="https://marketplace.golidee.com/">Visit marketplace <ArrowRight/></Link><Link className="neo-button bare" href="/founder">Founder profile <MoveUpRight/></Link></div>
     </div>
     <FloatingBadge/>
   </section>

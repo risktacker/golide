@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowUpRight, BriefcaseBusiness, Layers3, Pencil, Sparkles, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { MarketProduct } from "./market-data";
+import { marketplaceProductPath } from "./market-links";
 import styles from "./market.module.css";
 
 type Props = {
@@ -157,7 +158,7 @@ export default function MarketClient({ products, canManage }: Props) {
               <div className={styles.modalActions}>
                 {selected.priceText && <strong>{selected.priceText}</strong>}
                 {canManage && <Link href={`/ventures/market-systems/manage?edit=${encodeURIComponent(selected.id)}`}>Edit product <Pencil size={14}/></Link>}
-                <Link href={`/ventures/market-systems/${selected.slug}`}>View system <ArrowUpRight size={16}/></Link>
+                <Link href={marketplaceProductPath(selected.slug)}>View system <ArrowUpRight size={16}/></Link>
                 {selected.whopUrl && <a href={selected.whopUrl} target="_blank" rel="noreferrer">Get it on Whop <ArrowUpRight size={16}/></a>}
               </div>
             </div>
