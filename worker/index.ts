@@ -47,7 +47,7 @@ const worker = {
       }
 
       if (url.pathname === "/jobsearch/jobsearch-toolkit" || url.pathname === "/jobsearch/jobsearch-toolkit/") {
-        return env.ASSETS.fetch(new Request(new URL("/marketplace/jobsearch/jobsearch-toolkit/index.html", request.url), request));
+        return env.ASSETS.fetch(new Request(new URL("/marketplace/jobsearch/jobsearch-toolkit/", request.url), request));
       }
 
       const marketplaceAssets: Record<string, string> = {
