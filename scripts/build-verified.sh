@@ -18,6 +18,12 @@ if [[ ! -x "${vinext}" ]]; then
   exit 69
 fi
 
+echo "Preparing marketplace audio asset..."
+(
+  cd "${SITES_PROJECT_ROOT}"
+  node scripts/prepare-marketplace-audio.mjs
+)
+
 echo "Running bounded vinext build..."
 timeout \
   --signal=TERM \
