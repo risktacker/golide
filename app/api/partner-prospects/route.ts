@@ -119,6 +119,20 @@ function defaultProfileUrl(platform: string, handle: string) {
   return "";
 }
 
+async function ensurePartnerColumns() {
+  const info = await env.DB.prepare("PRAGMA table_info(partner_prospects)").all<{ name: string }>();
+  const existing = new Set((info.results ?? []).map((column) => column.name));
+  const additions = [
+    ["audience_market", "ALTER TABLE partner_prospects ADD COLUMN audience_market TEXT NOT NULL DEFAULT ''"],
+    ["activity_evidence", "ALTER TABLE partner_prospects ADD COLUMN activity_evidence TEXT NOT NULL DEFAULT ''"],
+    ["buyer_intent_evidence", "ALTER TABLE partner_prospects ADD COLUMN buyer_intent_evidence TEXT NOT NULL DEFAULT ''"],
+    ["monetization_evidence", "ALTER TABLE partner_prospects ADD COLUMN monetization_evidence TEXT NOT NULL DEFAULT ''"],
+  ] as const;
+  for (const [name, sql] of additions) {
+    if (!existing.has(name)) await env.DB.prepare(sql).run();
+  }
+}
+
 async function ensurePartnerTable() {
   if (!env.DB) throw new Error("Partner database is unavailable.");
   await env.DB.prepare(`
@@ -130,6 +144,10 @@ async function ensurePartnerTable() {
       profile_url TEXT NOT NULL,
       contact TEXT NOT NULL DEFAULT '',
       audience_size INTEGER NOT NULL DEFAULT 0,
+      audience_market TEXT NOT NULL DEFAULT '',
+      activity_evidence TEXT NOT NULL DEFAULT '',
+      buyer_intent_evidence TEXT NOT NULL DEFAULT '',
+      monetization_evidence TEXT NOT NULL DEFAULT '',
       reason TEXT NOT NULL DEFAULT '',
       personal_hook TEXT NOT NULL DEFAULT '',
       outreach_message TEXT NOT NULL DEFAULT '',
@@ -141,6 +159,7 @@ async function ensurePartnerTable() {
       updated_at INTEGER NOT NULL
     )
   `).run();
+  await ensurePartnerColumns();
   await env.DB.prepare("CREATE UNIQUE INDEX IF NOT EXISTS partner_prospects_platform_handle_idx ON partner_prospects (platform, handle)").run();
   await env.DB.prepare("CREATE INDEX IF NOT EXISTS partner_prospects_status_idx ON partner_prospects (status, updated_at)").run();
 }
@@ -168,8 +187,8 @@ export async function POST(request: Request) {
       const profileUrl = defaultProfileUrl(prospect.platform, handle);
       return env.DB.prepare(`
         INSERT OR IGNORE INTO partner_prospects
-        (id, name, platform, handle, profile_url, contact, audience_size, reason, personal_hook, outreach_message, status, affiliate_link, notes, last_contacted_at, created_at, updated_at)
-        VALUES (?1, ?2, ?3, ?4, ?5, '', ?6, ?7, ?8, ?9, 'NEW', '', 'Qualified at 10K+ followers with recent activity verified before seeding.', NULL, ?10, ?11)
+        (id, name, platform, handle, profile_url, contact, audience_size, audience_market, activity_evidence, buyer_intent_evidence, monetization_evidence, reason, personal_hook, outreach_message, status, affiliate_link, notes, last_contacted_at, created_at, updated_at)
+        VALUES (?1, ?2, ?3, ?4, ?5, '', ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, 'NEW', '', 'Initial researched seed. Re-check current audience geography and monetization links before sending.', NULL, ?14, ?15)
       `).bind(
         crypto.randomUUID(),
         prospect.name,
@@ -177,6 +196,10 @@ export async function POST(request: Request) {
         handle,
         profileUrl,
         prospect.audienceSize,
+        "English-language career audience with commercial fit for online job-search products; prioritize audiences in high digital-purchase markets or with clear paid-online behavior.",
+        prospect.hook,
+        prospect.reason,
+        "Creator distributes career resources, coaching, templates, guides or other actionable off-platform support; re-check current monetization path before outreach.",
         prospect.reason,
         prospect.hook,
         prospect.message,
@@ -197,10 +220,17 @@ export async function POST(request: Request) {
     const hook = cleanText(prospect.personalHook, 500);
     const reason = cleanText(prospect.reason, 700);
     const audienceSize = cleanInt(prospect.audienceSize);
+    const audienceMarket = cleanText(prospect.audienceMarket, 700);
+    const activityEvidence = cleanText(prospect.activityEvidence, 700);
+    const buyerIntentEvidence = cleanText(prospect.buyerIntentEvidence, 900);
+    const monetizationEvidence = cleanText(prospect.monetizationEvidence, 900);
     const outreachMessage = cleanText(prospect.outreachMessage, 4000);
     const profileUrl = safeUrl(prospect.profileUrl) || defaultProfileUrl(platform, handle);
     if (!handle || !profileUrl) return NextResponse.json({ error: "Handle and valid profile URL are required." }, { status: 400 });
-    if (audienceSize < 10000) return NextResponse.json({ error: "Partner prospects must have at least 10,000 followers." }, { status: 400 });
+    if (audienceSize < 10000) return NextResponse.json({ error: "Partner prospects must normally have at least 10,000 followers." }, { status: 400 });
+    if (!audienceMarket || !activityEvidence || !buyerIntentEvidence || !monetizationEvidence) {
+      return NextResponse.json({ error: "Audience market, recent activity, buying-intent and monetization evidence are required." }, { status: 400 });
+    }
     if (!reason || !hook || !outreachMessage) return NextResponse.json({ error: "Fit reason, current content hook and a fully personalized outreach message are required." }, { status: 400 });
 
     const now = Date.now();
@@ -213,6 +243,10 @@ export async function POST(request: Request) {
         profileUrl,
         contact: cleanText(prospect.contact, 240),
         audienceSize,
+        audienceMarket,
+        activityEvidence,
+        buyerIntentEvidence,
+        monetizationEvidence,
         reason,
         personalHook: hook,
         outreachMessage,
@@ -250,6 +284,10 @@ export async function POST(request: Request) {
       name: cleanText(prospect.name, 120),
       contact: cleanText(prospect.contact, 240),
       audienceSize: cleanInt(prospect.audienceSize),
+      audienceMarket: cleanText(prospect.audienceMarket, 700),
+      activityEvidence: cleanText(prospect.activityEvidence, 700),
+      buyerIntentEvidence: cleanText(prospect.buyerIntentEvidence, 900),
+      monetizationEvidence: cleanText(prospect.monetizationEvidence, 900),
       reason: cleanText(prospect.reason, 700),
       personalHook: cleanText(prospect.personalHook, 500),
       outreachMessage: cleanText(prospect.outreachMessage, 4000),
