@@ -13,6 +13,7 @@ import {
   Users,
 } from "lucide-react";
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
+import styles from "./partner-engine.module.css";
 
 type Status = "NEW" | "CONTACTED" | "REPLIED" | "PARTNER" | "SALE" | "NO_REPLY";
 
@@ -171,113 +172,120 @@ export default function PartnersClient() {
   }
 
   return (
-    <main className="min-h-screen bg-[#03070b] text-[#edf7ff]">
-      <div className="mx-auto w-[min(1180px,calc(100%-32px))] py-8 md:py-12">
-        <a href="https://golidee.com/" className="inline-flex items-center gap-2 text-sm text-slate-400 transition hover:text-cyan-300">
-          <ArrowLeft size={15} /> golidee.com
-        </a>
+    <main className={styles.page}>
+      <div className={styles.shell}>
+        <div className={styles.topbar}>
+          <a className={styles.brand} href="https://golidee.com/" aria-label="GOLIDE home">
+            <img src="/brand/wordmark.png" alt="GOLIDE" />
+          </a>
+          <a className={styles.domainLink} href="https://marketplace.golidee.com/">
+            <ArrowLeft size={14} /><span>Back to marketplace</span>
+          </a>
+        </div>
 
-        <header className="mt-8 flex flex-col gap-6 border-b border-white/10 pb-8 md:flex-row md:items-end md:justify-between">
-          <div>
-            <p className="text-xs font-bold tracking-[0.2em] text-cyan-300">GOLIDE PARTNER ENGINE</p>
-            <h1 className="mt-3 text-4xl font-bold tracking-[-0.04em] md:text-6xl">First-sale queue.</h1>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-400 md:text-base">
-              Find the right people, open the account, copy the prepared message, send it, then move the lead forward.
+        <section className={styles.hero}>
+          <div className={styles.heroCopy}>
+            <p className={styles.eyebrow}>Private growth console</p>
+            <h1>Partner <span>Engine.</span></h1>
+            <p className={styles.heroText}>
+              One focused queue for GOLIDE&apos;s first sale: open the right account, copy the prepared message, send it, and move the relationship forward.
             </p>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <button onClick={() => void load("Queue refreshed.")} disabled={loading} className="inline-flex items-center gap-2 rounded-xl border border-white/10 px-4 py-3 text-sm hover:border-cyan-300/40 disabled:opacity-50">
-              <RefreshCw size={15} /> Refresh
+          <div className={styles.heroActions}>
+            <button className={styles.secondaryButton} onClick={() => void load("Queue refreshed.")} disabled={loading}>
+              <RefreshCw size={14} /> Refresh
             </button>
-            <button onClick={() => setShowAdd((value) => !value)} className="inline-flex items-center gap-2 rounded-xl bg-cyan-300 px-4 py-3 text-sm font-bold text-slate-950">
-              <Plus size={15} /> Add prospect
+            <button className={styles.primaryButton} onClick={() => setShowAdd((value) => !value)}>
+              <Plus size={14} /> {showAdd ? "Close form" : "Add prospect"}
             </button>
           </div>
-        </header>
+        </section>
 
-        <section className="grid grid-cols-2 gap-3 py-6 md:grid-cols-6">
+        <section className={styles.stats} aria-label="Partner pipeline">
           {statusOrder.map((status) => (
             <button
               key={status}
               onClick={() => setFilter(filter === status ? "ALL" : status)}
-              className={`rounded-2xl border p-4 text-left transition ${filter === status ? "border-cyan-300/50 bg-cyan-300/10" : "border-white/10 bg-white/[0.025] hover:border-white/20"}`}
+              className={`${styles.stat} ${filter === status ? styles.statActive : ""}`}
+              aria-pressed={filter === status}
             >
-              <div className="text-2xl font-bold">{counts[status]}</div>
-              <div className="mt-1 text-xs uppercase tracking-[0.12em] text-slate-500">{statusLabel[status]}</div>
+              <span className={styles.statNumber}>{counts[status]}</span>
+              <span className={styles.statLabel}>{statusLabel[status]}</span>
             </button>
           ))}
         </section>
 
-        {message && <div className="mb-5 rounded-xl border border-cyan-300/20 bg-cyan-300/[0.06] px-4 py-3 text-sm text-cyan-100">{message}</div>}
+        {message && <p className={styles.message}>{message}</p>}
 
         {showAdd && (
-          <form onSubmit={addProspect} className="mb-6 grid gap-4 rounded-2xl border border-white/10 bg-[#081019] p-5 md:grid-cols-2">
-            <label className="text-xs text-slate-400">Name<input name="name" className="mt-2 w-full rounded-lg border border-white/10 bg-black/30 p-3 text-sm text-white outline-none focus:border-cyan-300/40" /></label>
-            <label className="text-xs text-slate-400">Platform<select name="platform" defaultValue="Instagram" className="mt-2 w-full rounded-lg border border-white/10 bg-[#07101a] p-3 text-sm text-white outline-none"><option>Instagram</option><option>TikTok</option><option>LinkedIn</option><option>YouTube</option><option>Email</option></select></label>
-            <label className="text-xs text-slate-400">Handle<input name="handle" required placeholder="careercreator" className="mt-2 w-full rounded-lg border border-white/10 bg-black/30 p-3 text-sm text-white outline-none focus:border-cyan-300/40" /></label>
-            <label className="text-xs text-slate-400">Profile URL<input name="profileUrl" type="url" placeholder="Optional for Instagram/TikTok" className="mt-2 w-full rounded-lg border border-white/10 bg-black/30 p-3 text-sm text-white outline-none focus:border-cyan-300/40" /></label>
-            <label className="text-xs text-slate-400">Audience size<input name="audienceSize" type="number" min="0" className="mt-2 w-full rounded-lg border border-white/10 bg-black/30 p-3 text-sm text-white outline-none focus:border-cyan-300/40" /></label>
-            <label className="text-xs text-slate-400">Email / contact<input name="contact" className="mt-2 w-full rounded-lg border border-white/10 bg-black/30 p-3 text-sm text-white outline-none focus:border-cyan-300/40" /></label>
-            <label className="text-xs text-slate-400 md:col-span-2">Why this account?<textarea name="reason" rows={2} className="mt-2 w-full rounded-lg border border-white/10 bg-black/30 p-3 text-sm text-white outline-none focus:border-cyan-300/40" /></label>
-            <label className="text-xs text-slate-400 md:col-span-2">Personal hook<textarea name="personalHook" rows={2} placeholder="their recent interview-prep post" className="mt-2 w-full rounded-lg border border-white/10 bg-black/30 p-3 text-sm text-white outline-none focus:border-cyan-300/40" /></label>
-            <label className="text-xs text-slate-400 md:col-span-2">Custom outreach message <span className="text-slate-600">(optional — a default is created)</span><textarea name="outreachMessage" rows={5} className="mt-2 w-full rounded-lg border border-white/10 bg-black/30 p-3 text-sm text-white outline-none focus:border-cyan-300/40" /></label>
-            <div className="md:col-span-2 flex justify-end"><button type="submit" disabled={loading} className="rounded-xl bg-cyan-300 px-5 py-3 text-sm font-bold text-slate-950 disabled:opacity-50">Save prospect</button></div>
+          <form onSubmit={addProspect} className={styles.addPanel}>
+            <label className={styles.label}>Name<input name="name" /></label>
+            <label className={styles.label}>Platform<select name="platform" defaultValue="Instagram"><option>Instagram</option><option>TikTok</option><option>LinkedIn</option><option>YouTube</option><option>Email</option></select></label>
+            <label className={styles.label}>Handle<input name="handle" required placeholder="careercreator" /></label>
+            <label className={styles.label}>Profile URL<input name="profileUrl" type="url" placeholder="Optional for Instagram / TikTok" /></label>
+            <label className={styles.label}>Audience size<input name="audienceSize" type="number" min="0" /></label>
+            <label className={styles.label}>Email / contact<input name="contact" /></label>
+            <label className={`${styles.label} ${styles.full}`}>Why this account?<textarea name="reason" rows={2} /></label>
+            <label className={`${styles.label} ${styles.full}`}>Personal hook<textarea name="personalHook" rows={2} placeholder="Their recent interview-prep post" /></label>
+            <label className={`${styles.label} ${styles.full}`}>Custom outreach message <span>(optional — a default is created)</span><textarea name="outreachMessage" rows={5} /></label>
+            <div className={styles.formActions}><button type="submit" disabled={loading} className={styles.primaryButton}>Save prospect</button></div>
           </form>
         )}
 
         {!prospects.length && !loading ? (
-          <section className="rounded-2xl border border-dashed border-white/15 bg-white/[0.02] p-10 text-center">
-            <Users className="mx-auto text-cyan-300" />
-            <h2 className="mt-4 text-2xl font-bold">Start with the researched queue.</h2>
-            <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-slate-400">Load the initial career and job-search creators so you are not being handed the research job.</p>
-            <button onClick={() => void seed()} className="mt-5 rounded-xl bg-cyan-300 px-5 py-3 text-sm font-bold text-slate-950">Load starter prospects</button>
+          <section className={styles.empty}>
+            <span className={styles.emptyIcon}><Users size={22} /></span>
+            <h2>Load the researched queue.</h2>
+            <p>The first prospects are already prepared so the system starts with real accounts instead of handing the research job back to you.</p>
+            <button onClick={() => void seed()} className={styles.primaryButton}>Load starter prospects</button>
           </section>
         ) : (
-          <section className="grid gap-4">
-            {loading && (
-              <div className="flex items-center gap-2 py-4 text-sm text-slate-500"><LoaderCircle className="animate-spin" size={16} /> Updating queue…</div>
-            )}
+          <section className={styles.queue}>
+            {loading && <div className={styles.loading}><LoaderCircle className={styles.spin} size={15} /> Updating queue…</div>}
             {visible.map((prospect) => (
-              <article key={prospect.id} className="rounded-2xl border border-white/10 bg-gradient-to-br from-[#0a121d] to-[#060a10] p-5 shadow-2xl shadow-black/20">
-                <div className="grid gap-5 lg:grid-cols-[1fr_1.25fr]">
-                  <div>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="rounded-full border border-cyan-300/20 bg-cyan-300/[0.07] px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-cyan-200">{prospect.platform}</span>
-                      <span className="rounded-full border border-white/10 px-2.5 py-1 text-[11px] uppercase tracking-[0.12em] text-slate-400">{statusLabel[prospect.status]}</span>
+              <article className={styles.card} key={prospect.id}>
+                <div className={styles.cardGrid}>
+                  <div className={styles.identity}>
+                    <div className={styles.chips}>
+                      <span className={styles.chip}>{prospect.platform}</span>
+                      <span className={styles.statusChip}>{statusLabel[prospect.status]}</span>
                     </div>
-                    <h2 className="mt-4 text-2xl font-bold">{prospect.name || `@${prospect.handle}`}</h2>
-                    <p className="mt-1 text-sm text-slate-500">@{prospect.handle} · {compactNumber(prospect.audienceSize)}</p>
-                    <p className="mt-4 text-sm leading-6 text-slate-300">{prospect.reason || "Relevant job-search audience."}</p>
-                    {prospect.personalHook && <p className="mt-3 border-l-2 border-cyan-300/30 pl-3 text-xs leading-5 text-slate-500">Hook: {prospect.personalHook}</p>}
-                    <div className="mt-5 flex flex-wrap gap-2">
-                      <a href={prospect.profileUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-lg border border-white/10 px-3 py-2 text-xs font-bold hover:border-cyan-300/40">
-                        <ExternalLink size={14} /> Open profile
-                      </a>
-                      <button onClick={() => void copyMessage(prospect)} className="inline-flex items-center gap-2 rounded-lg bg-cyan-300 px-3 py-2 text-xs font-bold text-slate-950">
-                        <Clipboard size={14} /> Copy message
-                      </button>
+                    <h2 className={styles.name}>{prospect.name || `@${prospect.handle}`}</h2>
+                    <p className={styles.handle}>@{prospect.handle} · {compactNumber(prospect.audienceSize)}</p>
+                    <p className={styles.reason}>{prospect.reason || "Relevant job-search audience."}</p>
+                    {prospect.personalHook && <p className={styles.hook}>Hook: {prospect.personalHook}</p>}
+                    <div className={styles.cardActions}>
+                      <a className={styles.openButton} href={prospect.profileUrl} target="_blank" rel="noreferrer"><ExternalLink size={13} /> Open profile</a>
+                      <button className={styles.copyButton} onClick={() => void copyMessage(prospect)}><Clipboard size={13} /> Copy message</button>
                     </div>
                   </div>
-
-                  <div className="rounded-xl border border-white/10 bg-black/20 p-4">
-                    <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">Prepared message</p>
-                    <p className="whitespace-pre-wrap text-sm leading-6 text-slate-300">{prospect.outreachMessage}</p>
+                  <div className={styles.messageBox}>
+                    <p className={styles.messageTitle}>Prepared outreach</p>
+                    <p className={styles.messageBody}>{prospect.outreachMessage}</p>
                   </div>
                 </div>
 
-                <div className="mt-5 flex flex-wrap items-center gap-2 border-t border-white/10 pt-4">
-                  {prospect.status === "NEW" && <button onClick={() => void setStatus(prospect.id, "CONTACTED")} className="inline-flex items-center gap-2 rounded-lg border border-cyan-300/30 px-3 py-2 text-xs font-bold text-cyan-200"><Send size={13} /> Mark sent</button>}
-                  {prospect.status === "CONTACTED" && <><button onClick={() => void setStatus(prospect.id, "REPLIED")} className="inline-flex items-center gap-2 rounded-lg border border-cyan-300/30 px-3 py-2 text-xs font-bold text-cyan-200"><Check size={13} /> Replied</button><button onClick={() => void setStatus(prospect.id, "NO_REPLY")} className="rounded-lg border border-white/10 px-3 py-2 text-xs text-slate-400">No reply</button></>}
-                  {prospect.status === "REPLIED" && <button onClick={() => void setStatus(prospect.id, "PARTNER")} className="rounded-lg border border-violet-300/30 px-3 py-2 text-xs font-bold text-violet-200">Convert to partner</button>}
-                  {prospect.status === "PARTNER" && <button onClick={() => void setStatus(prospect.id, "SALE")} className="rounded-lg border border-emerald-300/30 bg-emerald-300/10 px-3 py-2 text-xs font-bold text-emerald-200">Record sale</button>}
-                  {(prospect.status === "NO_REPLY" || prospect.status === "SALE") && <button onClick={() => void setStatus(prospect.id, "NEW")} className="rounded-lg border border-white/10 px-3 py-2 text-xs text-slate-400">Return to queue</button>}
-                  <button onClick={() => void remove(prospect.id, prospect.handle)} className="ml-auto rounded-lg border border-white/10 p-2 text-slate-600 hover:border-red-400/30 hover:text-red-300" aria-label={`Remove @${prospect.handle}`}><Trash2 size={14} /></button>
+                <div className={styles.stageBar}>
+                  {prospect.status === "NEW" && <button onClick={() => void setStatus(prospect.id, "CONTACTED")} className={styles.stageButton}><Send size={13} /> Mark sent</button>}
+                  {prospect.status === "CONTACTED" && <>
+                    <button onClick={() => void setStatus(prospect.id, "REPLIED")} className={styles.stageButton}><Check size={13} /> Replied</button>
+                    <button onClick={() => void setStatus(prospect.id, "NO_REPLY")} className={styles.quietButton}>No reply</button>
+                  </>}
+                  {prospect.status === "REPLIED" && <button onClick={() => void setStatus(prospect.id, "PARTNER")} className={styles.stageButton}>Convert to partner</button>}
+                  {prospect.status === "PARTNER" && <button onClick={() => void setStatus(prospect.id, "SALE")} className={styles.saleButton}>Record sale</button>}
+                  {(prospect.status === "NO_REPLY" || prospect.status === "SALE") && <button onClick={() => void setStatus(prospect.id, "NEW")} className={styles.quietButton}>Return to queue</button>}
+                  <button onClick={() => void remove(prospect.id, prospect.handle)} className={styles.deleteButton} aria-label={`Remove @${prospect.handle}`}><Trash2 size={13} /></button>
                 </div>
               </article>
             ))}
-            {!visible.length && prospects.length > 0 && <div className="rounded-2xl border border-white/10 p-8 text-center text-sm text-slate-500">Nothing in this stage yet.</div>}
+            {!visible.length && prospects.length > 0 && <div className={styles.noResults}>Nothing in this stage yet.</div>}
           </section>
         )}
+
+        <footer className={styles.footerNote}>
+          <span><strong>GOLIDE Partner Engine</strong> · private admin workspace</span>
+          <span>Target: move one real relationship to SALE.</span>
+        </footer>
       </div>
     </main>
   );
