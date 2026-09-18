@@ -188,7 +188,7 @@ export default function PartnersClient() {
             <p className={styles.eyebrow}>Private growth console</p>
             <h1>Partner <span>Engine.</span></h1>
             <p className={styles.heroText}>
-              One focused queue for GOLIDE&apos;s first sale: open the right account, copy the prepared message, send it, and move the relationship forward.
+              One focused queue for GOLIDE&apos;s first sale: active 10K+ creators only, each with a researched content hook and a message written specifically for that profile.
             </p>
           </div>
           <div className={styles.heroActions}>
@@ -223,11 +223,11 @@ export default function PartnersClient() {
             <label className={styles.label}>Platform<select name="platform" defaultValue="Instagram"><option>Instagram</option><option>TikTok</option><option>LinkedIn</option><option>YouTube</option><option>Email</option></select></label>
             <label className={styles.label}>Handle<input name="handle" required placeholder="careercreator" /></label>
             <label className={styles.label}>Profile URL<input name="profileUrl" type="url" placeholder="Optional for Instagram / TikTok" /></label>
-            <label className={styles.label}>Audience size<input name="audienceSize" type="number" min="0" /></label>
+            <label className={styles.label}>Audience size<input name="audienceSize" type="number" min="10000" required placeholder="10000+" /></label>
             <label className={styles.label}>Email / contact<input name="contact" /></label>
-            <label className={`${styles.label} ${styles.full}`}>Why this account?<textarea name="reason" rows={2} /></label>
-            <label className={`${styles.label} ${styles.full}`}>Personal hook<textarea name="personalHook" rows={2} placeholder="Their recent interview-prep post" /></label>
-            <label className={`${styles.label} ${styles.full}`}>Custom outreach message <span>(optional — a default is created)</span><textarea name="outreachMessage" rows={5} /></label>
+            <label className={`${styles.label} ${styles.full}`}>Why this account?<textarea name="reason" rows={2} required placeholder="Why this active audience is a strong fit" /></label>
+            <label className={`${styles.label} ${styles.full}`}>Current content hook<textarea name="personalHook" rows={2} required placeholder="Specific recent post, video or topic" /></label>
+            <label className={`${styles.label} ${styles.full}`}>Personalized outreach message <span>(required for this exact creator)</span><textarea name="outreachMessage" rows={6} required placeholder="Written specifically from the verified content hook above" /></label>
             <div className={styles.formActions}><button type="submit" disabled={loading} className={styles.primaryButton}>Save prospect</button></div>
           </form>
         )}
@@ -236,7 +236,7 @@ export default function PartnersClient() {
           <section className={styles.empty}>
             <span className={styles.emptyIcon}><Users size={22} /></span>
             <h2>Load the researched queue.</h2>
-            <p>The first prospects are already prepared so the system starts with real accounts instead of handing the research job back to you.</p>
+            <p>The starter queue contains only researched 10K+ creators with recent activity and a unique message tied to their current content.</p>
             <button onClick={() => void seed()} className={styles.primaryButton}>Load starter prospects</button>
           </section>
         ) : (
