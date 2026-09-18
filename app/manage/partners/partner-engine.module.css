@@ -101,6 +101,10 @@
 .handle{margin:6px 0 0;color:#617783;font-size:11px}
 .reason{margin:15px 0 0;color:#a9bbc3;font-size:12px;line-height:1.62}
 .hook{margin:12px 0 0;padding:10px 12px;border-left:2px solid rgba(88,234,255,.34);border-radius:0 8px 8px 0;background:rgba(88,234,255,.025);color:#748a95;font-size:10px;line-height:1.55}
+.qualificationGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:14px}
+.qualificationGrid>div{min-width:0;padding:10px 11px;border:1px solid rgba(255,255,255,.07);border-radius:10px;background:rgba(255,255,255,.018)}
+.qualificationGrid span{display:block;color:#5fe9fb;font-size:7px;font-weight:950;letter-spacing:.13em;text-transform:uppercase}
+.qualificationGrid p{margin:5px 0 0;color:#728893;font-size:9px;line-height:1.5}
 .cardActions{display:flex;flex-wrap:wrap;gap:8px;margin-top:17px}
 .openButton,.copyButton,.stageButton,.quietButton,.saleButton,.deleteButton{
   display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:35px;padding:0 11px;border-radius:9px;font:inherit;font-size:9px;font-weight:900;cursor:pointer;text-decoration:none
@@ -133,7 +137,7 @@
   .heroText{font-size:12px}.heroActions{width:100%}.heroActions>*{flex:1}
   .stats{grid-template-columns:repeat(2,1fr);gap:8px}.stat{min-height:76px;padding:13px}.statNumber{font-size:23px}
   .addPanel{grid-template-columns:1fr;padding:17px}.full,.formActions{grid-column:1}
-  .card{padding:16px;border-radius:18px}.name{font-size:22px}.reason{font-size:11px}
+  .card{padding:16px;border-radius:18px}.name{font-size:22px}.reason{font-size:11px}.qualificationGrid{grid-template-columns:1fr}
   .messageBox{padding:13px}.messageBody{font-size:10px;max-height:180px}
   .cardActions{display:grid;grid-template-columns:1fr 1fr}.openButton,.copyButton{width:100%}
   .stageBar{align-items:stretch}.stageBar button:not(.deleteButton){flex:1}.deleteButton{margin-left:0}
