@@ -20,7 +20,9 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const products = await listPublishedProducts();
-  const canManage = isAdminUser(await getGolideUser());
+  const user = await getGolideUser();
+  const canManage = isAdminUser(user);
+  const showPartners = user?.email.trim().toLowerCase() === "esiahkapinga@gmail.com";
 
   const marketplaceData = {
     "@context": "https://schema.org",
@@ -37,6 +39,6 @@ export default async function Page() {
     <div className={styles.marketShell}>
       <MarketClient products={products} canManage={canManage}/>
     </div>
-    <Footer/>
+    <Footer showPartners={showPartners}/>
   </main>;
 }
