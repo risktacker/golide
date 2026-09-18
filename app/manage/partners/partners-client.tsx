@@ -25,6 +25,10 @@ type Prospect = {
   profileUrl: string;
   contact: string;
   audienceSize: number;
+  audienceMarket: string;
+  activityEvidence: string;
+  buyerIntentEvidence: string;
+  monetizationEvidence: string;
   reason: string;
   personalHook: string;
   outreachMessage: string;
@@ -157,6 +161,10 @@ export default function PartnersClient() {
           profileUrl: form.get("profileUrl"),
           contact: form.get("contact"),
           audienceSize: form.get("audienceSize"),
+          audienceMarket: form.get("audienceMarket"),
+          activityEvidence: form.get("activityEvidence"),
+          buyerIntentEvidence: form.get("buyerIntentEvidence"),
+          monetizationEvidence: form.get("monetizationEvidence"),
           reason: form.get("reason"),
           personalHook: form.get("personalHook"),
           outreachMessage: form.get("outreachMessage"),
@@ -188,7 +196,7 @@ export default function PartnersClient() {
             <p className={styles.eyebrow}>Private growth console</p>
             <h1>Partner <span>Engine.</span></h1>
             <p className={styles.heroText}>
-              One focused queue for GOLIDE&apos;s first sale: active 10K+ creators only, each with a researched content hook and a message written specifically for that profile.
+              One focused queue for GOLIDE&apos;s first sale: active 10K+ creators, commercially qualified audiences, and a message written specifically for each profile.
             </p>
           </div>
           <div className={styles.heroActions}>
@@ -225,6 +233,10 @@ export default function PartnersClient() {
             <label className={styles.label}>Profile URL<input name="profileUrl" type="url" placeholder="Optional for Instagram / TikTok" /></label>
             <label className={styles.label}>Audience size<input name="audienceSize" type="number" min="10000" required placeholder="10000+" /></label>
             <label className={styles.label}>Email / contact<input name="contact" /></label>
+            <label className={`${styles.label} ${styles.full}`}>Audience market / geography<textarea name="audienceMarket" rows={2} required placeholder="Where the audience appears to be, or why $19.99 online purchases are commercially normal for them" /></label>
+            <label className={`${styles.label} ${styles.full}`}>Recent activity evidence<textarea name="activityEvidence" rows={2} required placeholder="Recent post/video/activity within roughly the last 14 days" /></label>
+            <label className={`${styles.label} ${styles.full}`}>Buying-intent evidence<textarea name="buyerIntentEvidence" rows={2} required placeholder="Comments or content showing people actively want jobs, interviews, CV help, career change, remote work, etc." /></label>
+            <label className={`${styles.label} ${styles.full}`}>Monetization evidence<textarea name="monetizationEvidence" rows={2} required placeholder="Coaching, templates, courses, guides, memberships, affiliate links, booking links, or similar" /></label>
             <label className={`${styles.label} ${styles.full}`}>Why this account?<textarea name="reason" rows={2} required placeholder="Why this active audience is a strong fit" /></label>
             <label className={`${styles.label} ${styles.full}`}>Current content hook<textarea name="personalHook" rows={2} required placeholder="Specific recent post, video or topic" /></label>
             <label className={`${styles.label} ${styles.full}`}>Personalized outreach message <span>(required for this exact creator)</span><textarea name="outreachMessage" rows={6} required placeholder="Written specifically from the verified content hook above" /></label>
@@ -236,7 +248,7 @@ export default function PartnersClient() {
           <section className={styles.empty}>
             <span className={styles.emptyIcon}><Users size={22} /></span>
             <h2>Load the researched queue.</h2>
-            <p>The starter queue contains only researched 10K+ creators with recent activity and a unique message tied to their current content.</p>
+            <p>The starter queue is built around 10K+ active creators, audience buying signals, commercial fit and unique messages tied to current content.</p>
             <button onClick={() => void seed()} className={styles.primaryButton}>Load starter prospects</button>
           </section>
         ) : (
@@ -254,6 +266,12 @@ export default function PartnersClient() {
                     <p className={styles.handle}>@{prospect.handle} · {compactNumber(prospect.audienceSize)}</p>
                     <p className={styles.reason}>{prospect.reason || "Relevant job-search audience."}</p>
                     {prospect.personalHook && <p className={styles.hook}>Hook: {prospect.personalHook}</p>}
+                    <div className={styles.qualificationGrid}>
+                      <div><span>Audience market</span><p>{prospect.audienceMarket || "Re-verify before outreach."}</p></div>
+                      <div><span>Recent activity</span><p>{prospect.activityEvidence || "Re-verify before outreach."}</p></div>
+                      <div><span>Buying intent</span><p>{prospect.buyerIntentEvidence || "Re-verify before outreach."}</p></div>
+                      <div><span>Monetization</span><p>{prospect.monetizationEvidence || "Re-verify before outreach."}</p></div>
+                    </div>
                     <div className={styles.cardActions}>
                       <a className={styles.openButton} href={prospect.profileUrl} target="_blank" rel="noreferrer"><ExternalLink size={13} /> Open profile</a>
                       <button className={styles.copyButton} onClick={() => void copyMessage(prospect)}><Clipboard size={13} /> Copy message</button>
