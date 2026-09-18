@@ -36,6 +36,10 @@ const worker = {
       return Response.redirect(loginUrl, 307);
     }
 
+    if (!marketplaceHost && (url.pathname === "/manage/partners" || url.pathname === "/manage/partners/")) {
+      return Response.redirect("https://marketplace.golidee.com/partners", 308);
+    }
+
     if (!marketplaceHost && url.pathname.startsWith(legacyMarketPath) && !url.pathname.startsWith(`${legacyMarketPath}/manage`)) {
       const suffix = url.pathname.slice(legacyMarketPath.length).replace(/^\/+|\/+$/g, "");
       const destination = suffix === jobSearchSlug ? "/jobsearch/" : suffix ? `/${suffix}/` : "/";
@@ -68,7 +72,8 @@ const worker = {
       const assetPath = marketplaceAssets[url.pathname];
       if (assetPath) return env.ASSETS.fetch(new Request(new URL(assetPath, request.url), request));
 
-      if (url.pathname === "/manage" || url.pathname === "/manage/") url.pathname = `${legacyMarketPath}/manage`;
+      if (url.pathname === "/partners" || url.pathname === "/partners/") url.pathname = `${legacyMarketPath}/partners`;
+      else if (url.pathname === "/manage" || url.pathname === "/manage/") url.pathname = `${legacyMarketPath}/manage`;
       else if (url.pathname === "/" || url.pathname === "") url.pathname = legacyMarketPath;
       else if (url.pathname === "/jobsearch" || url.pathname === "/jobsearch/") url.pathname = `${legacyMarketPath}/${jobSearchSlug}`;
       request = new Request(url, request);
