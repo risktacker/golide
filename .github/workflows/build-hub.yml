@@ -5,12 +5,28 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: read
+  actions: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
+      - name: Remove previous GOLIDE build artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api --paginate "/repos/${GITHUB_REPOSITORY}/actions/artifacts?per_page=100" \
+            --jq '.artifacts[] | select(.name == "golide-hub-dist") | .id' | \
+          while read -r artifact_id; do
+            [ -n "$artifact_id" ] || continue
+            echo "Deleting old golide-hub-dist artifact: $artifact_id"
+            gh api --method DELETE "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${artifact_id}"
+          done
       - uses: actions/setup-node@v4
         with:
           node-version: 22
