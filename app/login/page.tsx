@@ -5,7 +5,7 @@ import LoginClient from "./login-client";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Sign in — GOLIDE",
+  title: "Sign in  -  GOLIDE",
   description: "Sign in to GOLIDE to keep your marketplace and toolkit data connected to your account.",
   robots: { index: false, follow: false },
 };
