@@ -51,7 +51,7 @@ const statusLabel: Record<Status, string> = {
 };
 
 function compactNumber(value: number) {
-  if (!value) return "—";
+  if (!value) return " - ";
   return new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(value);
 }
 
