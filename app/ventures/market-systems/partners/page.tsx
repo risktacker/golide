@@ -6,7 +6,7 @@ import PartnersClient from "./partners-client";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Partner Engine — GOLIDE Marketplace",
+  title: "Partner Engine  -  GOLIDE Marketplace",
   description: "Private GOLIDE partner outreach queue.",
   alternates: { canonical: "https://marketplace.golidee.com/partners" },
   robots: { index: false, follow: false, noarchive: true, nocache: true },
