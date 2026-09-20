@@ -594,3 +594,11 @@ footer .brand-wordmark{width:176px}
 .route-loading img{width:54px;height:54px;object-fit:contain;animation:routePulse 1s ease-in-out infinite}
 @keyframes routePulse{0%,100%{opacity:.55;transform:scale(.94)}50%{opacity:1;transform:scale(1.04)}}
 @media(prefers-reduced-motion:reduce){.route-loading img{animation:none}}
+
+
+/* Fluid viewport framework */
+html,body{width:100%;max-width:100%;overflow-x:clip}
+@media(min-width:901px){
+.shell{width:calc(100% - clamp(40px,5vw,96px));max-width:1760px;margin-inline:auto}
+.founder-feature{width:calc(100% - clamp(40px,5vw,96px));max-width:1760px;margin-inline:auto}
+}
