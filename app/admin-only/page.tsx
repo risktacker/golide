@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Footer, Header } from "../shared";
 
 export const metadata = {
-  title: "Admin only — G$LIDE",
+  title: "Admin only  -  G$LIDE",
   robots: { index: false, follow: false },
 };
 
