@@ -62,7 +62,7 @@ export function KineticHero() {
     <div className="tech-orbit orbit-a"><span><Bot/></span></div>
     <div className="tech-orbit orbit-b"><span><Dna/></span></div>
     <div className="tech-orbit orbit-c"><span><BarChart3/></span></div>
-    <div className="golide-core"><small>THE GOLIDE<br/>ECOSYSTEM</small><strong>G</strong><i>01—∞</i></div>
+    <div className="golide-core"><small>THE GOLIDE<br/>ECOSYSTEM</small><strong>G</strong><i>01 - ∞</i></div>
     <div className="data-ticker"><span>BUILD</span><i>◆</i><span>RESEARCH</span><i>◆</i><span>TRADE</span><i>◆</i><span>CONNECT</span></div>
   </div>;
 }
