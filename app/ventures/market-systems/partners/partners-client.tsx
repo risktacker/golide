@@ -186,9 +186,12 @@ export default function PartnersClient() {
           <a className={styles.brand} href="https://golidee.com/" aria-label="GOLIDE home">
             <img src="/brand/wordmark.png" alt="GOLIDE" />
           </a>
-          <a className={styles.domainLink} href="https://marketplace.golidee.com/">
-            <ArrowLeft size={14} /><span>Back to marketplace</span>
-          </a>
+          <div className={styles.topLinks}>
+            <a className={styles.domainLink} href="https://studio.golidee.com/">Studio</a>
+            <a className={styles.domainLink} href="https://marketplace.golidee.com/">
+              <ArrowLeft size={14} /><span>Back to marketplace</span>
+            </a>
+          </div>
         </div>
 
         <section className={styles.hero}>

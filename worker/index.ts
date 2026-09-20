@@ -36,6 +36,10 @@ const worker = {
       return Response.redirect(loginUrl, 307);
     }
 
+    if (!marketplaceHost && ["/studio", "/studio/", "/content-engine", "/content-engine/"].includes(url.pathname)) {
+      return Response.redirect("https://studio.golidee.com/", 308);
+    }
+
     if (!marketplaceHost && (url.pathname === "/manage/partners" || url.pathname === "/manage/partners/")) {
       return Response.redirect("https://marketplace.golidee.com/partners", 308);
     }
