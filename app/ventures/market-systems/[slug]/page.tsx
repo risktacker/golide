@@ -11,7 +11,7 @@ type Props = { params: Promise<{ slug: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const product = await getPublishedProduct(slug);
-  if (!product) return { title: "Product — G$LIDE Market" };
+  if (!product) return { title: "Product  -  G$LIDE Market" };
   return {
     title: product.name,
     description: product.summary,
