@@ -32,7 +32,7 @@
 .hero:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.18;background-image:linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);background-size:42px 42px}
 .heroCopy,.heroActions{position:relative;z-index:2}
 .eyebrow{display:flex;align-items:center;gap:8px;margin:0 0 14px;color:var(--cyan);font-size:10px;font-weight:950;letter-spacing:.19em;text-transform:uppercase}
-.eyebrow:before{content:"";width:22px;height:1px;background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
+
 .hero h1{margin:0;font-size:clamp(42px,6vw,72px);line-height:.93;letter-spacing:-.055em;font-weight:900}
 .hero h1 span{color:var(--gold);text-shadow:0 0 32px rgba(255,188,78,.12)}
 .heroText{max-width:650px;margin:16px 0 0;color:#8ea3ad;font-size:14px;line-height:1.65}
@@ -144,3 +144,11 @@
   .footerNote{align-items:flex-start;flex-direction:column}
 }
 @media(prefers-reduced-motion:reduce){.card{transition:none}.spin{animation:none}}
+
+
+/* Partner Engine fluid desktop frame */
+@media(min-width:901px){
+.shell{width:calc(100% - clamp(36px,4vw,76px));max-width:1660px}
+.hero{padding-inline:clamp(34px,3vw,52px)}
+.cardGrid{grid-template-columns:minmax(0,1fr) minmax(0,1.18fr)}
+}
