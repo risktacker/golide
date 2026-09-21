@@ -42,7 +42,7 @@ export default function RootLayout({
           "@context": "https://schema.org",
           "@graph": [
             { "@type": "Organization", "@id": "https://golidee.com/#organization", name: "GOLIDE", url: "https://golidee.com", logo: "https://golidee.com/brand/favicon.png", description: "A digital products, software, research and technology platform.", founder: { "@id": "https://golidee.com/founder#person" } },
-            { "@type": "Person", "@id": "https://golidee.com/founder#person", name: "Esiah Kapinga", url: "https://golidee.com/founder", jobTitle: "Founder of GOLIDE", sameAs: ["https://github.com/risktacker", "https://www.youtube.com/@esiah.1"] },
+            { "@type": "Person", "@id": "https://golidee.com/founder#person", name: "Esiah Kapinga", url: "https://golidee.com/founder", jobTitle: "Founder of GOLIDE", sameAs: ["https://www.youtube.com/@esiah.1"] },
             { "@type": "WebSite", "@id": "https://golidee.com/#website", url: "https://golidee.com", name: "GOLIDE", description: "Digital products, software, practical tools and research-driven technology.", publisher: { "@id": "https://golidee.com/#organization" }, inLanguage: "en" }
           ]
         }).replace(/</g, "\\u003c") }} />
