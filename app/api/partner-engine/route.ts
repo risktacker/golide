@@ -118,6 +118,39 @@ async function ensureInfrastructure() {
     )
   `).run();
   await env.DB.prepare("CREATE INDEX IF NOT EXISTS partner_search_runs_status_idx ON partner_search_runs (status, created_at)").run();
+
+  // One-time compatibility bridge: the legacy queue was built only for the
+  // first Job Search product. Preserve those researched prospects by linking
+  // currently-unlinked legacy rows to that product without making Job Search
+  // a permanent engine assumption.
+  const legacyProduct = await env.DB.prepare(`
+    SELECT id, affiliate_rate FROM market_products
+    WHERE lower(name) LIKE '%job%' OR lower(slug) LIKE '%job%'
+    ORDER BY created_at ASC LIMIT 1
+  `).first<{ id: string; affiliate_rate: number }>();
+  if (legacyProduct?.id) {
+    const legacyProspects = await env.DB.prepare(`
+      SELECT p.id, p.reason, p.personal_hook, p.outreach_message
+      FROM partner_prospects p
+      WHERE NOT EXISTS (
+        SELECT 1 FROM partner_product_matches m WHERE m.prospect_id = p.id
+      )
+    `).all<{ id: string; reason: string; personal_hook: string; outreach_message: string }>();
+    const now = Date.now();
+    const statements = (legacyProspects.results ?? []).map((prospect, index) =>
+      env.DB.prepare(`
+        INSERT OR IGNORE INTO partner_product_matches
+        (id, prospect_id, product_id, fit_score, reason, personal_hook, outreach_message,
+         commission_rate, status, conversions, revenue_cents, created_at, updated_at)
+        VALUES (?1, ?2, ?3, 80, ?4, ?5, ?6, ?7, 'NEW', 0, 0, ?8, ?9)
+      `).bind(
+        crypto.randomUUID(), prospect.id, legacyProduct.id, prospect.reason,
+        prospect.personal_hook, prospect.outreach_message,
+        legacyProduct.affiliate_rate || 0, now + index, now + index,
+      )
+    );
+    if (statements.length) await env.DB.batch(statements);
+  }
 }
 
 async function rows<T = Record<string, unknown>>(sql: string, binds: unknown[] = []) {
