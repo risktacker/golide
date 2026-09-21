@@ -189,14 +189,19 @@ async function snapshot() {
     const productMatches = matchesByProduct.get(product.id) ?? [];
     const uniqueProspects = [...new Set(productMatches.map((item) => item.prospect_id))];
     const platforms = new Set<string>();
+    const markets = new Set<string>();
     let reachableAudience = 0;
     uniqueProspects.forEach((id) => {
       const prospect: any = prospectById.get(id);
       if (prospect) {
         reachableAudience += Number(prospect.audience_size || 0);
         if (prospect.platform) platforms.add(String(prospect.platform));
+        if (prospect.audience_market) markets.add(String(prospect.audience_market));
       }
     });
+    const expectedChannels = ["Instagram", "TikTok", "YouTube", "X", "LinkedIn"];
+    const normalizedChannels = new Set([...platforms].map((value) => value.toLowerCase()));
+    const channelGaps = expectedChannels.filter((value) => !normalizedChannels.has(value.toLowerCase()));
     const count = (s: string) => productMatches.filter((item) => item.status === s).length;
     return {
       productId: product.id,
@@ -211,6 +216,9 @@ async function snapshot() {
       revenueCents: productMatches.reduce((sum, item) => sum + Number(item.revenue_cents || 0), 0),
       reachableAudience,
       channels: [...platforms],
+      channelGaps,
+      markets: [...markets].slice(0, 8),
+      targetGeographies: product.target_geographies,
     };
   });
   return { products, prospects, matches, opportunities, searchRuns, coverage };
@@ -368,6 +376,20 @@ export async function POST(request: Request) {
       VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,'AUDIENCE_OPPORTUNITY','',?10,?11,?12)`)
       .bind(crypto.randomUUID(), title, clean(item.niche, 600), problem, clean(item.creatorSignals, 1800), clean(item.audienceMarket, 800),
         Math.max(0, integer(item.creatorCount)), Math.max(0, integer(item.estimatedReach)), clean(item.saturation, 300), clean(item.notes, 2200), now, now).run();
+    return NextResponse.json({ ok: true });
+  }
+
+  if (action === "opportunity-link-product") {
+    const id = clean(body.id, 80);
+    const productId = clean(body.productId, 80);
+    if (!id) return NextResponse.json({ error: "Missing opportunity." }, { status: 400 });
+    if (productId) {
+      const product = (await rows<ProductRow>("SELECT * FROM market_products WHERE id=? LIMIT 1", [productId]))[0];
+      if (!product) return NextResponse.json({ error: "Choose a valid product." }, { status: 400 });
+    }
+    await env.DB.prepare(
+      "UPDATE audience_opportunities SET linked_product_id=?1, updated_at=?2 WHERE id=?3"
+    ).bind(productId, Date.now(), id).run();
     return NextResponse.json({ ok: true });
   }
 
