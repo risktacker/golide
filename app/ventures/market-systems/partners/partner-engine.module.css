@@ -247,3 +247,12 @@
 .opportunityLink a{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:36px;padding:0 10px;border:1px solid rgba(255,196,95,.18);border-radius:8px;background:rgba(255,196,95,.05);color:#f2cb83;text-decoration:none;font-size:8px;font-weight:900}
 .opportunityLink select{margin-top:0}
 @media(max-width:620px){.opportunityLink{grid-template-columns:1fr}.opportunityLink a{width:100%}}
+
+.scoutCreators{margin-top:12px;padding:10px;border:1px solid rgba(88,234,255,.1);border-radius:9px;background:rgba(88,234,255,.02)}
+.scoutCreators>strong{display:block;margin-bottom:7px;color:var(--cyan);font-size:7px;letter-spacing:.12em;text-transform:uppercase}
+.scoutCreatorList{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.scoutCreatorList span{display:inline-flex;align-items:center;gap:4px;padding:5px 7px;border:1px solid rgba(255,255,255,.07);border-radius:999px;background:#071017}
+.scoutCreatorList a{color:#9edce5;text-decoration:none;font-size:8px}
+.scoutCreatorList button{border:0;background:transparent;color:#6c7f88;cursor:pointer;font-size:12px;line-height:1}
+.scoutCreatorList em{color:#62757f;font-size:8px;font-style:normal}
+.scoutCreators select{margin-top:0}
