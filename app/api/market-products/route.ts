@@ -87,6 +87,16 @@ export async function POST(request: Request) {
       whopUrl: safeWhopUrl(product.whopUrl),
       featured: Boolean(product.featured), published,
       sortOrder: Number.isFinite(Number(product.sortOrder)) ? Math.trunc(Number(product.sortOrder)) : 0,
+      lifecycleStatus: text(product.lifecycleStatus, 40).toUpperCase() || (published ? "ACTIVE" : "PRE_LAUNCH"),
+      targetAudience: text(product.targetAudience, 900),
+      problemSolved: text(product.problemSolved, 900),
+      keywords: text(product.keywords, 1200),
+      creatorNiches: text(product.creatorNiches, 1200),
+      targetGeographies: text(product.targetGeographies, 800),
+      affiliateRate: Math.max(0, Math.min(100, Number.isFinite(Number(product.affiliateRate)) ? Math.trunc(Number(product.affiliateRate)) : 0)),
+      launchDate: text(product.launchDate, 40),
+      priority: Math.max(0, Math.min(100, Number.isFinite(Number(product.priority)) ? Math.trunc(Number(product.priority)) : 50)),
+      lastPartnerSearchAt: null,
       createdAt: now, updatedAt: now,
     });
     return NextResponse.json({ ok: true, id, slug, published, imageUrl });
@@ -111,6 +121,15 @@ export async function POST(request: Request) {
       whopUrl: safeWhopUrl(product.whopUrl),
       featured: Boolean(product.featured), published: Boolean(product.published),
       sortOrder: Number.isFinite(Number(product.sortOrder)) ? Math.trunc(Number(product.sortOrder)) : 0,
+      lifecycleStatus: text(product.lifecycleStatus, 40).toUpperCase() || (Boolean(product.published) ? "ACTIVE" : "PRE_LAUNCH"),
+      targetAudience: text(product.targetAudience, 900),
+      problemSolved: text(product.problemSolved, 900),
+      keywords: text(product.keywords, 1200),
+      creatorNiches: text(product.creatorNiches, 1200),
+      targetGeographies: text(product.targetGeographies, 800),
+      affiliateRate: Math.max(0, Math.min(100, Number.isFinite(Number(product.affiliateRate)) ? Math.trunc(Number(product.affiliateRate)) : 0)),
+      launchDate: text(product.launchDate, 40),
+      priority: Math.max(0, Math.min(100, Number.isFinite(Number(product.priority)) ? Math.trunc(Number(product.priority)) : 50)),
       updatedAt: Date.now(),
     }).where(eq(marketProducts.id, id));
     return NextResponse.json({ ok: true, imageUrl });
