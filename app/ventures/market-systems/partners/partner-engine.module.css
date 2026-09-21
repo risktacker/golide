@@ -155,3 +155,87 @@
 
 .topLinks{display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:flex-end}
 @media(max-width:620px){.topLinks{gap:9px}.topLinks .domainLink:first-child{padding:6px 8px;border:1px solid rgba(88,234,255,.16);border-radius:999px}}
+
+
+/* Multi-product command center */
+.iconButton{display:inline-flex;align-items:center;gap:7px;min-height:34px;padding:0 10px;border:1px solid rgba(255,255,255,.09);border-radius:9px;background:#081117;color:#aebfc7;font:inherit;font-size:9px;font-weight:900;cursor:pointer}
+.iconButton:hover{border-color:rgba(88,234,255,.28);color:#eafcff}
+.commandPanel{margin:18px 0;padding:18px;border:1px solid rgba(88,234,255,.14);border-radius:20px;background:linear-gradient(145deg,rgba(10,22,31,.96),rgba(5,11,16,.98))}
+.commandModes{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.modeButton,.modeActive,.tabButton,.tabActive{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid rgba(255,255,255,.08);border-radius:999px;background:#081118;color:#8fa4ae;padding:9px 12px;font:inherit;font-size:9px;font-weight:900;cursor:pointer}
+.modeActive,.tabActive{border-color:rgba(88,234,255,.48);background:rgba(88,234,255,.1);color:#dffcff;box-shadow:0 0 24px rgba(88,234,255,.06)}
+.searchForm{display:grid;grid-template-columns:1.2fr 1.2fr 1fr .8fr .7fr;gap:9px;align-items:end}
+.searchForm label,.filterBar label{display:flex;flex-direction:column;gap:6px;color:#70858f;font-size:8px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.searchForm input,.searchForm select,.filterBar select{min-height:38px;border:1px solid rgba(255,255,255,.09);border-radius:9px;background:#071017;color:#eef9fc;padding:8px 10px;outline:none;font:inherit;font-size:10px;text-transform:none;letter-spacing:0}
+.searchForm .checkLabel{grid-column:1/-2;display:flex;flex-direction:row;align-items:center;gap:8px;min-height:38px;text-transform:none;letter-spacing:0;font-size:9px}
+.checkLabel input{width:auto}
+.searchForm>.primaryButton{min-height:38px}
+.searchHint{margin:12px 2px 0;color:#6d828c;font-size:10px;line-height:1.55}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 14px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.07)}
+.tabButton,.tabActive{border-radius:9px}
+.filterBar{display:flex;align-items:end;gap:10px;margin-bottom:14px;padding:12px;border:1px solid rgba(255,255,255,.07);border-radius:14px;background:rgba(6,14,20,.72)}
+.filterBar label{min-width:210px}
+.coverageMini{margin-left:auto;padding:10px 12px;color:#728893;font-size:9px}
+.coverageMini strong{color:#dffbff}
+.fitChip{display:inline-flex;align-items:center;min-height:25px;padding:0 9px;border:1px solid rgba(255,196,95,.22);border-radius:999px;background:rgba(255,196,95,.06);color:#ffd791;font-size:8px;font-weight:950;letter-spacing:.08em;text-transform:uppercase}
+.productMatch{display:grid;gap:3px;margin-top:14px;padding:12px;border:1px solid rgba(255,196,95,.14);border-radius:11px;background:rgba(255,196,95,.03)}
+.productMatch span{color:#806c49;font-size:7px;font-weight:950;letter-spacing:.13em;text-transform:uppercase}
+.productMatch strong{color:#f4e6c9;font-size:11px}
+.productMatch small{color:#756f65;font-size:8px}
+.performanceStrip{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;padding-top:11px;border-top:1px solid rgba(255,255,255,.07)}
+.performanceStrip span{padding:6px 8px;border-radius:7px;background:rgba(255,255,255,.025);color:#718690;font-size:8px;font-weight:800}
+.coverageGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.coverageCard{padding:18px;border:1px solid rgba(88,234,255,.12);border-radius:18px;background:linear-gradient(145deg,#0a141d,#060b10)}
+.coverageHead{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.coverageHead span{color:var(--cyan);font-size:7px;font-weight:950;letter-spacing:.14em;text-transform:uppercase}
+.coverageHead h2{margin:5px 0 0;font-size:18px;letter-spacing:-.025em}
+.coverageHead>strong{display:grid;place-items:center;min-width:36px;height:28px;border:1px solid rgba(255,196,95,.18);border-radius:8px;color:#f5c878;font-size:9px}
+.coverageNumbers{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:14px}
+.coverageNumbers div{padding:10px;border:1px solid rgba(255,255,255,.06);border-radius:9px;background:rgba(255,255,255,.018)}
+.coverageNumbers b{display:block;font-size:18px}
+.coverageNumbers span{display:block;margin-top:4px;color:#687d87;font-size:7px;font-weight:900;text-transform:uppercase;letter-spacing:.08em}
+.coverageCard>p{color:#687d87;font-size:9px}
+.coverageActions{display:flex;gap:8px;margin-top:12px}
+.coverageActions button{flex:1;min-height:34px;border:1px solid rgba(88,234,255,.15);border-radius:8px;background:#081118;color:#9cb0b9;font:inherit;font-size:8px;font-weight:900;cursor:pointer}
+.coverageActions button:hover{border-color:rgba(88,234,255,.35);color:#e5fbff}
+.sectionToolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px}
+.sectionToolbar h2{margin:0;font-size:20px}
+.opportunityGrid,.searchQueue{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.opportunityGrid>.empty,.searchQueue>.empty{grid-column:1/-1}
+.opportunityCard,.searchRun{padding:18px;border:1px solid rgba(88,234,255,.11);border-radius:17px;background:linear-gradient(145deg,#0a141d,#060b10)}
+.opportunityHead,.searchRunHead{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.opportunityHead>span,.searchRunHead>span{color:var(--cyan);font-size:7px;font-weight:950;letter-spacing:.13em;text-transform:uppercase}
+.opportunityHead button{display:grid;place-items:center;width:30px;height:30px;border:1px solid rgba(255,255,255,.06);border-radius:8px;background:transparent;color:#536771;cursor:pointer}
+.opportunityHead button:hover{color:#ff98a1;border-color:rgba(255,93,107,.2)}
+.opportunityCard h2,.searchRun h2{margin:12px 0 0;font-size:18px;letter-spacing:-.02em}
+.opportunityProblem,.searchRun p{color:#9cb0b8;font-size:10px;line-height:1.58}
+.opportunityMeta,.searchRunMeta{display:flex;flex-wrap:wrap;gap:6px;margin:11px 0}
+.opportunityMeta span,.searchRunMeta span{padding:6px 8px;border:1px solid rgba(255,255,255,.06);border-radius:999px;background:rgba(255,255,255,.018);color:#718690;font-size:7px;font-weight:850}
+.opportunityCard>p:not(.opportunityProblem){color:#718690;font-size:9px;line-height:1.55}
+.opportunityCard select{width:100%;min-height:36px;margin-top:10px;border:1px solid rgba(255,255,255,.08);border-radius:8px;background:#071017;color:#c9d7dd;padding:7px 9px;font:inherit;font-size:9px}
+.searchRunHead strong{padding:5px 7px;border:1px solid rgba(255,255,255,.08);border-radius:999px;color:#81939c;font-size:7px;letter-spacing:.09em}
+.runQueued{color:#ffd791!important;border-color:rgba(255,196,95,.2)!important}
+.runRunning{color:#7beaff!important;border-color:rgba(88,234,255,.25)!important}
+.runDone{color:#a8f0cc!important;border-color:rgba(94,234,169,.24)!important}
+.runFailed{color:#ff98a1!important;border-color:rgba(255,93,107,.22)!important}
+
+@media(max-width:1050px){
+  .searchForm{grid-template-columns:repeat(3,1fr)}
+  .searchForm .checkLabel{grid-column:1/-1}
+  .coverageGrid,.opportunityGrid,.searchQueue{grid-template-columns:1fr}
+}
+@media(max-width:700px){
+  .commandModes{display:grid;grid-template-columns:1fr 1fr}
+  .modeButton,.modeActive{border-radius:10px}
+  .searchForm{grid-template-columns:1fr 1fr}
+  .searchForm .checkLabel{grid-column:1/-1}
+  .filterBar{align-items:stretch;flex-direction:column}
+  .filterBar label{min-width:0;width:100%}
+  .coverageMini{margin-left:0}
+}
+@media(max-width:520px){
+  .searchForm{grid-template-columns:1fr}
+  .searchForm .checkLabel{grid-column:1}
+  .commandModes{grid-template-columns:1fr}
+  .coverageNumbers{grid-template-columns:repeat(2,1fr)}
+}
