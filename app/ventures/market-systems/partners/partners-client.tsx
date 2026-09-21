@@ -126,6 +126,9 @@ type Coverage = {
   revenueCents: number;
   reachableAudience: number;
   channels: string[];
+  channelGaps: string[];
+  markets: string[];
+  targetGeographies: string;
 };
 
 type Snapshot = {
@@ -160,6 +163,17 @@ function money(cents: number) {
 
 function pretty(value: string) {
   return value.replaceAll("_", " ").toLowerCase().replace(/\b\w/g, (m) => m.toUpperCase());
+}
+
+function nextAction(stage: Stage) {
+  return ({
+    NEW: "Send the personalized outreach.",
+    CONTACTED: "Watch for a reply and follow up with context, not a generic bump.",
+    REPLIED: "Qualify interest, share the product for review and agree on the tracked offer.",
+    PARTNER: "Make sure the tracked link and creative are live, then monitor conversions.",
+    SALE: "Keep what converted, deepen the relationship and test another suitable product.",
+    NO_REPLY: "Park or re-engage only when there is a genuinely new reason to contact them.",
+  } as Record<Stage, string>)[stage];
 }
 
 export default function PartnersClient() {
@@ -330,6 +344,17 @@ export default function PartnersClient() {
     }
   }
 
+  async function linkOpportunity(item: Opportunity, productId: string) {
+    setBusy(true);
+    try {
+      await api({ action: "opportunity-link-product", id: item.id, productId });
+      await refresh(productId ? "Opportunity linked to product." : "Opportunity unlinked.");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not link opportunity.");
+      setBusy(false);
+    }
+  }
+
   async function moveOpportunity(item: Opportunity, next: string) {
     setBusy(true);
     try {
@@ -470,6 +495,9 @@ export default function PartnersClient() {
                 {relationshipCards.map(({ match, prospect }) => {
                   const product = productById.get(match.product_id);
                   const creatorMatches = data.matches.filter((item) => item.prospect_id === prospect.id);
+                  const matchedProducts = creatorMatches
+                    .map((item) => productById.get(item.product_id)?.name)
+                    .filter(Boolean) as string[];
                   return <article className={styles.card} key={match.id}>
                     <div className={styles.cardGrid}>
                       <div className={styles.identity}>
@@ -481,7 +509,7 @@ export default function PartnersClient() {
                         </div>
                         <h2 className={styles.name}>{prospect.name || `@${prospect.handle}`}</h2>
                         <p className={styles.handle}>@{prospect.handle}</p>
-                        <div className={styles.productMatch}><span>Matched product</span><strong>{product?.name || "Unknown product"}</strong><small>{match.commission_rate}% affiliate · {creatorMatches.length} product match{creatorMatches.length === 1 ? "" : "es"}</small></div>
+                        <div className={styles.productMatch}><span>Matched product</span><strong>{product?.name || "Unknown product"}</strong><small>{match.commission_rate}% affiliate · Fits: {matchedProducts.join(" · ") || "this product"}</small></div>
                         <p className={styles.reason}>{match.reason || prospect.reason}</p>
                         <p className={styles.hook}><strong>Hook:</strong> {match.personal_hook || prospect.personal_hook}</p>
                         <div className={styles.qualificationGrid}>
@@ -498,6 +526,7 @@ export default function PartnersClient() {
                       <div className={styles.messageBox}>
                         <p className={styles.messageTitle}>Product-specific outreach</p>
                         <p className={styles.messageBody}>{match.outreach_message || prospect.outreach_message}</p>
+                        <div className={styles.nextAction}><strong>Next action</strong><span>{nextAction(match.status)}</span></div>
                         <div className={styles.performanceStrip}><span>{match.conversions} conversions</span><span>{money(match.revenue_cents)} tracked revenue</span></div>
                       </div>
                     </div>
@@ -526,7 +555,10 @@ export default function PartnersClient() {
                   <div><b>{item.conversions}</b><span>Conversions</span></div>
                   <div><b>{compact(item.reachableAudience)}</b><span>Reach</span></div>
                 </div>
-                <p>{item.channels.length ? item.channels.join(" · ") : "No channel coverage yet"}</p>
+                <p><strong>Covered:</strong> {item.channels.length ? item.channels.join(" · ") : "No channels yet"}</p>
+                <p><strong>Channel gaps:</strong> {item.channelGaps.length ? item.channelGaps.join(" · ") : "None across tracked channels"}</p>
+                <p><strong>Target geographies:</strong> {item.targetGeographies || "Not set"}</p>
+                <p><strong>Observed markets:</strong> {item.markets.length ? item.markets.join(" · ") : "No audience-market evidence yet"}</p>
                 <div className={styles.coverageActions}>
                   <button type="button" onClick={() => { setSelectedProduct(item.productId); setMode("PRODUCT"); setTab("partners"); }}>Open partners</button>
                   <button type="button" onClick={() => { setSelectedProduct(item.productId); setMode("EXPAND"); window.scrollTo({ top: 0, behavior: "smooth" }); }}>Expand search</button>
@@ -563,6 +595,13 @@ export default function PartnersClient() {
                 {item.creator_signals && <p><strong>Signals:</strong> {item.creator_signals}</p>}
                 {item.audience_market && <p><strong>Market:</strong> {item.audience_market}</p>}
                 {item.saturation && <p><strong>Saturation:</strong> {item.saturation}</p>}
+                <div className={styles.opportunityLink}>
+                  <a href="/manage?mode=add" target="_blank" rel="noreferrer"><Plus size={12}/> Create product</a>
+                  <select value={item.linked_product_id || ""} onChange={(event) => void linkOpportunity(item, event.target.value)} disabled={busy}>
+                    <option value="">Not linked to a product</option>
+                    {data.products.map((product) => <option key={product.id} value={product.id}>{product.name}</option>)}
+                  </select>
+                </div>
                 <select value={item.status} onChange={(event) => void moveOpportunity(item, event.target.value)} disabled={busy}>{opportunityStages.map((value) => <option key={value} value={value}>{pretty(value)}</option>)}</select>
               </article>)}
               {!data.opportunities.length && <div className={styles.empty}><div className={styles.emptyIcon}><Radar size={22}/></div><h2>No audience opportunities yet.</h2><p>Run Audience Scout or add one from research. The goal is to know the audience and likely distribution before building the next product.</p></div>}
