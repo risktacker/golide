@@ -80,6 +80,7 @@ export default function ManagerClient() {
     try {
       await api({ action: "create", product: {
         name: form.get("name"), shelf, format: form.get("format"), priceText: form.get("priceText"), summary: form.get("summary"), transformation: form.get("transformation"), imageUrl: createImageData || form.get("imageUrl"), whopUrl: form.get("whopUrl"), featured: form.get("featured") === "on", published: form.get("published") === "on", sortOrder: form.get("sortOrder"),
+        lifecycleStatus: form.get("lifecycleStatus"), targetAudience: form.get("targetAudience"), problemSolved: form.get("problemSolved"), keywords: form.get("keywords"), creatorNiches: form.get("creatorNiches"), targetGeographies: form.get("targetGeographies"), affiliateRate: form.get("affiliateRate"), launchDate: form.get("launchDate"), priority: form.get("priority"),
       }});
       window.location.href = "/manage";
     } catch (error) { setMessage(error instanceof Error ? error.message : "Could not save product."); setLoading(false); }
@@ -93,6 +94,7 @@ export default function ManagerClient() {
     try {
       await api({ action: "update", id: editing.id, product: {
         name: form.get("name"), shelf: editShelf, format: form.get("format"), priceText: form.get("priceText"), summary: form.get("summary"), transformation: form.get("transformation"), imageUrl: editImageData || form.get("imageUrl"), whopUrl: form.get("whopUrl"), featured: form.get("featured") === "on", published: form.get("published") === "on", sortOrder: form.get("sortOrder"),
+        lifecycleStatus: form.get("lifecycleStatus"), targetAudience: form.get("targetAudience"), problemSolved: form.get("problemSolved"), keywords: form.get("keywords"), creatorNiches: form.get("creatorNiches"), targetGeographies: form.get("targetGeographies"), affiliateRate: form.get("affiliateRate"), launchDate: form.get("launchDate"), priority: form.get("priority"),
       }});
       window.location.href = "/manage";
     } catch (error) { setMessage(error instanceof Error ? error.message : "Could not update product."); setLoading(false); }
@@ -119,7 +121,20 @@ export default function ManagerClient() {
       <label>Format<input name="format" defaultValue={product?.format || "Toolkit"}/></label>
       <label>Price display<input name="priceText" defaultValue={product?.priceText || ""} placeholder="$19.99"/></label>
       <label className={styles.managerFull}>Short promise / summary<textarea name="summary" required defaultValue={product?.summary || ""} placeholder="What the buyer gets and the problem it solves."/></label>
-      <label className={styles.managerFull}>Transformation<textarea name="transformation" defaultValue={product?.transformation || ""} placeholder="From scattered applications to a repeatable job-search system."/></label>
+      <label className={styles.managerFull}>Transformation<textarea name="transformation" defaultValue={product?.transformation || ""} placeholder="What changes for the buyer after using it."/></label>
+      <label>Lifecycle
+        <select name="lifecycleStatus" defaultValue={product?.lifecycleStatus || (product?.published ? "ACTIVE" : "PRE_LAUNCH")}>
+          <option value="IDEA">Idea</option><option value="PRE_LAUNCH">Pre-launch</option><option value="NEW">New</option><option value="ACTIVE">Active</option><option value="MATURE">Mature</option><option value="PAUSED">Paused</option>
+        </select>
+      </label>
+      <label>Launch date<input name="launchDate" type="date" defaultValue={product?.launchDate || ""}/></label>
+      <label className={styles.managerFull}>Target audience<textarea name="targetAudience" defaultValue={product?.targetAudience || ""} placeholder="Who this is built for, buying context and audience traits."/></label>
+      <label className={styles.managerFull}>Problem solved<textarea name="problemSolved" defaultValue={product?.problemSolved || ""} placeholder="The concrete problem this product solves."/></label>
+      <label>Creator niches<input name="creatorNiches" defaultValue={product?.creatorNiches || ""} placeholder="career coach, HR creator, remote work"/></label>
+      <label>Target geographies<input name="targetGeographies" defaultValue={product?.targetGeographies || ""} placeholder="US, UK, Canada, India"/></label>
+      <label className={styles.managerFull}>Discovery keywords<input name="keywords" defaultValue={product?.keywords || ""} placeholder="Comma-separated search and content-fit terms"/></label>
+      <label>Affiliate rate %<input name="affiliateRate" type="number" min="0" max="100" defaultValue={product?.affiliateRate ?? 0}/></label>
+      <label>Distribution priority<input name="priority" type="number" min="0" max="100" defaultValue={product?.priority ?? 50}/></label>
       <label>Whop purchase URL<input name="whopUrl" type="url" defaultValue={product?.whopUrl || ""} placeholder="https://whop.com/..."/></label>
       <label>{isEdit ? "Upload replacement image" : "Upload product image"}<input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => isEdit ? chooseEditImage(event.currentTarget.files?.[0]) : chooseCreateImage(event.currentTarget.files?.[0])}/></label>
       <label>Or image path / URL<input name="imageUrl" defaultValue={isEdit && product?.imageUrl && !product.imageUrl.startsWith("data:image/") ? product.imageUrl : ""} placeholder="Optional: /market/... or https://..."/></label>
@@ -144,7 +159,7 @@ export default function ManagerClient() {
     {mode === "catalog" && <section className={styles.catalogGrid}>
       {loading && !products.length ? <div className={styles.managerEmpty}>Loading catalog…</div> : products.length ? products.map((product) => <article className={styles.catalogCard} key={product.id}>
         <div className={styles.catalogVisual}>{product.imageUrl ? <img src={product.imageUrl} alt=""/> : <span>{product.format}</span>}</div>
-        <div className={styles.catalogCopy}><div className={styles.catalogMeta}><span>{product.shelf}</span><strong className={product.published ? styles.statusLive : styles.statusDraft}>{product.published ? "LIVE" : "DRAFT"}</strong></div><h2>{product.name}</h2><p>{product.priceText || "No price set"} · {product.format}</p><div className={styles.catalogActions}>{product.published && <a href={marketplaceProductPath(product.slug)} target="_blank" rel="noreferrer"><ExternalLink size={13}/> View</a>}<a href={`/manage?edit=${encodeURIComponent(product.id)}`}><Pencil size={13}/> Edit</a><button type="button" onClick={() => void toggle(product)}>{product.published ? "Unpublish" : "Publish"}</button><button className={styles.danger} type="button" onClick={() => void remove(product)} aria-label={`Delete ${product.name}`}><Trash2 size={13}/></button></div></div>
+        <div className={styles.catalogCopy}><div className={styles.catalogMeta}><span>{product.shelf}</span><strong className={product.published ? styles.statusLive : styles.statusDraft}>{product.published ? "LIVE" : "DRAFT"}</strong></div><h2>{product.name}</h2><p>{product.priceText || "No price set"} · {product.format} · {product.lifecycleStatus || "ACTIVE"} · Priority {product.priority ?? 50}</p><div className={styles.catalogActions}>{product.published && <a href={marketplaceProductPath(product.slug)} target="_blank" rel="noreferrer"><ExternalLink size={13}/> View</a>}<a href={`/manage?edit=${encodeURIComponent(product.id)}`}><Pencil size={13}/> Edit</a><button type="button" onClick={() => void toggle(product)}>{product.published ? "Unpublish" : "Publish"}</button><button className={styles.danger} type="button" onClick={() => void remove(product)} aria-label={`Delete ${product.name}`}><Trash2 size={13}/></button></div></div>
       </article>) : <div className={styles.managerEmpty}>No products yet. <a href="/manage?mode=add">Add the first product.</a></div>}
     </section>}
 
