@@ -239,3 +239,11 @@
   .commandModes{grid-template-columns:1fr}
   .coverageNumbers{grid-template-columns:repeat(2,1fr)}
 }
+
+.nextAction{display:grid;gap:4px;margin-top:14px;padding:10px 11px;border:1px solid rgba(88,234,255,.11);border-radius:9px;background:rgba(88,234,255,.025)}
+.nextAction strong{color:var(--cyan);font-size:7px;letter-spacing:.12em;text-transform:uppercase}
+.nextAction span{color:#98abb4;font-size:9px;line-height:1.45}
+.opportunityLink{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:center;margin-top:12px}
+.opportunityLink a{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:36px;padding:0 10px;border:1px solid rgba(255,196,95,.18);border-radius:8px;background:rgba(255,196,95,.05);color:#f2cb83;text-decoration:none;font-size:8px;font-weight:900}
+.opportunityLink select{margin-top:0}
+@media(max-width:620px){.opportunityLink{grid-template-columns:1fr}.opportunityLink a{width:100%}}
