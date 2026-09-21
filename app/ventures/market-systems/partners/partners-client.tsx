@@ -98,6 +98,14 @@ type Opportunity = {
   updated_at: number;
 };
 
+type OpportunityCreator = {
+  id: string;
+  opportunity_id: string;
+  prospect_id: string;
+  notes: string;
+  created_at: number;
+};
+
 type SearchRun = {
   id: string;
   mode: SearchMode;
@@ -136,6 +144,7 @@ type Snapshot = {
   prospects: Prospect[];
   matches: Match[];
   opportunities: Opportunity[];
+  opportunityCreators: OpportunityCreator[];
   searchRuns: SearchRun[];
   coverage: Coverage[];
 };
@@ -177,7 +186,7 @@ function nextAction(stage: Stage) {
 }
 
 export default function PartnersClient() {
-  const [data, setData] = useState<Snapshot>({ products: [], prospects: [], matches: [], opportunities: [], searchRuns: [], coverage: [] });
+  const [data, setData] = useState<Snapshot>({ products: [], prospects: [], matches: [], opportunities: [], opportunityCreators: [], searchRuns: [], coverage: [] });
   const [tab, setTab] = useState<Tab>("partners");
   const [selectedProduct, setSelectedProduct] = useState("");
   const [stage, setStage] = useState<Stage | "ALL">("ALL");
@@ -344,6 +353,29 @@ export default function PartnersClient() {
     }
   }
 
+  async function linkOpportunityCreator(item: Opportunity, prospectId: string) {
+    if (!prospectId) return;
+    setBusy(true);
+    try {
+      await api({ action: "opportunity-link-creator", opportunityId: item.id, prospectId });
+      await refresh("Creator linked to audience opportunity.");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not link creator.");
+      setBusy(false);
+    }
+  }
+
+  async function unlinkOpportunityCreator(item: Opportunity, prospectId: string) {
+    setBusy(true);
+    try {
+      await api({ action: "opportunity-unlink-creator", opportunityId: item.id, prospectId });
+      await refresh("Creator removed from audience opportunity.");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not unlink creator.");
+      setBusy(false);
+    }
+  }
+
   async function linkOpportunity(item: Opportunity, productId: string) {
     setBusy(true);
     try {
@@ -461,7 +493,7 @@ export default function PartnersClient() {
 
         {showAdd && (
           <form className={styles.addPanel} onSubmit={addProspect}>
-            <label>Product<select name="productId" required defaultValue={selectedProduct}>{data.products.map((product) => <option key={product.id} value={product.id}>{product.name}</option>)}</select></label>
+            <label>Product / scout use<select name="productId" defaultValue={selectedProduct}><option value="">Audience Scout · no product yet</option>{data.products.map((product) => <option key={product.id} value={product.id}>{product.name}</option>)}</select></label>
             <label>Fit score<input name="fitScore" type="number" min="0" max="100" defaultValue="80"/></label>
             <label>Name<input name="name" placeholder="Creator name"/></label>
             <label>Platform<select name="platform"><option>Instagram</option><option>TikTok</option><option>YouTube</option><option>X</option><option>LinkedIn</option></select></label>
@@ -588,7 +620,11 @@ export default function PartnersClient() {
               <div className={styles.formActions}><button type="button" className={styles.secondaryButton} onClick={() => setShowOpportunity(false)}>Cancel</button><button className={styles.primaryButton} disabled={busy}>Save opportunity</button></div>
             </form>}
             <section className={styles.opportunityGrid}>
-              {data.opportunities.map((item) => <article className={styles.opportunityCard} key={item.id}>
+              {data.opportunities.map((item) => {
+                const creatorLinks = data.opportunityCreators.filter((link) => link.opportunity_id === item.id);
+                const linkedCreatorIds = new Set(creatorLinks.map((link) => link.prospect_id));
+                const availableCreators = data.prospects.filter((prospect) => !linkedCreatorIds.has(prospect.id));
+                return <article className={styles.opportunityCard} key={item.id}>
                 <div className={styles.opportunityHead}><span>{pretty(item.status)}</span><button type="button" onClick={() => void removeOpportunity(item)}><Trash2 size={13}/></button></div>
                 <h2>{item.title}</h2><p className={styles.opportunityProblem}>{item.audience_problem}</p>
                 <div className={styles.opportunityMeta}><span>{item.niche || "Unspecified niche"}</span><span>{item.creator_count} creators</span><span>{compact(item.estimated_reach)} reach</span></div>
@@ -602,8 +638,23 @@ export default function PartnersClient() {
                     {data.products.map((product) => <option key={product.id} value={product.id}>{product.name}</option>)}
                   </select>
                 </div>
+                <div className={styles.scoutCreators}>
+                  <strong>Audience creators</strong>
+                  <div className={styles.scoutCreatorList}>
+                    {creatorLinks.map((link) => {
+                      const creator = prospectById.get(link.prospect_id);
+                      return creator ? <span key={link.id}><a href={creator.profile_url} target="_blank" rel="noreferrer">@{creator.handle}</a><button type="button" onClick={() => void unlinkOpportunityCreator(item, creator.id)} aria-label={`Unlink @${creator.handle}`}>×</button></span> : null;
+                    })}
+                    {!creatorLinks.length && <em>No creators linked yet.</em>}
+                  </div>
+                  <select value="" onChange={(event) => void linkOpportunityCreator(item, event.target.value)} disabled={busy || !availableCreators.length}>
+                    <option value="">Link a researched creator…</option>
+                    {availableCreators.map((creator) => <option key={creator.id} value={creator.id}>@{creator.handle} · {creator.platform} · {compact(creator.audience_size)}</option>)}
+                  </select>
+                </div>
                 <select value={item.status} onChange={(event) => void moveOpportunity(item, event.target.value)} disabled={busy}>{opportunityStages.map((value) => <option key={value} value={value}>{pretty(value)}</option>)}</select>
-              </article>)}
+              </article>;
+              })}
               {!data.opportunities.length && <div className={styles.empty}><div className={styles.emptyIcon}><Radar size={22}/></div><h2>No audience opportunities yet.</h2><p>Run Audience Scout or add one from research. The goal is to know the audience and likely distribution before building the next product.</p></div>}
             </section>
           </>
