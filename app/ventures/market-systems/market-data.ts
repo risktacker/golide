@@ -52,10 +52,38 @@ export async function ensureMarketTable() {
       featured INTEGER NOT NULL DEFAULT 0,
       published INTEGER NOT NULL DEFAULT 0,
       sort_order INTEGER NOT NULL DEFAULT 0,
+      lifecycle_status TEXT NOT NULL DEFAULT 'ACTIVE',
+      target_audience TEXT NOT NULL DEFAULT '',
+      problem_solved TEXT NOT NULL DEFAULT '',
+      keywords TEXT NOT NULL DEFAULT '',
+      creator_niches TEXT NOT NULL DEFAULT '',
+      target_geographies TEXT NOT NULL DEFAULT '',
+      affiliate_rate INTEGER NOT NULL DEFAULT 0,
+      launch_date TEXT NOT NULL DEFAULT '',
+      priority INTEGER NOT NULL DEFAULT 50,
+      last_partner_search_at INTEGER,
       created_at INTEGER NOT NULL,
       updated_at INTEGER NOT NULL
     )
   `).run();
+  const productInfo = await env.DB.prepare("PRAGMA table_info(market_products)").all<{ name: string }>();
+  const productColumns = new Set((productInfo.results ?? []).map((column) => column.name));
+  const registryAdditions = [
+    ["lifecycle_status", "ALTER TABLE market_products ADD COLUMN lifecycle_status TEXT NOT NULL DEFAULT 'ACTIVE'"],
+    ["target_audience", "ALTER TABLE market_products ADD COLUMN target_audience TEXT NOT NULL DEFAULT ''"],
+    ["problem_solved", "ALTER TABLE market_products ADD COLUMN problem_solved TEXT NOT NULL DEFAULT ''"],
+    ["keywords", "ALTER TABLE market_products ADD COLUMN keywords TEXT NOT NULL DEFAULT ''"],
+    ["creator_niches", "ALTER TABLE market_products ADD COLUMN creator_niches TEXT NOT NULL DEFAULT ''"],
+    ["target_geographies", "ALTER TABLE market_products ADD COLUMN target_geographies TEXT NOT NULL DEFAULT ''"],
+    ["affiliate_rate", "ALTER TABLE market_products ADD COLUMN affiliate_rate INTEGER NOT NULL DEFAULT 0"],
+    ["launch_date", "ALTER TABLE market_products ADD COLUMN launch_date TEXT NOT NULL DEFAULT ''"],
+    ["priority", "ALTER TABLE market_products ADD COLUMN priority INTEGER NOT NULL DEFAULT 50"],
+    ["last_partner_search_at", "ALTER TABLE market_products ADD COLUMN last_partner_search_at INTEGER"],
+  ] as const;
+  for (const [name, sql] of registryAdditions) {
+    if (!productColumns.has(name)) await env.DB.prepare(sql).run();
+  }
+
   await env.DB.prepare(`
     CREATE TABLE IF NOT EXISTS market_images (
       id TEXT PRIMARY KEY NOT NULL,
@@ -66,6 +94,7 @@ export async function ensureMarketTable() {
     )
   `).run();
   await env.DB.prepare("CREATE INDEX IF NOT EXISTS market_products_published_idx ON market_products (published, shelf, sort_order)").run();
+  await env.DB.prepare("CREATE INDEX IF NOT EXISTS market_products_lifecycle_idx ON market_products (lifecycle_status, priority, updated_at)").run();
   await migrateLegacyMarketImages();
 }
 
