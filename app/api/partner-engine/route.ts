@@ -102,6 +102,18 @@ async function ensureInfrastructure() {
   `).run();
 
   await env.DB.prepare(`
+    CREATE TABLE IF NOT EXISTS audience_opportunity_creators (
+      id TEXT PRIMARY KEY NOT NULL,
+      opportunity_id TEXT NOT NULL,
+      prospect_id TEXT NOT NULL,
+      notes TEXT NOT NULL DEFAULT '',
+      created_at INTEGER NOT NULL,
+      UNIQUE(opportunity_id, prospect_id)
+    )
+  `).run();
+  await env.DB.prepare("CREATE INDEX IF NOT EXISTS audience_opportunity_creators_opportunity_idx ON audience_opportunity_creators (opportunity_id, created_at)").run();
+
+  await env.DB.prepare(`
     CREATE TABLE IF NOT EXISTS partner_search_runs (
       id TEXT PRIMARY KEY NOT NULL,
       mode TEXT NOT NULL,
@@ -168,13 +180,14 @@ type ProductRow = {
 };
 
 async function snapshot() {
-  const [products, prospects, matches, opportunities, searchRuns] = await Promise.all([
+  const [products, prospects, matches, opportunities, opportunityCreators, searchRuns] = await Promise.all([
     rows<ProductRow>(`SELECT id, slug, name, shelf, lifecycle_status, target_audience, problem_solved,
       keywords, creator_niches, target_geographies, affiliate_rate, launch_date, priority,
       last_partner_search_at, published, updated_at FROM market_products ORDER BY priority DESC, updated_at DESC`),
     rows(`SELECT * FROM partner_prospects ORDER BY updated_at DESC`),
     rows(`SELECT * FROM partner_product_matches ORDER BY updated_at DESC`),
     rows(`SELECT * FROM audience_opportunities ORDER BY updated_at DESC`),
+    rows(`SELECT * FROM audience_opportunity_creators ORDER BY created_at ASC`),
     rows(`SELECT * FROM partner_search_runs ORDER BY created_at DESC LIMIT 60`),
   ]);
 
@@ -221,7 +234,7 @@ async function snapshot() {
       targetGeographies: product.target_geographies,
     };
   });
-  return { products, prospects, matches, opportunities, searchRuns, coverage };
+  return { products, prospects, matches, opportunities, opportunityCreators, searchRuns, coverage };
 }
 
 function lifecycleBoost(value: string) {
@@ -360,6 +373,7 @@ export async function POST(request: Request) {
     if (!id) return NextResponse.json({ error: "Missing prospect." }, { status: 400 });
     await env.DB.batch([
       env.DB.prepare("DELETE FROM partner_product_matches WHERE prospect_id=?1").bind(id),
+      env.DB.prepare("DELETE FROM audience_opportunity_creators WHERE prospect_id=?1").bind(id),
       env.DB.prepare("DELETE FROM partner_prospects WHERE id=?1").bind(id),
     ]);
     return NextResponse.json({ ok: true });
@@ -376,6 +390,30 @@ export async function POST(request: Request) {
       VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,'AUDIENCE_OPPORTUNITY','',?10,?11,?12)`)
       .bind(crypto.randomUUID(), title, clean(item.niche, 600), problem, clean(item.creatorSignals, 1800), clean(item.audienceMarket, 800),
         Math.max(0, integer(item.creatorCount)), Math.max(0, integer(item.estimatedReach)), clean(item.saturation, 300), clean(item.notes, 2200), now, now).run();
+    return NextResponse.json({ ok: true });
+  }
+
+  if (action === "opportunity-link-creator") {
+    const opportunityId = clean(body.opportunityId, 80);
+    const prospectId = clean(body.prospectId, 80);
+    if (!opportunityId || !prospectId) return NextResponse.json({ error: "Opportunity and creator are required." }, { status: 400 });
+    const [opportunity] = await rows<any>("SELECT id FROM audience_opportunities WHERE id=? LIMIT 1", [opportunityId]);
+    const [prospect] = await rows<any>("SELECT id FROM partner_prospects WHERE id=? LIMIT 1", [prospectId]);
+    if (!opportunity || !prospect) return NextResponse.json({ error: "Opportunity or creator was not found." }, { status: 404 });
+    await env.DB.prepare(`
+      INSERT OR IGNORE INTO audience_opportunity_creators
+      (id, opportunity_id, prospect_id, notes, created_at)
+      VALUES (?1, ?2, ?3, ?4, ?5)
+    `).bind(crypto.randomUUID(), opportunityId, prospectId, clean(body.notes, 1000), Date.now()).run();
+    return NextResponse.json({ ok: true });
+  }
+
+  if (action === "opportunity-unlink-creator") {
+    const opportunityId = clean(body.opportunityId, 80);
+    const prospectId = clean(body.prospectId, 80);
+    await env.DB.prepare(
+      "DELETE FROM audience_opportunity_creators WHERE opportunity_id=?1 AND prospect_id=?2"
+    ).bind(opportunityId, prospectId).run();
     return NextResponse.json({ ok: true });
   }
 
