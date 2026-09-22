@@ -670,7 +670,10 @@ export async function POST(request: Request) {
   await ensureInfrastructure();
   const action = clean(body.action, 40);
 
-  if (action === "snapshot") {\n    await kickPartnerResearch();\n    return NextResponse.json(await snapshot());\n  }
+  if (action === "snapshot") {
+    await kickPartnerResearch();
+    return NextResponse.json(await snapshot());
+  }
 
   if (action === "create-prospect") {
     const prospect = (body.prospect ?? {}) as Record<string, unknown>;
