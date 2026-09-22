@@ -8,6 +8,13 @@ const MODES = ["PRODUCT", "AUTO", "AUDIENCE_SCOUT", "EXPAND", "ALL"] as const;
 type PipelineStatus = (typeof PIPELINE)[number];
 type SearchMode = (typeof MODES)[number];
 
+const PARTNER_MAX_WEB_SEARCH_CALLS = 6;
+const PARTNER_MAX_CANDIDATES = 8;
+const PARTNER_MAX_ALL_PRODUCTS = 3;
+const WEB_SEARCH_COST_PER_CALL_USD = 0.01;
+const LUNA_INPUT_COST_PER_MILLION_USD = 0.20;
+const LUNA_OUTPUT_COST_PER_MILLION_USD = 1.20;
+
 function clean(value: unknown, max = 1200) {
   return typeof value === "string" ? value.trim().slice(0, max) : "";
 }
@@ -125,11 +132,31 @@ async function ensureInfrastructure() {
       exclude_product_sellers INTEGER NOT NULL DEFAULT 0,
       query_brief TEXT NOT NULL DEFAULT '',
       status TEXT NOT NULL DEFAULT 'QUEUED',
+      max_web_search_calls INTEGER NOT NULL DEFAULT 6,
+      candidate_limit INTEGER NOT NULL DEFAULT 8,
+      web_search_calls INTEGER NOT NULL DEFAULT 0,
+      profiles_added INTEGER NOT NULL DEFAULT 0,
+      input_tokens INTEGER NOT NULL DEFAULT 0,
+      output_tokens INTEGER NOT NULL DEFAULT 0,
+      estimated_cost_usd REAL NOT NULL DEFAULT 0,
+      last_error TEXT NOT NULL DEFAULT '',
       created_at INTEGER NOT NULL,
       updated_at INTEGER NOT NULL
     )
   `).run();
   await env.DB.prepare("CREATE INDEX IF NOT EXISTS partner_search_runs_status_idx ON partner_search_runs (status, created_at)").run();
+  for (const sql of [
+    "ALTER TABLE partner_search_runs ADD COLUMN max_web_search_calls INTEGER NOT NULL DEFAULT 6",
+    "ALTER TABLE partner_search_runs ADD COLUMN candidate_limit INTEGER NOT NULL DEFAULT 8",
+    "ALTER TABLE partner_search_runs ADD COLUMN web_search_calls INTEGER NOT NULL DEFAULT 0",
+    "ALTER TABLE partner_search_runs ADD COLUMN profiles_added INTEGER NOT NULL DEFAULT 0",
+    "ALTER TABLE partner_search_runs ADD COLUMN input_tokens INTEGER NOT NULL DEFAULT 0",
+    "ALTER TABLE partner_search_runs ADD COLUMN output_tokens INTEGER NOT NULL DEFAULT 0",
+    "ALTER TABLE partner_search_runs ADD COLUMN estimated_cost_usd REAL NOT NULL DEFAULT 0",
+    "ALTER TABLE partner_search_runs ADD COLUMN last_error TEXT NOT NULL DEFAULT ''"
+  ]) {
+    try { await env.DB.prepare(sql).run(); } catch {}
+  }
 
   // One-time compatibility bridge: the legacy queue was built only for the
   // first Job Search product. Preserve those researched prospects by linking
@@ -265,7 +292,7 @@ async function chooseProducts(requestedMode: SearchMode, selectedProductId: stri
       return { item, score: productSearchScore(item, Number(coverage.qualified || 0), Number(coverage.contacted || 0)) + Math.random() * 12 };
     })
     .sort((a, b) => b.score - a.score);
-  if (requestedMode === "ALL") return candidates.slice(0, Math.min(8, candidates.length)).map((item) => item.item);
+  if (requestedMode === "ALL") return candidates.slice(0, Math.min(PARTNER_MAX_ALL_PRODUCTS, candidates.length)).map((item) => item.item);
   return candidates.slice(0, 1).map((item) => item.item);
 }
 
@@ -302,6 +329,9 @@ type ResearchRunRow = {
   id: string; mode: SearchMode; product_id: string; niche: string; geography: string;
   platform: string; min_followers: number; exclude_product_sellers: number;
   query_brief: string; status: "QUEUED" | "RUNNING" | "DONE" | "FAILED";
+  max_web_search_calls: number; candidate_limit: number; web_search_calls: number;
+  profiles_added: number; input_tokens: number; output_tokens: number;
+  estimated_cost_usd: number; last_error: string;
   created_at: number; updated_at: number;
 };
 
@@ -320,6 +350,22 @@ type ResearchResult = {
     audienceMarket: string; saturation: string; sourceUrls: string[];
   };
 };
+
+type ResearchExecution = {
+  result: ResearchResult;
+  webSearchCalls: number;
+  inputTokens: number;
+  outputTokens: number;
+  estimatedCostUsd: number;
+};
+
+function estimatePartnerResearchCost(webSearchCalls: number, inputTokens: number, outputTokens: number) {
+  return Number((
+    webSearchCalls * WEB_SEARCH_COST_PER_CALL_USD +
+    inputTokens * LUNA_INPUT_COST_PER_MILLION_USD / 1_000_000 +
+    outputTokens * LUNA_OUTPUT_COST_PER_MILLION_USD / 1_000_000
+  ).toFixed(6));
+}
 
 function researchApiKey() {
   return clean((env as any).OPENAI_API_KEY, 4000);
@@ -362,7 +408,7 @@ function responseOutputText(payload: any) {
   return "";
 }
 
-async function researchSearchRun(run: ResearchRunRow, product: ProductRow | null): Promise<ResearchResult> {
+async function researchSearchRun(run: ResearchRunRow, product: ProductRow | null): Promise<ResearchExecution> {
   const apiKey = researchApiKey();
   if (!apiKey) throw new Error("Partner research runtime is not configured.");
 
@@ -401,7 +447,7 @@ async function researchSearchRun(run: ResearchRunRow, product: ProductRow | null
     "Search brief: " + run.query_brief,
     productContext,
     "Existing creators:\n" + (existingKeys.join("\n") || "(none)"),
-    "Find up to 8 strong qualified candidates. sourceUrls must contain the public pages used to verify each candidate.",
+    "Find up to " + PARTNER_MAX_CANDIDATES + " strong qualified candidates. sourceUrls must contain the public pages used to verify each candidate.",
     run.mode === "AUDIENCE_SCOUT"
       ? "Also summarize the strongest repeated audience problem as one opportunity based on the creators and sources you actually found."
       : "For opportunity fields return empty strings and an empty sourceUrls array.",
@@ -415,7 +461,7 @@ async function researchSearchRun(run: ResearchRunRow, product: ProductRow | null
     properties: {
       candidates: {
         type: "array",
-        maxItems: 8,
+        maxItems: PARTNER_MAX_CANDIDATES,
         items: {
           type: "object",
           additionalProperties: false,
@@ -470,6 +516,7 @@ async function researchSearchRun(run: ResearchRunRow, product: ProductRow | null
     body: JSON.stringify({
       model: clean((env as any).PARTNER_RESEARCH_MODEL, 100) || "gpt-5.6-luna",
       reasoning: { effort: "low" },
+      max_tool_calls: PARTNER_MAX_WEB_SEARCH_CALLS,
       tools: [{ type: "web_search", search_context_size: "medium" }],
       text: { format: { type: "json_schema", name: "golide_partner_research", strict: true, schema } },
       input: prompt,
@@ -485,7 +532,18 @@ async function researchSearchRun(run: ResearchRunRow, product: ProductRow | null
   if (!text) throw new Error("Research provider returned no structured result.");
   const parsed = JSON.parse(text) as ResearchResult;
   if (!Array.isArray(parsed.candidates) || !parsed.opportunity) throw new Error("Research provider returned an invalid result.");
-  return parsed;
+  const webSearchCalls = Array.isArray(payload?.output)
+    ? payload.output.filter((item: any) => item?.type === "web_search_call").length
+    : 0;
+  const inputTokens = Math.max(0, integer(payload?.usage?.input_tokens));
+  const outputTokens = Math.max(0, integer(payload?.usage?.output_tokens));
+  return {
+    result: parsed,
+    webSearchCalls,
+    inputTokens,
+    outputTokens,
+    estimatedCostUsd: estimatePartnerResearchCost(webSearchCalls, inputTokens, outputTokens),
+  };
 }
 
 async function persistResearchResult(run: ResearchRunRow, product: ProductRow | null, result: ResearchResult) {
@@ -494,7 +552,7 @@ async function persistResearchResult(run: ResearchRunRow, product: ProductRow | 
   const seen = new Set<string>();
   const now = Date.now();
 
-  for (const candidate of result.candidates.slice(0, 8)) {
+  for (const candidate of result.candidates.slice(0, PARTNER_MAX_CANDIDATES)) {
     const platform = normalizeResearchPlatform(candidate.platform);
     const handle = clean(candidate.handle, 160).replace(/^@/, "");
     const key = platform + ":" + handle.toLowerCase();
@@ -609,12 +667,19 @@ async function processPartnerSearchRun(id: string) {
     const product = run.product_id
       ? (await rows<ProductRow>("SELECT * FROM market_products WHERE id=? LIMIT 1", [run.product_id]))[0] || null
       : null;
-    const result = await researchSearchRun(run, product);
-    const count = await persistResearchResult(run, product, result);
-    await env.DB.prepare("UPDATE partner_search_runs SET status='DONE', updated_at=?1 WHERE id=?2").bind(Date.now(), id).run();
+    const execution = await researchSearchRun(run, product);
+    const count = await persistResearchResult(run, product, execution.result);
+    await env.DB.prepare(
+      "UPDATE partner_search_runs SET status='DONE',web_search_calls=?1,profiles_added=?2,input_tokens=?3,output_tokens=?4,estimated_cost_usd=?5,last_error='',updated_at=?6 WHERE id=?7"
+    ).bind(
+      execution.webSearchCalls, count, execution.inputTokens, execution.outputTokens,
+      execution.estimatedCostUsd, Date.now(), id
+    ).run();
     return count;
-  } catch {
-    await env.DB.prepare("UPDATE partner_search_runs SET status='FAILED', updated_at=?1 WHERE id=?2").bind(Date.now(), id).run();
+  } catch (error) {
+    await env.DB.prepare(
+      "UPDATE partner_search_runs SET status='FAILED',last_error=?1,updated_at=?2 WHERE id=?3"
+    ).bind(clean(error instanceof Error ? error.message : String(error), 1000), Date.now(), id).run();
     return 0;
   }
 }
@@ -800,8 +865,8 @@ export async function POST(request: Request) {
     if (requestedMode === "AUDIENCE_SCOUT") {
       const id = crypto.randomUUID();
       await env.DB.prepare(`INSERT INTO partner_search_runs
-        (id,mode,product_id,niche,geography,platform,min_followers,exclude_product_sellers,query_brief,status,created_at,updated_at)
-        VALUES (?1,'AUDIENCE_SCOUT','',?2,?3,?4,?5,1,?6,'QUEUED',?7,?8)`)
+        (id,mode,product_id,niche,geography,platform,min_followers,exclude_product_sellers,query_brief,status,max_web_search_calls,candidate_limit,created_at,updated_at)
+        VALUES (?1,'AUDIENCE_SCOUT','',?2,?3,?4,?5,1,?6,'QUEUED',6,8,?7,?8)`)
         .bind(id, clean(body.niche, 500), clean(body.geography, 300), clean(body.platform, 100), minFollowers, queryBrief(null, body, requestedMode), now, now).run();
       created.push(id);
     } else {
@@ -810,8 +875,8 @@ export async function POST(request: Request) {
       for (const product of chosen) {
         const id = crypto.randomUUID();
         await env.DB.prepare(`INSERT INTO partner_search_runs
-          (id,mode,product_id,niche,geography,platform,min_followers,exclude_product_sellers,query_brief,status,created_at,updated_at)
-          VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,'QUEUED',?10,?11)`)
+          (id,mode,product_id,niche,geography,platform,min_followers,exclude_product_sellers,query_brief,status,max_web_search_calls,candidate_limit,created_at,updated_at)
+          VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,'QUEUED',6,8,?10,?11)`)
           .bind(id, requestedMode, product.id, clean(body.niche, 500), clean(body.geography, 300), clean(body.platform, 100), minFollowers,
             body.excludeProductSellers ? 1 : 0, queryBrief(product, body, requestedMode), now, now).run();
         await env.DB.prepare("UPDATE market_products SET last_partner_search_at=?1 WHERE id=?2").bind(now, product.id).run();

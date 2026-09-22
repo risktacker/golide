@@ -117,6 +117,14 @@ type SearchRun = {
   exclude_product_sellers: number;
   query_brief: string;
   status: "QUEUED" | "RUNNING" | "DONE" | "FAILED";
+  max_web_search_calls: number;
+  candidate_limit: number;
+  web_search_calls: number;
+  profiles_added: number;
+  input_tokens: number;
+  output_tokens: number;
+  estimated_cost_usd: number;
+  last_error: string;
   created_at: number;
   updated_at: number;
 };
@@ -463,7 +471,7 @@ export default function PartnersClient() {
             </label>
             <label>Minimum followers<input name="minFollowers" type="number" min="1000" defaultValue={10000}/></label>
             <label className={styles.checkLabel}><input name="excludeProductSellers" type="checkbox" defaultChecked={mode === "AUDIENCE_SCOUT"}/> Prefer creators without equivalent product</label>
-            <button className={styles.primaryButton} type="submit" disabled={busy}><Search size={14}/> Queue search</button>
+            <button className={styles.primaryButton} type="submit" disabled={busy}><Search size={14}/> Run research</button>
           </form>
           <p className={styles.searchHint}>
             {mode === "AUTO" && "Auto uses lifecycle, product priority, partner coverage, outreach gap and search freshness. New and under-covered products rise first."}
@@ -472,6 +480,7 @@ export default function PartnersClient() {
             {mode === "EXPAND" && "Expand deliberately looks beyond the creator pockets already covered for the selected product."}
             {mode === "ALL" && "Queue a distributed search across the strongest current product priorities without treating every product equally."}
           </p>
+          <p className={styles.searchHint}><strong>Hard limit:</strong> one product run uses at most 6 web searches and returns at most 8 qualified profiles. All Products is capped at 3 product runs (18 web searches / 24 profiles maximum). Nothing researches in the background unless you press Run research.</p>
         </section>
 
         <section className={styles.stats}>
@@ -668,7 +677,8 @@ export default function PartnersClient() {
                 <div className={styles.searchRunHead}><span>{pretty(run.mode)}</span><strong className={styles[`run${pretty(run.status).replaceAll(" ", "")}`] || ""}>{run.status}</strong></div>
                 <h2>{run.mode === "AUDIENCE_SCOUT" ? (run.niche || "Audience discovery") : (product?.name || "Product search")}</h2>
                 <p>{run.query_brief}</p>
-                <div className={styles.searchRunMeta}><span>{run.platform || "Any platform"}</span><span>{run.geography || "Any geography"}</span><span>{compact(run.min_followers)}+ followers</span>{run.exclude_product_sellers ? <span>Exclude equivalent sellers</span> : null}</div>
+                <div className={styles.searchRunMeta}><span>{run.platform || "Any platform"}</span><span>{run.geography || "Any geography"}</span><span>{compact(run.min_followers)}+ followers</span>{run.exclude_product_sellers ? <span>Exclude equivalent sellers</span> : null}<span>{run.web_search_calls || 0}/{run.max_web_search_calls || 6} web searches</span><span>{run.profiles_added || 0}/{run.candidate_limit || 8} profiles added</span><span>Est. {money(Math.round(Number(run.estimated_cost_usd || 0) * 100))}</span>{run.input_tokens || run.output_tokens ? <span>{compact(run.input_tokens || 0)} in · {compact(run.output_tokens || 0)} out tokens</span> : null}</div>
+                {run.last_error ? <p>Research error: {run.last_error}</p> : null}
               </article>;
             })}
             {!data.searchRuns.length && <div className={styles.empty}><div className={styles.emptyIcon}><Search size={22}/></div><h2>No search jobs yet.</h2><p>Use the command panel above to queue Product, Auto, Audience Scout, Expand or All Products search work.</p></div>}
