@@ -22,11 +22,11 @@ export default function AccountControl() {
   if (!user) return <a href={`/login?returnTo=${encodeURIComponent(returnTo)}`}>Sign in</a>;
 
   const firstName = user.displayName.split(/\s+/)[0] || user.email;
-  return <span className="account-control">
-    <span className="account-identity">{user.isAdmin ? "Admin" : "Account"} · {firstName}</span>
+  return <div className="account-control">
+    <span className="account-identity" title={user.displayName || user.email}>{user.isAdmin ? "Admin" : "Account"} · {firstName}</span>
     <form action="/auth/signout" method="post">
       <input type="hidden" name="returnTo" value={returnTo}/>
       <button className="auth-nav-button" type="submit">Sign out</button>
     </form>
-  </span>;
+  </div>;
 }
