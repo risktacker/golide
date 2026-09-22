@@ -627,39 +627,16 @@ function startPartnerSearchRuns(ids: string[]) {
 }
 
 async function kickPartnerResearch() {
+  // Only continue work the user explicitly queued. Never create research jobs
+  // in the background merely because Partner Engine was opened or refreshed.
   await env.DB.prepare(
     "UPDATE partner_search_runs SET status='QUEUED', updated_at=?1 WHERE status='RUNNING' AND updated_at<?2"
   ).bind(Date.now(), Date.now() - 15 * 60 * 1000).run();
 
-  const active = await rows<{ id: string; status: string }>(
-    "SELECT id,status FROM partner_search_runs WHERE status IN ('QUEUED','RUNNING') ORDER BY created_at ASC LIMIT 2"
+  const queued = await rows<{ id: string }>(
+    "SELECT id FROM partner_search_runs WHERE status='QUEUED' ORDER BY created_at ASC LIMIT 2"
   );
-  const queued = active.filter((item) => item.status === "QUEUED").map((item) => item.id);
-  if (queued.length) startPartnerSearchRuns(queued);
-  if (active.length) return;
-  if (!researchApiKey()) return;
-
-  const now = Date.now();
-  const bucket = Math.floor(now / (12 * 60 * 60 * 1000));
-  const automaticId = "auto-" + bucket;
-  if ((await rows<{ id: string }>("SELECT id FROM partner_search_runs WHERE id=? LIMIT 1", [automaticId])).length) return;
-
-  const chosen = await chooseProducts("AUTO", "");
-  const product = chosen[0];
-  if (!product) return;
-  const coverage = await rows<{ count: number }>(
-    "SELECT COUNT(*) count FROM partner_product_matches WHERE product_id=?",
-    [product.id]
-  );
-  if (Number(coverage[0]?.count || 0) >= 40) return;
-
-  await env.DB.prepare(
-    "INSERT OR IGNORE INTO partner_search_runs " +
-    "(id,mode,product_id,niche,geography,platform,min_followers,exclude_product_sellers,query_brief,status,created_at,updated_at) " +
-    "VALUES (?1,'AUTO',?2,'','','',10000,0,?3,'QUEUED',?4,?5)"
-  ).bind(automaticId, product.id, queryBrief(product, {}, "AUTO"), now, now).run();
-  await env.DB.prepare("UPDATE market_products SET last_partner_search_at=?1 WHERE id=?2").bind(now, product.id).run();
-  startPartnerSearchRuns([automaticId]);
+  if (queued.length) startPartnerSearchRuns(queued.map((item) => item.id));
 }
 
 export async function POST(request: Request) {
