@@ -856,6 +856,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true });
   }
 
+  if (action === "search-delete") {
+    const id = clean(body.id, 80);
+    if (!id) return NextResponse.json({ error: "Missing search result." }, { status: 400 });
+    await env.DB.prepare("DELETE FROM partner_search_runs WHERE id=?1").bind(id).run();
+    return NextResponse.json({ ok: true });
+  }
+
   if (action === "search") {
     const requestedMode = mode(body.mode);
     if (!requestedMode) return NextResponse.json({ error: "Choose a valid search mode." }, { status: 400 });

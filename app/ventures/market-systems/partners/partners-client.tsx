@@ -195,7 +195,7 @@ function nextAction(stage: Stage) {
 
 export default function PartnersClient() {
   const [data, setData] = useState<Snapshot>({ products: [], prospects: [], matches: [], opportunities: [], opportunityCreators: [], searchRuns: [], coverage: [] });
-  const [tab, setTab] = useState<Tab>("partners");
+  const [tab, setTab] = useState<Tab>("coverage");
   const [selectedProduct, setSelectedProduct] = useState("");
   const [stage, setStage] = useState<Stage | "ALL">("ALL");
   const [mode, setMode] = useState<SearchMode>("PRODUCT");
@@ -334,6 +334,18 @@ export default function PartnersClient() {
     }
   }
 
+  async function removeSearchRun(run: SearchRun) {
+    if (!confirm("Remove this search result from the queue?")) return;
+    setBusy(true);
+    try {
+      await api({ action: "search-delete", id: run.id });
+      await refresh("Search result removed.");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not remove search result.");
+      setBusy(false);
+    }
+  }
+
   async function copy(text: string) {
     await navigator.clipboard.writeText(text);
     setMessage("Outreach copied.");
@@ -422,7 +434,7 @@ export default function PartnersClient() {
     <main className={styles.page}>
       <div className={styles.shell}>
         <div className={styles.topbar}>
-          <a className={styles.brand} href="https://marketplace.golidee.com/"><img src="/marketplace-assets/golide-logo.png" alt="GOLIDE"/></a>
+          <a className={styles.brand} href="https://marketplace.golidee.com/"><img src="/brand/wordmark.png?v=20260923" alt="GOLIDE"/></a>
           <div className={styles.topLinks}>
             <a className={styles.domainLink} href="https://marketplace.golidee.com/"><ArrowLeft size={13}/><span>Marketplace</span></a>
             <button className={styles.iconButton} type="button" onClick={() => void refresh("Engine refreshed.")} disabled={busy}>
@@ -539,7 +551,11 @@ export default function PartnersClient() {
                   const matchedProducts = creatorMatches
                     .map((item) => productById.get(item.product_id)?.name)
                     .filter(Boolean) as string[];
-                  return <article className={styles.card} key={match.id}>
+                  return <details className={styles.card} key={match.id}>
+                    <summary className={styles.cardSummary}>
+                      <span><strong>{prospect.name || `@${prospect.handle}`}</strong><small>@{prospect.handle} · {prospect.platform} · {compact(prospect.audience_size)} followers</small></span>
+                      <span className={styles.statusChip}>{pretty(match.status)}</span>
+                    </summary>
                     <div className={styles.cardGrid}>
                       <div className={styles.identity}>
                         <div className={styles.chips}>
@@ -575,7 +591,7 @@ export default function PartnersClient() {
                       {stages.map((next) => <button key={next} type="button" className={next === "SALE" ? styles.saleButton : styles.stageButton} disabled={match.status === next || busy} onClick={() => void changeMatchStage(match, next)}>{next === match.status && <Check size={11}/>} {pretty(next)}</button>)}
                       <button type="button" className={styles.deleteButton} onClick={() => void removeProspect(prospect)} aria-label={`Remove @${prospect.handle}`}><Trash2 size={13}/></button>
                     </div>
-                  </article>;
+                  </details>;
                 })}
               </section> : <div className={styles.empty}><div className={styles.emptyIcon}><Users size={22}/></div><h2>No relationships in this view.</h2><p>Choose another product/stage or queue a search. Creators live once in the engine and can match multiple products.</p></div>
             }
@@ -674,7 +690,7 @@ export default function PartnersClient() {
             {data.searchRuns.map((run) => {
               const product = productById.get(run.product_id);
               return <article className={styles.searchRun} key={run.id}>
-                <div className={styles.searchRunHead}><span>{pretty(run.mode)}</span><strong className={styles[`run${pretty(run.status).replaceAll(" ", "")}`] || ""}>{run.status}</strong></div>
+                <div className={styles.searchRunHead}><span>{pretty(run.mode)}</span><div><strong className={styles[`run${pretty(run.status).replaceAll(" ", "")}`] || ""}>{run.status}</strong><button type="button" className={styles.deleteButton} onClick={() => void removeSearchRun(run)} aria-label="Remove search result"><Trash2 size={13}/></button></div></div>
                 <h2>{run.mode === "AUDIENCE_SCOUT" ? (run.niche || "Audience discovery") : (product?.name || "Product search")}</h2>
                 <p>{run.query_brief}</p>
                 <div className={styles.searchRunMeta}><span>{run.platform || "Any platform"}</span><span>{run.geography || "Any geography"}</span><span>{compact(run.min_followers)}+ followers</span>{run.exclude_product_sellers ? <span>Exclude equivalent sellers</span> : null}<span>{run.web_search_calls || 0}/{run.max_web_search_calls || 6} web searches</span><span>{run.profiles_added || 0}/{run.candidate_limit || 8} profiles added</span><span>Est. {money(Math.round(Number(run.estimated_cost_usd || 0) * 100))}</span>{run.input_tokens || run.output_tokens ? <span>{compact(run.input_tokens || 0)} in · {compact(run.output_tokens || 0)} out tokens</span> : null}</div>
