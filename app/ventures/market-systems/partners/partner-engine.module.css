@@ -127,6 +127,8 @@
 .cardSummary small{color:#78909b;font-size:11px}
 .card[open] .cardSummary{padding-bottom:18px;margin-bottom:18px;border-bottom:1px solid var(--line)}
 .searchRunHead>div{display:flex;align-items:center;gap:9px}
+.budgetGuard{margin:0 0 14px;padding:10px 12px;border:1px solid rgba(242,190,93,.2);border-radius:10px;background:rgba(242,190,93,.045);color:#9eb3bd;font-size:11px}
+.budgetGuard strong{color:#f2be5d}
 .noResults{padding:30px;border:1px solid rgba(255,255,255,.08);border-radius:20px;background:#071016;color:#71848e;text-align:center;font-size:11px}
 .footerNote{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:26px;padding:16px 2px;color:#536a75;font-size:9px;font-weight:800;letter-spacing:.05em}
 .footerNote strong{color:#718791}

@@ -155,6 +155,7 @@ type Snapshot = {
   opportunityCreators: OpportunityCreator[];
   searchRuns: SearchRun[];
   coverage: Coverage[];
+  researchBudget?: { perRunUsd: number; dailyLimitUsd: number; dailyUsedUsd: number; monthlyLimitUsd: number; monthlyUsedUsd: number };
 };
 
 const stages: Stage[] = ["NEW", "CONTACTED", "REPLIED", "PARTNER", "SALE", "NO_REPLY"];
@@ -456,6 +457,7 @@ export default function PartnersClient() {
         </section>
 
         <section className={styles.commandPanel}>
+          {data.researchBudget && <p className={styles.budgetGuard}><strong>OpenAI hard guard:</strong> ${data.researchBudget.perRunUsd.toFixed(2)} per run · ${data.researchBudget.dailyUsedUsd.toFixed(2)} / ${data.researchBudget.dailyLimitUsd.toFixed(2)} today · ${data.researchBudget.monthlyUsedUsd.toFixed(2)} / ${data.researchBudget.monthlyLimitUsd.toFixed(2)} this month</p>}
           <div className={styles.commandModes}>
             {([
               ["PRODUCT", "Product Search", Search],

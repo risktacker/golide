@@ -14,6 +14,10 @@ const PARTNER_MAX_ALL_PRODUCTS = 3;
 const WEB_SEARCH_COST_PER_CALL_USD = 0.01;
 const LUNA_INPUT_COST_PER_MILLION_USD = 0.20;
 const LUNA_OUTPUT_COST_PER_MILLION_USD = 1.20;
+const PARTNER_RUN_LIMIT_MICRO_USD = 100_000;
+const PARTNER_DAILY_LIMIT_MICRO_USD = 250_000;
+const PARTNER_MONTHLY_LIMIT_MICRO_USD = 1_000_000;
+const PARTNER_MAX_OUTPUT_TOKENS = 2_500;
 
 function clean(value: unknown, max = 1200) {
   return typeof value === "string" ? value.trim().slice(0, max) : "";
@@ -145,6 +149,21 @@ async function ensureInfrastructure() {
     )
   `).run();
   await env.DB.prepare("CREATE INDEX IF NOT EXISTS partner_search_runs_status_idx ON partner_search_runs (status, created_at)").run();
+  await env.DB.prepare(`
+    CREATE TABLE IF NOT EXISTS partner_research_usage (
+      id TEXT PRIMARY KEY NOT NULL,
+      run_id TEXT NOT NULL UNIQUE,
+      day_key TEXT NOT NULL,
+      month_key TEXT NOT NULL,
+      reserved_micro_usd INTEGER NOT NULL,
+      actual_micro_usd INTEGER NOT NULL DEFAULT 0,
+      status TEXT NOT NULL DEFAULT 'RESERVED',
+      created_at INTEGER NOT NULL,
+      updated_at INTEGER NOT NULL
+    )
+  `).run();
+  await env.DB.prepare("CREATE INDEX IF NOT EXISTS partner_research_usage_day_idx ON partner_research_usage (day_key,status)").run();
+  await env.DB.prepare("CREATE INDEX IF NOT EXISTS partner_research_usage_month_idx ON partner_research_usage (month_key,status)").run();
   for (const sql of [
     "ALTER TABLE partner_search_runs ADD COLUMN max_web_search_calls INTEGER NOT NULL DEFAULT 6",
     "ALTER TABLE partner_search_runs ADD COLUMN candidate_limit INTEGER NOT NULL DEFAULT 8",
@@ -261,7 +280,58 @@ async function snapshot() {
       targetGeographies: product.target_geographies,
     };
   });
-  return { products, prospects, matches, opportunities, opportunityCreators, searchRuns, coverage };
+  return { products, prospects, matches, opportunities, opportunityCreators, searchRuns, coverage, researchBudget: await researchBudgetStatus() };
+}
+
+function usageKeys(now = new Date()) {
+  const iso = now.toISOString();
+  return { day: iso.slice(0, 10), month: iso.slice(0, 7) };
+}
+
+async function researchBudgetStatus() {
+  const keys = usageKeys();
+  const [day, month] = await Promise.all([
+    env.DB.prepare("SELECT COALESCE(SUM(CASE WHEN status='RESERVED' THEN reserved_micro_usd ELSE actual_micro_usd END),0) used FROM partner_research_usage WHERE day_key=?1").bind(keys.day).first<any>(),
+    env.DB.prepare("SELECT COALESCE(SUM(CASE WHEN status='RESERVED' THEN reserved_micro_usd ELSE actual_micro_usd END),0) used FROM partner_research_usage WHERE month_key=?1").bind(keys.month).first<any>(),
+  ]);
+  const dayUsed = Number(day?.used || 0);
+  const monthUsed = Number(month?.used || 0);
+  return {
+    perRunUsd: PARTNER_RUN_LIMIT_MICRO_USD / 1_000_000,
+    dailyLimitUsd: PARTNER_DAILY_LIMIT_MICRO_USD / 1_000_000,
+    dailyUsedUsd: dayUsed / 1_000_000,
+    monthlyLimitUsd: PARTNER_MONTHLY_LIMIT_MICRO_USD / 1_000_000,
+    monthlyUsedUsd: monthUsed / 1_000_000,
+  };
+}
+
+async function reserveResearchBudget(runId: string) {
+  const keys = usageKeys();
+  const now = Date.now();
+  const result = await env.DB.prepare(`
+    INSERT INTO partner_research_usage
+      (id,run_id,day_key,month_key,reserved_micro_usd,actual_micro_usd,status,created_at,updated_at)
+    SELECT ?1,?2,?3,?4,?5,0,'RESERVED',?6,?7
+    WHERE NOT EXISTS (SELECT 1 FROM partner_research_usage WHERE run_id=?8)
+      AND COALESCE((SELECT SUM(CASE WHEN status='RESERVED' THEN reserved_micro_usd ELSE actual_micro_usd END) FROM partner_research_usage WHERE day_key=?9),0)+?10<=?11
+      AND COALESCE((SELECT SUM(CASE WHEN status='RESERVED' THEN reserved_micro_usd ELSE actual_micro_usd END) FROM partner_research_usage WHERE month_key=?12),0)+?13<=?14
+  `).bind(
+    crypto.randomUUID(), runId, keys.day, keys.month, PARTNER_RUN_LIMIT_MICRO_USD, now, now, runId,
+    keys.day, PARTNER_RUN_LIMIT_MICRO_USD, PARTNER_DAILY_LIMIT_MICRO_USD,
+    keys.month, PARTNER_RUN_LIMIT_MICRO_USD, PARTNER_MONTHLY_LIMIT_MICRO_USD,
+  ).run();
+  if (!Number((result as any)?.meta?.changes || 0)) {
+    throw new Error("Partner research usage ceiling reached. No OpenAI request was made.");
+  }
+}
+
+async function finalizeResearchBudget(runId: string, estimatedCostUsd: number, failed = false) {
+  const actual = failed
+    ? PARTNER_RUN_LIMIT_MICRO_USD
+    : Math.min(PARTNER_RUN_LIMIT_MICRO_USD, Math.max(0, Math.ceil(estimatedCostUsd * 1_000_000)));
+  await env.DB.prepare(
+    "UPDATE partner_research_usage SET actual_micro_usd=?1,status='FINAL',updated_at=?2 WHERE run_id=?3"
+  ).bind(actual, Date.now(), runId).run();
 }
 
 function lifecycleBoost(value: string) {
@@ -517,6 +587,7 @@ async function researchSearchRun(run: ResearchRunRow, product: ProductRow | null
       model: clean((env as any).PARTNER_RESEARCH_MODEL, 100) || "gpt-5.6-luna",
       reasoning: { effort: "low" },
       max_tool_calls: PARTNER_MAX_WEB_SEARCH_CALLS,
+      max_output_tokens: PARTNER_MAX_OUTPUT_TOKENS,
       tools: [{ type: "web_search", search_context_size: "medium" }],
       text: { format: { type: "json_schema", name: "golide_partner_research", strict: true, schema } },
       input: prompt,
@@ -667,6 +738,7 @@ async function processPartnerSearchRun(id: string) {
     const product = run.product_id
       ? (await rows<ProductRow>("SELECT * FROM market_products WHERE id=? LIMIT 1", [run.product_id]))[0] || null
       : null;
+    await reserveResearchBudget(id);
     const execution = await researchSearchRun(run, product);
     const count = await persistResearchResult(run, product, execution.result);
     await env.DB.prepare(
@@ -675,8 +747,10 @@ async function processPartnerSearchRun(id: string) {
       execution.webSearchCalls, count, execution.inputTokens, execution.outputTokens,
       execution.estimatedCostUsd, Date.now(), id
     ).run();
+    await finalizeResearchBudget(id, execution.estimatedCostUsd);
     return count;
   } catch (error) {
+    await finalizeResearchBudget(id, 0, true).catch(() => {});
     await env.DB.prepare(
       "UPDATE partner_search_runs SET status='FAILED',last_error=?1,updated_at=?2 WHERE id=?3"
     ).bind(clean(error instanceof Error ? error.message : String(error), 1000), Date.now(), id).run();
