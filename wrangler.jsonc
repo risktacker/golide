@@ -1,0 +1,42 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "golide-hub",
+  "main": "./worker/index.ts",
+  "compatibility_date": "2026-05-15",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+
+  // Cloudflare D1 — created 2026-10-03 (Western Europe)
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "golide-db",
+      "database_id": "7e22ca62-2df1-4c8d-a057-c0d86a6f5c69",
+      "migrations_dir": "drizzle"
+    }
+  ],
+
+  // Used by /_vinext/image (worker/index.ts)
+  "images": { "binding": "IMAGES" },
+
+  // worker/index.ts calls env.ASSETS directly (toolkit page, marketplace
+  // assets, image optimizer). The directory is set by the Vite plugin.
+  "assets": { "binding": "ASSETS" },
+
+  // Set these as secrets (they survive every deploy, never live in git):
+  //   npx wrangler secret put NEXT_PUBLIC_SUPABASE_URL
+  //   npx wrangler secret put NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+  //   npx wrangler secret put OPENAI_API_KEY          (Partner research only)
+  // GOLIDE_AUTH_CALLBACK_URL is left unset: the code picks golidee.com or the
+  // current origin automatically, so the workers.dev test URL also works.
+
+  // Custom domains (golidee.com DNS is on Cloudflare; studio.golidee.com
+  // belongs to the golide-studio Worker and is not listed here).
+  "routes": [
+    { "pattern": "golidee.com", "custom_domain": true },
+    { "pattern": "www.golidee.com", "custom_domain": true },
+    { "pattern": "marketplace.golidee.com", "custom_domain": true }
+  ],
+
+  "workers_dev": true
+}

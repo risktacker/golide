@@ -1,0 +1,105 @@
+name: Deploy GOLIDE Hub to Cloudflare
+
+on:
+  workflow_dispatch:
+  # Test deploys: pushing the migration branch deploys to *.workers.dev only
+  # (no custom domain is attached yet, so live sites are untouched).
+  push:
+    branches: [cloudflare-migration]
+  # Turn on automatic deploys after the first manual deploy is verified:
+  # push:
+  #   branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloudflare-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Check Cloudflare secrets are present
+        run: |
+          missing=""
+          [ -n "$CLOUDFLARE_API_TOKEN" ] || missing="$missing CLOUDFLARE_API_TOKEN"
+          [ -n "$CLOUDFLARE_ACCOUNT_ID" ] || missing="$missing CLOUDFLARE_ACCOUNT_ID"
+          if [ -n "$missing" ]; then
+            echo "::error title=missing secrets::Not set as repository secrets in risktacker/golide:$missing"
+            exit 1
+          fi
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - run: npm ci --no-audit --no-fund
+      - run: npx vinext build
+      - name: Deploy Worker
+        run: |
+          set -o pipefail
+          if ! npx wrangler deploy 2>&1 | tee deploy.log; then
+            # Surface the real error as annotations (readable without log access).
+            grep -iE "error|✘|failed|permission|not found|authenticat|code: [0-9]+" deploy.log | tail -15 | while IFS= read -r line; do
+              echo "::error title=wrangler::${line}"
+            done
+            exit 1
+          fi
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - name: Sync app secrets from GitHub into the Worker
+        # Copies whichever of these exist as GitHub secrets into the Worker, so
+        # every key lives in one place. Missing ones are skipped. Values never
+        # appear in logs.
+        run: |
+          set -euo pipefail
+          jq -n \
+            --arg u "$NEXT_PUBLIC_SUPABASE_URL" \
+            --arg k "$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY" \
+            --arg o "$OPENAI_API_KEY" \
+            --arg m "$PARTNER_RESEARCH_MODEL" \
+            '{NEXT_PUBLIC_SUPABASE_URL:$u, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:$k,
+              OPENAI_API_KEY:$o, PARTNER_RESEARCH_MODEL:$m}
+             | with_entries(select(.value != ""))' > app-secrets.json
+          if [ "$(jq 'length' app-secrets.json)" -gt 0 ]; then
+            echo "Syncing: $(jq -r 'keys|join(", ")' app-secrets.json)"
+            npx wrangler secret bulk app-secrets.json
+          else
+            echo "::warning title=secrets::No app secrets in GitHub yet — login and Partner research stay off until they are added."
+          fi
+          rm -f app-secrets.json
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          PARTNER_RESEARCH_MODEL: ${{ secrets.PARTNER_RESEARCH_MODEL }}
+      - name: Smoke test the deployed hub
+        run: |
+          url=$(grep -oE 'https://[a-z0-9.-]+\.workers\.dev' deploy.log | head -1)
+          echo "::notice title=hub url::$url"
+          sleep 5
+          for path in / /ventures/market-systems /ventures/market-systems/job-search-conversion-system-62224 /login /api/auth/session /api/product-registry /sitemap.xml; do
+            code=$(curl -s -o body.txt -w "%{http_code}" --max-time 30 "$url$path")
+            snippet=$(head -c 160 body.txt | tr '\n\r' '  ')
+            echo "::notice title=$code $path::$snippet"
+          done
+          # Login backend reachable? (expects a 4xx "credentials" reply, not "not configured")
+          code=$(curl -s -o body.txt -w "%{http_code}" --max-time 30 -X POST "$url/api/auth/password" \
+            -H 'content-type: application/json' -d '{"email":"smoke-test@invalid.example","password":"x"}')
+          echo "::notice title=$code login-backend::$(head -c 200 body.txt | tr '\n' ' ')"
+      - name: Smoke test the live domains
+        run: |
+          sleep 20
+          for u in https://golidee.com/ https://www.golidee.com/ https://golidee.com/api/auth/session https://marketplace.golidee.com/ https://marketplace.golidee.com/jobsearch https://marketplace.golidee.com/jobsearch/jobsearch-toolkit https://studio.golidee.com/api/health; do
+            out=$(curl -s -o body.txt -w "%{http_code} %{url_effective}" --max-time 30 -L "$u")
+            echo "::notice title=$out::$(head -c 140 body.txt | tr '\n\r' '  ' | sed 's/^$/(empty)/')"
+          done

@@ -1,7 +1,13 @@
 import vinext from "vinext";
+import { existsSync } from "node:fs";
 import { defineConfig } from "vite";
 import hostingConfig from "./.openai/hosting.json";
 import { sites } from "./build/sites-vite-plugin";
+
+// Cloudflare is the default target. Set GOLIDE_TARGET=sites to build the old
+// ChatGPT Sites package until the cutover is finished.
+const useWranglerConfig =
+  process.env.GOLIDE_TARGET !== "sites" && existsSync("./wrangler.jsonc");
 
 const SITE_CREATOR_PLACEHOLDER_DATABASE_ID =
   "00000000-0000-4000-8000-000000000000";
@@ -53,12 +59,20 @@ export default defineConfig(async () => {
     },
     plugins: [
       vinext(),
-      sites(),
-      cloudflare({
-        viteEnvironment: { name: "rsc", childEnvironments: ["ssr"] },
-        inspectorPort: false,
-        config: localBindingConfig,
-      }),
+      ...(useWranglerConfig ? [] : [sites()]),
+      cloudflare(
+        useWranglerConfig
+          ? {
+              viteEnvironment: { name: "rsc", childEnvironments: ["ssr"] },
+              inspectorPort: false,
+              configPath: "./wrangler.jsonc",
+            }
+          : {
+              viteEnvironment: { name: "rsc", childEnvironments: ["ssr"] },
+              inspectorPort: false,
+              config: localBindingConfig,
+            },
+      ),
     ],
   };
 });
