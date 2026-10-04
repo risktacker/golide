@@ -96,3 +96,10 @@ jobs:
           code=$(curl -s -o body.txt -w "%{http_code}" --max-time 30 -X POST "$url/api/auth/password" \
             -H 'content-type: application/json' -d '{"email":"smoke-test@invalid.example","password":"x"}')
           echo "::notice title=$code login-backend::$(head -c 200 body.txt | tr '\n' ' ')"
+      - name: Smoke test the live domains
+        run: |
+          sleep 20
+          for u in https://golidee.com/ https://www.golidee.com/ https://golidee.com/api/auth/session https://marketplace.golidee.com/ https://marketplace.golidee.com/jobsearch https://marketplace.golidee.com/jobsearch/jobsearch-toolkit https://studio.golidee.com/api/health; do
+            out=$(curl -s -o body.txt -w "%{http_code} %{url_effective}" --max-time 30 -L "$u")
+            echo "::notice title=$out::$(head -c 140 body.txt | tr '\n\r' '  ' | sed 's/^$/(empty)/')"
+          done
