@@ -26,11 +26,13 @@
   // GOLIDE_AUTH_CALLBACK_URL is left unset: the code picks golidee.com or the
   // current origin automatically, so the workers.dev test URL also works.
 
-  // Custom domains — enable once golidee.com DNS is on Cloudflare
-  // "routes": [
-  //   { "pattern": "golidee.com", "custom_domain": true },
-  //   { "pattern": "marketplace.golidee.com", "custom_domain": true }
-  // ],
+  // Custom domains (golidee.com DNS is on Cloudflare; studio.golidee.com
+  // belongs to the golide-studio Worker and is not listed here).
+  "routes": [
+    { "pattern": "golidee.com", "custom_domain": true },
+    { "pattern": "www.golidee.com", "custom_domain": true },
+    { "pattern": "marketplace.golidee.com", "custom_domain": true }
+  ],
 
   "workers_dev": true
 }
