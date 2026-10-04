@@ -27,6 +27,18 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - name: Check Cloudflare secrets are present
+        run: |
+          missing=""
+          [ -n "$CLOUDFLARE_API_TOKEN" ] || missing="$missing CLOUDFLARE_API_TOKEN"
+          [ -n "$CLOUDFLARE_ACCOUNT_ID" ] || missing="$missing CLOUDFLARE_ACCOUNT_ID"
+          if [ -n "$missing" ]; then
+            echo "::error title=missing secrets::Not set as repository secrets in risktacker/golide:$missing"
+            exit 1
+          fi
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       - run: npm ci --no-audit --no-fund
       - run: npx vinext build
       - name: Deploy Worker
@@ -42,3 +54,31 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - name: Sync app secrets from GitHub into the Worker
+        # Copies whichever of these exist as GitHub secrets into the Worker, so
+        # every key lives in one place. Missing ones are skipped. Values never
+        # appear in logs.
+        run: |
+          set -euo pipefail
+          jq -n \
+            --arg u "$NEXT_PUBLIC_SUPABASE_URL" \
+            --arg k "$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY" \
+            --arg o "$OPENAI_API_KEY" \
+            --arg m "$PARTNER_RESEARCH_MODEL" \
+            '{NEXT_PUBLIC_SUPABASE_URL:$u, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:$k,
+              OPENAI_API_KEY:$o, PARTNER_RESEARCH_MODEL:$m}
+             | with_entries(select(.value != ""))' > app-secrets.json
+          if [ "$(jq 'length' app-secrets.json)" -gt 0 ]; then
+            echo "Syncing: $(jq -r 'keys|join(", ")' app-secrets.json)"
+            npx wrangler secret bulk app-secrets.json
+          else
+            echo "::warning title=secrets::No app secrets in GitHub yet — login and Partner research stay off until they are added."
+          fi
+          rm -f app-secrets.json
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          PARTNER_RESEARCH_MODEL: ${{ secrets.PARTNER_RESEARCH_MODEL }}
