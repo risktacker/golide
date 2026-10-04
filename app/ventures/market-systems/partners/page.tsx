@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { requireAdmin } from "../../../chatgpt-auth";
+import { requireAdmin } from "../../../golide-auth";
 import PartnersClient from "./partners-client";
 
 export const dynamic = "force-dynamic";

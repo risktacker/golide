@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { destroyGolideSession, safeRelativePath } from "../../chatgpt-auth";
+import { destroyGolideSession, safeRelativePath } from "../../golide-auth";
 
 export async function POST(request: Request) {
   const form = await request.formData().catch(() => new FormData());

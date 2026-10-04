@@ -1,6 +1,6 @@
 import { env, waitUntil } from "cloudflare:workers";
 import { NextResponse } from "next/server";
-import { getGolideUser, isAdminUser } from "../../chatgpt-auth";
+import { getGolideUser, isAdminUser } from "../../golide-auth";
 import { ensureMarketTable } from "../../ventures/market-systems/market-data";
 
 const PIPELINE = ["NEW", "CONTACTED", "REPLIED", "PARTNER", "SALE", "NO_REPLY"] as const;

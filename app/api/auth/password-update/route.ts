@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createGolideSession, getSupabasePublicConfig, toGolideUser } from "../../../chatgpt-auth";
+import { createGolideSession, getSupabasePublicConfig, toGolideUser } from "../../../golide-auth";
 
 // Final step of the reset flow: the reset page sends the one-time recovery
 // access token from the email link plus the new password. Supabase verifies

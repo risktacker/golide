@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getGolideUser, isAdminUser } from "../../../chatgpt-auth";
+import { getGolideUser, isAdminUser } from "../../../golide-auth";
 
 export const dynamic = "force-dynamic";
 

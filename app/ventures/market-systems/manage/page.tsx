@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { requireAdmin } from "../../../chatgpt-auth";
+import { requireAdmin } from "../../../golide-auth";
 import ManagerClient from "./manager-client";
 
 export const dynamic = "force-dynamic";

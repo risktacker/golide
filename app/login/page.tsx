@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getGolideUser, safeRelativePath } from "../chatgpt-auth";
+import { getGolideUser, safeRelativePath } from "../golide-auth";
 import LoginClient from "./login-client";
 
 export const dynamic = "force-dynamic";

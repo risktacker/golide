@@ -4,7 +4,7 @@ import AmbientControl from "./ambient-control";
 import MarketClient from "./market-client";
 import { listPublishedProducts } from "./market-data";
 import styles from "./storefront.module.css";
-import { getGolideUser, isAdminUser } from "../../chatgpt-auth";
+import { getGolideUser, isAdminUser } from "../../golide-auth";
 import { MARKETPLACE_ORIGIN, marketplaceProductUrl } from "./market-links";
 
 export const dynamic = "force-dynamic";

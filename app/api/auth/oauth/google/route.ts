@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createPkcePair, getSupabasePublicConfig, safeRelativePath, setAuthFlowCookies } from "../../../../chatgpt-auth";
+import { createPkcePair, getSupabasePublicConfig, safeRelativePath, setAuthFlowCookies } from "../../../../golide-auth";
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);

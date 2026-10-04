@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createGolideSession, getSupabasePublicConfig, readAndClearAuthFlow, toGolideUser } from "../../../../chatgpt-auth";
+import { createGolideSession, getSupabasePublicConfig, readAndClearAuthFlow, toGolideUser } from "../../../../golide-auth";
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null) as { code?: unknown } | null;

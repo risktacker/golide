@@ -3,7 +3,7 @@ import { env } from "cloudflare:workers";
 import { NextResponse } from "next/server";
 import { getDb } from "../../../db";
 import { marketProducts } from "../../../db/schema";
-import { getGolideUser, isAdminUser } from "../../chatgpt-auth";
+import { getGolideUser, isAdminUser } from "../../golide-auth";
 import { ensureMarketTable, listAllProducts } from "../../ventures/market-systems/market-data";
 
 const MAX_IMAGE_BYTES = 2_000_000;

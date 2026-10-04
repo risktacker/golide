@@ -1,6 +1,6 @@
 import { env } from "cloudflare:workers";
 import { NextResponse } from "next/server";
-import { getGolideUser } from "../../chatgpt-auth";
+import { getGolideUser } from "../../golide-auth";
 
 const MAX_STATE_BYTES = 300_000;
 

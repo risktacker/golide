@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getSupabasePublicConfig } from "../../../chatgpt-auth";
+import { getSupabasePublicConfig } from "../../../golide-auth";
 
 // Sends a Supabase password-recovery email. The reply is always the same
 // generic message so the form cannot be used to discover which emails have
