@@ -87,7 +87,7 @@ jobs:
           url=$(grep -oE 'https://[a-z0-9.-]+\.workers\.dev' deploy.log | head -1)
           echo "::notice title=hub url::$url"
           sleep 5
-          for path in / /founder /ventures/market-systems /login /api/auth/session /api/product-registry /sitemap.xml; do
+          for path in / /ventures/market-systems /ventures/market-systems/job-search-conversion-system-62224 /login /api/auth/session /api/product-registry /sitemap.xml; do
             code=$(curl -s -o body.txt -w "%{http_code}" --max-time 30 "$url$path")
             snippet=$(head -c 160 body.txt | tr '\n\r' '  ')
             echo "::notice title=$code $path::$snippet"
