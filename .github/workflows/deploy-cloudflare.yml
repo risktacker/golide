@@ -30,7 +30,15 @@ jobs:
       - run: npm ci --no-audit --no-fund
       - run: npx vinext build
       - name: Deploy Worker
-        run: npx wrangler deploy
+        run: |
+          set -o pipefail
+          if ! npx wrangler deploy 2>&1 | tee deploy.log; then
+            # Surface the real error as annotations (readable without log access).
+            grep -iE "error|✘|failed|permission|not found|authenticat|code: [0-9]+" deploy.log | tail -15 | while IFS= read -r line; do
+              echo "::error title=wrangler::${line}"
+            done
+            exit 1
+          fi
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
