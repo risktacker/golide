@@ -31,8 +31,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark" data-theme="dark" suppressHydrationWarning>
       <head>
+        <link rel="preload" href="/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <script dangerouslySetInnerHTML={{ __html: "try{var t=localStorage.getItem('golide-theme');if(t==='light'){document.documentElement.dataset.theme='light';document.documentElement.classList.remove('dark')}}catch(e){}" }} />
         <link rel="icon" href="/favicon.ico?v=20260912" sizes="64x64" type="image/x-icon" />
         <link rel="icon" href="/brand/favicon.png?v=20260912" sizes="1254x1254" type="image/png" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20260912" />

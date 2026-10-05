@@ -26,10 +26,10 @@ export default function OAuthCallbackPage() {
     void complete();
   }, []);
 
-  return <main style={{minHeight:"100vh",display:"grid",placeItems:"center",background:"#050a0f",color:"#eef8fb",fontFamily:"Arial,sans-serif",padding:24}}>
-    <div style={{width:"min(460px,100%)",padding:28,border:"1px solid rgba(83,231,255,.18)",borderRadius:20,background:"#09151d",textAlign:"center"}}>
+  return <main style={{minHeight:"100vh",display:"grid",placeItems:"center",background:"var(--ink)",color:"inherit",fontFamily:"Arial,sans-serif",padding:24}}>
+    <div style={{width:"min(460px,100%)",padding:28,border:"1px solid rgba(83,231,255,.18)",borderRadius:20,background:"var(--soft)",textAlign:"center"}}>
       <img src="/brand/symbol.png?v=20260907-final" alt="" style={{width:48,height:48,objectFit:"contain"}}/>
-      <h1 style={{fontSize:28,margin:"14px 0 8px"}}>GOLIDE</h1><p style={{color:"#91a7b1",margin:0}}>{message}</p>
+      <h1 style={{fontSize:28,margin:"14px 0 8px"}}>GOLIDE</h1><p style={{color:"var(--muted)",margin:0}}>{message}</p>
     </div>
   </main>;
 }

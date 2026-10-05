@@ -1,6 +1,7 @@
+@font-face{font-family:"Geist";src:url("/fonts/Geist-Variable.woff2") format("woff2");font-style:normal;font-weight:100 900;font-display:swap}
 :root {
   color-scheme: dark light;
-  --font-sans: Inter, "Helvetica Neue", Arial, ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-sans: "Geist", Inter, "Helvetica Neue", Arial, ui-sans-serif, system-ui, -apple-system, sans-serif;
   --type-h1: clamp(2rem, 1.55rem + 1.75vw, 3.5rem);
   --type-h2: clamp(1.5rem, 1.28rem + .8vw, 2.25rem);
   --type-h3: clamp(1.125rem, 1.04rem + .32vw, 1.375rem);
@@ -22,7 +23,7 @@
 }
 html{font-family:var(--font-sans);font-size:100%}body{font-family:var(--font-sans)!important;font-size:var(--type-body)!important;line-height:1.6!important}
 h1{font-size:var(--type-h1);line-height:1.05;letter-spacing:-.035em}h2{font-size:var(--type-h2);line-height:1.18;letter-spacing:-.025em}h3{font-size:var(--type-h3);line-height:1.18}p{font-size:var(--type-body)}small{font-size:var(--type-small)}button,input,textarea,select{font-family:inherit}
-.theme-toggle{width:calc(100% - 16px);margin:20px 8px 0;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--text);cursor:pointer;font-size:var(--type-small);font-weight:750}.theme-toggle:hover{border-color:var(--cyan)}.theme-toggle__icon{color:var(--cyan);font-size:1.1rem}
+.theme-toggle{width:calc(100% - 16px);margin:20px 8px 0;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--text);cursor:pointer;font-size:var(--type-small);font-weight:500}.theme-toggle:hover{border-color:var(--cyan)}.theme-toggle__icon{color:var(--cyan);font-size:1.1rem}
 .top h1{font-size:var(--type-h1)!important;line-height:1.05!important}.card h2{font-size:var(--type-h2)!important}.card h3{font-size:var(--type-h3)!important}.eyebrow{font-size:var(--type-label)!important}
 :root[data-theme="light"] body{color:var(--text)!important}:root[data-theme="light"] .side{background:#e5f0f4!important}:root[data-theme="light"] .card{background:var(--card-gradient)!important;box-shadow:var(--shadow)}:root[data-theme="light"] input,:root[data-theme="light"] textarea,:root[data-theme="light"] select{background:var(--field)!important;color:var(--text)!important;border-color:var(--line)!important}:root[data-theme="light"] label{color:var(--text)!important}:root[data-theme="light"] .ghost,:root[data-theme="light"] .hint,:root[data-theme="light"] .badge,:root[data-theme="light"] .step{background:var(--panel2)!important;color:var(--text)!important}
 @media(max-width:900px){.theme-toggle{width:auto;margin:8px 4px 0}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important}}

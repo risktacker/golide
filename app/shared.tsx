@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import AccountControl from "./account-control";
 import AdminStudioLink from "./admin-studio-link";
 import MobileNav from "./mobile-nav";
+import ThemeToggle from "./theme-toggle";
 
 export function Logo() {
   return <a className="logo brand-logo" href="https://golidee.com/" aria-label="G$LIDE home">
@@ -27,6 +28,7 @@ export function Header({ utility }: { utility?: ReactNode } = {}) {
         </div>
       </nav>
       {utility}
+      <ThemeToggle/>
       <a className="nav-cta" href="https://marketplace.golidee.com/">Marketplace <ArrowUpRight size={15}/></a>
       <MobileNav/>
     </div>
