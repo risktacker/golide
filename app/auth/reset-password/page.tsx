@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import styles from "../../login/login.module.css";
+import { BrandLockup } from "../../brand-mark";
 
 // Landing page for the Supabase password-recovery email. Supabase puts the
 // one-time recovery token in the URL fragment (#access_token=…&type=recovery),
@@ -56,7 +57,7 @@ export default function ResetPasswordPage() {
 
   return <main className={styles.page}>
     <section className={styles.card}>
-      <a className={styles.brand} href="https://golidee.com/" aria-label="GOLIDE home"><img src="/brand/wordmark.png?v=20260907-final" alt="GOLIDE"/></a>
+      <a className={styles.brand} href="https://golidee.com/" aria-label="GOLIDE home"><BrandLockup/></a>
       <p className={styles.eyebrow}>GOLIDE ACCOUNT</p>
       <h1>Set a new password.</h1>
       <p className={styles.lead}>Choose a new password for your GOLIDE account.</p>

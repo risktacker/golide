@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import styles from "./login.module.css";
 import GolideLoader from "../golide-loader";
+import { BrandLockup } from "../brand-mark";
 
 type Props = { returnTo: string; alreadySignedIn: boolean };
 type Mode = "signin" | "signup" | "forgot";
@@ -58,7 +59,7 @@ export default function LoginClient({ returnTo, alreadySignedIn }: Props) {
   return <main className={styles.page}>
     {(leaving || (loading && mode !== "forgot")) && <GolideLoader label={mode === "signup" ? "Creating your account" : "Signing you in"}/>}
     <section className={styles.card}>
-      <a className={styles.brand} href="https://golidee.com/" aria-label="GOLIDE home"><img src="/brand/wordmark.png?v=20260907-final" alt="GOLIDE"/></a>
+      <a className={styles.brand} href="https://golidee.com/" aria-label="GOLIDE home"><BrandLockup/></a>
       <p className={styles.eyebrow}>GOLIDE ACCOUNT</p>
       <h1>{HEADINGS[mode]}</h1>
       <p className={styles.lead}>{mode === "forgot"

@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import styles from "./partner-engine.module.css";
+import { BrandLockup } from "../../../brand-mark";
 
 type SearchMode = "PRODUCT" | "AUTO" | "AUDIENCE_SCOUT" | "EXPAND" | "ALL";
 type Stage = "NEW" | "CONTACTED" | "REPLIED" | "PARTNER" | "SALE" | "NO_REPLY";
@@ -435,7 +436,7 @@ export default function PartnersClient() {
     <main className={styles.page}>
       <div className={styles.shell}>
         <div className={styles.topbar}>
-          <a className={styles.brand} href="https://marketplace.golidee.com/"><img src="/brand/wordmark.png?v=20260923" alt="GOLIDE"/></a>
+          <a className={styles.brand} href="https://marketplace.golidee.com/"><BrandLockup/></a>
           <div className={styles.topLinks}>
             <a className={styles.domainLink} href="https://marketplace.golidee.com/"><ArrowLeft size={13}/><span>Marketplace</span></a>
             <button className={styles.iconButton} type="button" onClick={() => void refresh("Engine refreshed.")} disabled={busy}>
