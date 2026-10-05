@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 // Gold points of light gather into GOLIDE, hold, dissolve, gather again: the
 // same motion language as the GOLIDE videos. Static pulsing word for people
@@ -27,6 +27,7 @@ export default function GolideLoader({ label = "Loading GOLIDE" }: { label?: str
     const build = () => {
       const dpr = Math.min(devicePixelRatio || 1, 2);
       w = canvas.clientWidth; h = canvas.clientHeight;
+      if (w < 2 || h < 2) { parts = []; return; } // hidden: nothing to draw yet
       canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       const off = document.createElement("canvas");
@@ -91,4 +92,31 @@ export default function GolideLoader({ label = "Loading GOLIDE" }: { label?: str
     <span className="golide-loader-word" aria-hidden="true">GOLIDE</span>
     <span className="sr-only">{label}</span>
   </div>;
+}
+
+// First visit in a browser session: the particle mark plays while the page
+// loads (at least one full gather), then fades. A head script sets
+// data-splash before paint so returning pages never flash it.
+export function EntrySplash() {
+  const [show, setShow] = useState(true);
+  const [fading, setFading] = useState(false);
+  useEffect(() => {
+    const root = document.documentElement;
+    if (root.dataset.splash !== "1") { const t = setTimeout(() => setShow(false), 0); return () => clearTimeout(t); }
+    const started = performance.now();
+    let done = false;
+    const finish = () => {
+      if (done) return; done = true;
+      const wait = Math.max(0, 1900 - (performance.now() - started));
+      setTimeout(() => {
+        setFading(true);
+        setTimeout(() => { delete root.dataset.splash; try { sessionStorage.setItem("golide-splash", "1"); } catch {} setShow(false); }, 500);
+      }, wait);
+    };
+    if (document.readyState === "complete") finish(); else addEventListener("load", finish, { once: true });
+    const safety = setTimeout(finish, 6000);
+    return () => { clearTimeout(safety); removeEventListener("load", finish); };
+  }, []);
+  if (!show) return null;
+  return <div className={"entry-splash" + (fading ? " is-done" : "")}><GolideLoader label="Opening GOLIDE"/></div>;
 }

@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import GolideLoader from "../../golide-loader";
 
 export default function OAuthCallbackPage() {
-  const [message, setMessage] = useState("Finishing your GOLIDE sign-in…");
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     async function complete() {
@@ -26,10 +27,12 @@ export default function OAuthCallbackPage() {
     void complete();
   }, []);
 
-  return <main style={{minHeight:"100vh",display:"grid",placeItems:"center",background:"var(--ink)",color:"inherit",fontFamily:"Arial,sans-serif",padding:24}}>
-    <div style={{width:"min(460px,100%)",padding:28,border:"1px solid rgba(83,231,255,.18)",borderRadius:20,background:"var(--soft)",textAlign:"center"}}>
-      <img src="/brand/symbol.png?v=20260907-final" alt="" style={{width:48,height:48,objectFit:"contain"}}/>
-      <h1 style={{fontSize:28,margin:"14px 0 8px"}}>GOLIDE</h1><p style={{color:"var(--muted)",margin:0}}>{message}</p>
+  if (!message) return <GolideLoader label="Finishing your GOLIDE sign-in"/>;
+  return <main style={{minHeight:"100vh",display:"grid",placeItems:"center",background:"var(--ink)",padding:24}}>
+    <div style={{width:"min(460px,100%)",padding:28,border:"1px solid var(--line)",borderRadius:20,background:"var(--soft)",textAlign:"center"}}>
+      <h1 style={{fontSize:25,fontWeight:500,margin:"0 0 8px"}}>Sign-in didn&apos;t finish</h1>
+      <p style={{color:"var(--muted)",margin:"0 0 18px"}}>{message}</p>
+      <a className="neo-button solid" href="/login">Try again</a>
     </div>
   </main>;
 }

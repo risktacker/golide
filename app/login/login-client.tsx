@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import styles from "./login.module.css";
+import GolideLoader from "../golide-loader";
 
 type Props = { returnTo: string; alreadySignedIn: boolean };
 type Mode = "signin" | "signup" | "forgot";
@@ -16,6 +17,7 @@ export default function LoginClient({ returnTo, alreadySignedIn }: Props) {
   const [mode, setMode] = useState<Mode>("signin");
   const [message, setMessage] = useState(alreadySignedIn ? "You are already signed in." : "");
   const [loading, setLoading] = useState(false);
+  const [leaving, setLeaving] = useState(false);
 
   function switchMode(next: Mode) { setMode(next); setMessage(""); }
 
@@ -43,6 +45,7 @@ export default function LoginClient({ returnTo, alreadySignedIn }: Props) {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Could not sign in.");
       if (data.confirmationRequired) { setMessage(data.message || "Check your email to confirm your account."); return; }
+      setLeaving(true);
       window.location.replace(data.returnTo || returnTo || "/");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not sign in.");
@@ -53,6 +56,7 @@ export default function LoginClient({ returnTo, alreadySignedIn }: Props) {
   const submitLabel = loading ? "Working…" : mode === "signin" ? "Sign in" : mode === "signup" ? "Create account" : "Send reset link";
 
   return <main className={styles.page}>
+    {(leaving || (loading && mode !== "forgot")) && <GolideLoader label={mode === "signup" ? "Creating your account" : "Signing you in"}/>}
     <section className={styles.card}>
       <a className={styles.brand} href="https://golidee.com/" aria-label="GOLIDE home"><img src="/brand/wordmark.png?v=20260907-final" alt="GOLIDE"/></a>
       <p className={styles.eyebrow}>GOLIDE ACCOUNT</p>
@@ -63,7 +67,7 @@ export default function LoginClient({ returnTo, alreadySignedIn }: Props) {
 
       {alreadySignedIn ? <a className={styles.continueButton} href={returnTo}>Continue to GOLIDE</a> : <>
         {mode !== "forgot" && <>
-          <a className={styles.googleButton} href={googleUrl}><img className={styles.googleLogo} src="/brand/google-g.svg" alt="" aria-hidden="true"/> Continue with Google</a>
+          <a className={styles.googleButton} href={googleUrl} onClick={() => setLeaving(true)}><img className={styles.googleLogo} src="/brand/google-g.svg" alt="" aria-hidden="true"/> Continue with Google</a>
           <div className={styles.divider}><span/>or<span/></div>
         </>}
         <form onSubmit={submit} key={mode}>
