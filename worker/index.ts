@@ -19,6 +19,16 @@ interface ExecutionContext {
   passThroughOnException(): void;
 }
 
+// First path segments on marketplace.golidee.com that are NOT product slugs:
+// app routes, public/ asset folders and paths handled elsewhere in this worker.
+// Add a new top-level app route or public folder here, or the marketplace will
+// treat it as a product slug.
+const marketplaceReservedSegments = new Set([
+  "jobsearch", "partners", "manage", "shared", "studio", "content-engine", "ventures",
+  "api", "auth", "login", "admin-only", "founder", "portfolio", "privacy", "projects", "research", "terms",
+  "audio", "brand", "experience", "fonts", "marketplace", "marketplace-assets", "videos",
+]);
+
 const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
@@ -62,6 +72,17 @@ const worker = {
       // which Search Console reports as "Alternate page with proper canonical tag".
       if (url.pathname === "/jobsearch/" || url.pathname === "/partners/") {
         return Response.redirect(`https://marketplace.golidee.com${url.pathname.slice(0, -1)}${url.search}`, 308);
+      }
+
+      // Every product lives at marketplace.golidee.com/<slug> (its canonical URL, see
+      // market-links.ts). A single lowercase slug segment that isn't an app route or a
+      // public asset folder is served by the product page; unknown slugs 404 there.
+      const productSlug = url.pathname.match(/^\/([a-z0-9]+(?:-[a-z0-9]+)*)(\/?)$/);
+      if (productSlug && !marketplaceReservedSegments.has(productSlug[1])) {
+        if (productSlug[2]) return Response.redirect(`https://marketplace.golidee.com/${productSlug[1]}${url.search}`, 308);
+        url.pathname = `${legacyMarketPath}/${productSlug[1]}`;
+        request = new Request(url, request);
+        return handler.fetch(request, env, ctx);
       }
 
       if (url.pathname === "/jobsearch/jobsearch-toolkit" || url.pathname === "/jobsearch/jobsearch-toolkit/") {
