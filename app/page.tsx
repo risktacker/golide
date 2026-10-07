@@ -77,5 +77,5 @@ export default function Home(){return <main className="neo-site"><Header/>
     <div className="shell journey-showcase-foot"><Link className="neo-text-link" href="/founder">Open the full origin story <ArrowRight/></Link><small>THE ROAD CONTINUES / GOLIDE</small></div>
   </section>
 
-  <section className="neo-cta shell"><div><p className="neo-kicker"><CircleDot/> OPEN CHANNEL</p><h2>Build something that earns its place.</h2></div><a className="neo-button invert" href="mailto:esiahkapinga3@gmail.com">Start a conversation <ArrowRight/></a></section><Footer/>
+  <section className="neo-cta shell"><div><p className="neo-kicker"><CircleDot/> OPEN CHANNEL</p><h2>Build something that earns its place.</h2></div><a className="neo-button invert" href="mailto:hello@golidee.com?subject=Hello%20GOLIDE">Start a conversation <ArrowRight/></a></section><Footer/>
  </main>}

@@ -31,7 +31,7 @@ export default function PrivacyPage(){
         <section className={styles.section}><h2>8. Children</h2><p>GOLIDE services are not intentionally directed to children under the age required to consent to online services in their jurisdiction. If we learn that personal information was collected inappropriately, we will take reasonable steps to address it.</p></section>
         <section className={styles.section}><h2>9. Changes to this policy</h2><p>We may update this policy as the platform changes. The date shown above indicates the latest published version. Material changes may also be communicated through the service when appropriate.</p></section>
       </div>
-      <aside className={styles.aside}><strong>Privacy contact</strong><p>Questions about this policy or information associated with you can be sent directly to GOLIDE.</p><a href="mailto:esiahsbusiness@gmail.com">esiahsbusiness@gmail.com</a></aside>
+      <aside className={styles.aside}><strong>Privacy contact</strong><p>Questions about this policy or information associated with you can be sent directly to GOLIDE.</p><a href="mailto:hello@golidee.com">hello@golidee.com</a></aside>
     </section>
     <Footer/>
   </main>

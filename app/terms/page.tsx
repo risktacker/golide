@@ -31,7 +31,7 @@ export default function TermsPage(){
         <section className={styles.section}><h2>8. Limitation of responsibility</h2><p>To the extent permitted by applicable law, GOLIDE is not responsible for indirect, incidental, or consequential losses arising from reliance on informational content, third-party services, or misuse of the platform. Nothing in these terms excludes rights or responsibilities that cannot lawfully be excluded.</p></section>
         <section className={styles.section}><h2>9. Changes to these terms</h2><p>We may update these terms as GOLIDE evolves. Continued use after an updated version is published means the current terms apply to subsequent use, subject to any rights provided by applicable law.</p></section>
       </div>
-      <aside className={styles.aside}><strong>Questions?</strong><p>If you need clarification about these terms, a purchase, or a GOLIDE service, contact us directly.</p><a href="mailto:esiahsbusiness@gmail.com">esiahsbusiness@gmail.com</a></aside>
+      <aside className={styles.aside}><strong>Questions?</strong><p>If you need clarification about these terms, a purchase, or a GOLIDE service, contact us directly.</p><a href="mailto:hello@golidee.com">hello@golidee.com</a></aside>
     </section>
     <Footer/>
   </main>
