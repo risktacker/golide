@@ -1,34 +1,39 @@
 import type { MetadataRoute } from "next";
 import { listPublishedProducts } from "./ventures/market-systems/market-data";
+import { MARKETPLACE_ORIGIN, marketplaceProductUrl } from "./ventures/market-systems/market-links";
 
+// Only final, canonical, indexable URLs belong here. Never list a URL that
+// redirects (worker/index.ts sends /content-engine to studio.golidee.com and
+// /ventures/market-systems/* to marketplace.golidee.com) or one marked noindex
+// (/partners, /login, /manage). Search Console flags those as "Page with redirect".
+// Cross-host entries for marketplace.golidee.com are valid because golidee.com
+// is verified as a Domain property, which covers every subdomain.
 const base = "https://golidee.com";
-const publicRoutes = [
-  "",
+const hubRoutes = [
+  "/",
   "/founder",
   "/research",
-  "/content-engine",
   "/privacy",
   "/terms",
   "/projects/syla",
   "/projects/malaria",
   "/projects/tinospora",
   "/projects/child-mortality",
-  "/ventures/market-systems",
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const products = await listPublishedProducts();
+  const newestProduct = products.reduce<Date | undefined>((latest, product) => {
+    const updated = new Date(product.updatedAt);
+    return !latest || updated > latest ? updated : latest;
+  }, undefined);
+
   return [
-    ...publicRoutes.map((route) => ({
-      url: `${base}${route}`,
-      changeFrequency: route === "/ventures/market-systems" ? "weekly" as const : "monthly" as const,
-      priority: route === "" ? 1 : route === "/ventures/market-systems" ? 0.9 : 0.7,
-    })),
+    ...hubRoutes.map((route) => ({ url: `${base}${route}` })),
+    { url: `${MARKETPLACE_ORIGIN}/`, ...(newestProduct ? { lastModified: newestProduct } : {}) },
     ...products.map((product) => ({
-      url: `${base}/ventures/market-systems/${product.slug}`,
+      url: marketplaceProductUrl(product.slug),
       lastModified: new Date(product.updatedAt),
-      changeFrequency: "weekly" as const,
-      priority: 0.8,
     })),
   ];
 }

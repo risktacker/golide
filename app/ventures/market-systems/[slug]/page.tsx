@@ -8,6 +8,13 @@ import { MARKETPLACE_ORIGIN, marketplaceProductUrl, marketplaceToolkitCheckoutUr
 
 type Props = { params: Promise<{ slug: string }> };
 
+// Google only shows a price in results when the Offer has a numeric price and a currency.
+// priceText is free text from /manage (e.g. "$19.99"); only plain USD amounts are mapped.
+function offerPrice(priceText: string | null | undefined): { price: string; priceCurrency: string } | Record<string, never> {
+  const match = priceText?.trim().match(/^(?:USD\s*)?\$\s*(\d+(?:\.\d{1,2})?)$/i);
+  return match ? { price: match[1], priceCurrency: "USD" } : {};
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const product = await getPublishedProduct(slug);
@@ -34,7 +41,7 @@ export default async function ProductPage({ params }: Props) {
     url: marketplaceProductUrl(product.slug),
     ...(product.imageUrl ? { image: product.imageUrl.startsWith("http") ? product.imageUrl : `${MARKETPLACE_ORIGIN}${product.imageUrl}` } : {}),
     brand: { "@type": "Brand", name: "GOLIDE" },
-    ...(product.whopUrl ? { offers: { "@type": "Offer", url: product.whopUrl, availability: "https://schema.org/InStock" } } : {}),
+    ...(product.whopUrl ? { offers: { "@type": "Offer", url: product.whopUrl, availability: "https://schema.org/InStock", ...offerPrice(product.priceText) } } : {}),
   };
   const toolkitCheckout = marketplaceToolkitCheckoutUrl(product.slug);
 

@@ -6,12 +6,6 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://golidee.com"),
   title: { default: "Digital Products, Software & Practical Tools | GOLIDE", template: "%s | GOLIDE" },
   description: "Discover digital products, practical tools, templates, software, learning systems and research-driven technology from GOLIDE.",
-  keywords: [
-    "digital products", "digital marketplace", "online tools", "digital toolkits",
-    "business templates", "productivity tools", "creator tools", "career tools",
-    "learning resources", "AI software", "data analytics tools", "trading tools",
-    "research software", "bioinformatics tools", "public health data analytics",
-  ],
   applicationName: "GOLIDE",
   creator: "Esiah Kapinga",
   authors: [{ name: "Esiah Kapinga", url: "https://golidee.com/founder" }],

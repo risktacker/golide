@@ -46,15 +46,22 @@ const worker = {
 
     if (!marketplaceHost && url.pathname.startsWith(legacyMarketPath) && !url.pathname.startsWith(`${legacyMarketPath}/manage`)) {
       const suffix = url.pathname.slice(legacyMarketPath.length).replace(/^\/+|\/+$/g, "");
-      const destination = suffix === jobSearchSlug ? "/jobsearch/" : suffix ? `/${suffix}/` : "/";
+      // Redirect straight to the canonical URL (no trailing slash) so crawlers get one hop, not a chain.
+      const destination = suffix === jobSearchSlug ? "/jobsearch" : suffix ? `/${suffix}` : "/";
       return Response.redirect(`https://marketplace.golidee.com${destination}`, 308);
     }
 
     if (marketplaceHost) {
       if (url.pathname.startsWith(legacyMarketPath)) {
         const suffix = url.pathname.slice(legacyMarketPath.length).replace(/^\/+|\/+$/g, "");
-        const destination = suffix === "manage" ? `/manage${url.search}` : suffix === jobSearchSlug ? "/jobsearch/" : suffix ? `/${suffix}/` : "/";
+        const destination = suffix === "manage" ? `/manage${url.search}` : suffix === jobSearchSlug ? "/jobsearch" : suffix ? `/${suffix}` : "/";
         return Response.redirect(`https://marketplace.golidee.com${destination}`, 308);
+      }
+
+      // One URL per page: the trailing-slash variants used to serve the same page with a 200,
+      // which Search Console reports as "Alternate page with proper canonical tag".
+      if (url.pathname === "/jobsearch/" || url.pathname === "/partners/") {
+        return Response.redirect(`https://marketplace.golidee.com${url.pathname.slice(0, -1)}${url.search}`, 308);
       }
 
       if (url.pathname === "/jobsearch/jobsearch-toolkit" || url.pathname === "/jobsearch/jobsearch-toolkit/") {

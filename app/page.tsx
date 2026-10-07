@@ -6,7 +6,8 @@ import { Footer, Header } from "./shared";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
-  openGraph: { url: "/" },
+  // A page-level openGraph object replaces the layout's whole openGraph, so the image must be repeated here.
+  openGraph: { type: "website", siteName: "GOLIDE", url: "/", title: "Digital Products, Software & Practical Tools | GOLIDE", description: "Digital products, practical tools, templates, software and research-driven technology built for real problems.", images: [{ url: "/og.webp", width: 1200, height: 630, alt: "GOLIDE digital products, software and technology" }] },
 };
 
 const ventures = [

@@ -12,7 +12,6 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Digital Products Marketplace: Tools, Templates & Software",
   description: "Explore practical digital products, toolkits, templates, playbooks, software and learning resources for career, business, creators and productivity.",
-  keywords: ["digital products marketplace", "digital tools", "online toolkits", "business templates", "creator tools", "career tools", "productivity tools", "learning resources", "digital downloads", "software tools"],
   alternates: { canonical: `${MARKETPLACE_ORIGIN}/` },
   openGraph: { url: `${MARKETPLACE_ORIGIN}/`, title: "Digital Products Marketplace | GOLIDE", description: "Practical digital products, tools, templates, software and learning resources built for real problems.", images: ["/og.webp"] },
   twitter: { card: "summary_large_image", title: "Digital Products Marketplace | GOLIDE", description: "Practical digital products, tools, templates, software and learning resources.", images: ["/og.webp"] },
