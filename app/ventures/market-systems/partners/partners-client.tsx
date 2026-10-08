@@ -16,6 +16,7 @@ import {
 import { FormEvent, type ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import styles from "./partner-engine.module.css";
 import { BrandLockup } from "../../../brand-mark";
+import ThemeToggle from "../../../theme-toggle";
 
 type Stage = "NEW" | "CONTACTED" | "REPLIED" | "PARTNER" | "SALE" | "NO_REPLY";
 type View = "find" | "pipeline" | "ideas" | "reports";
@@ -200,6 +201,7 @@ export default function PartnersClient() {
       </aside>
 
       <main className={styles.main}>
+        <div className={styles.topRow}><ThemeToggle /></div>
         {notice && <p className={notice.kind === "error" ? styles.noticeError : styles.noticeOk} role="status">
           {notice.text}<button type="button" onClick={() => setNotice(null)} aria-label="Dismiss">×</button>
         </p>}
@@ -217,11 +219,10 @@ export default function PartnersClient() {
               <section>
                 <form onSubmit={findPartners} className={styles.ask}>
                   <h1 className={styles.question}>
-                    <span>Who should sell</span>
+                    <span>Find partners for</span>
                     {productPicker(styles.headlinePicker, "Product")}
-                    <span>?</span>
                   </h1>
-                  <p className={styles.lede}>The engine searches the web for real creators whose audience fits this product and writes the first message for you. Each search takes about a minute.</p>
+                  <p className={styles.lede}>Press the button and the engine finds real creators whose audience would buy this, and writes the first message to each of them. About a minute per search.</p>
                   <details className={styles.options}>
                     <summary>Narrow it down</summary>
                     <div className={styles.optionGrid}>
