@@ -1,8 +1,12 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { ArrowRight, BarChart3, Beaker, Bot, ChevronRight, CircleDot, Dna, Globe2, MousePointerClick, MoveUpRight, Play, Radio, Workflow } from "lucide-react";
-import { CodePulse, FloatingBadge, HeroPortrait, KineticHero, Marquee } from "./kinetic";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { Footer, Header } from "./shared";
+import { listPublishedProducts } from "./ventures/market-systems/market-data";
+import { marketplaceProductUrl, MARKETPLACE_ORIGIN } from "./ventures/market-systems/market-links";
+import styles from "./home.module.css";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
@@ -10,73 +14,120 @@ export const metadata: Metadata = {
   openGraph: { type: "website", siteName: "GOLIDE", url: "/", title: "Digital Products, Software & Practical Tools | GOLIDE", description: "Digital products, practical tools, templates, software and research-driven technology built for real problems.", images: [{ url: "/og.webp", width: 1200, height: 630, alt: "GOLIDE digital products, software and technology" }] },
 };
 
-const ventures = [
-  { no:"02", icon:Bot, name:"Market Systems", type:"Trading intelligence", state:"In development", text:"Risk, execution and performance tools designed around discipline - not promises or shortcuts.", href:"/ventures/market-systems", accent:"violet", featured:true },
-  { no:"01", icon:BarChart3, name:"SYLA", type:"AI analytics platform", state:"Rebuild in progress", text:"From raw files to visualisations, forecasts and decisions - with less friction between question and answer.", href:"/projects/syla", accent:"cyan" },
-  { no:"03", icon:Dna, name:"Research Lab", type:"Bioinformatics + health", state:"Active", text:"Computational research and public-health systems that turn complex evidence into usable intelligence.", href:"/research", accent:"lime" },
+// Everything GOLIDE runs, with an honest status for each.
+const doors = [
+  { name: "Marketplace", text: "Digital products you can buy and use today: toolkits, templates and systems for your career, business and daily work.", status: "Open now", live: true, href: MARKETPLACE_ORIGIN + "/", external: true },
+  { name: "Software", text: "SYLA, an AI workspace that turns raw files into charts, forecasts and decisions, and Market Systems, risk and execution tools for traders.", status: "In development", live: false, href: "/projects/syla", external: false },
+  { name: "Studio", text: "Our content engine. It plans, records, edits and publishes video and posts across platforms from one place.", status: "Private for now", live: false, href: "https://studio.golidee.com/", external: true },
+  { name: "Research", text: "Public-health dashboards, bioinformatics and data analysis, written up as case studies with the work behind them.", status: "Active", live: true, href: "/research", external: false },
+  { name: "Work with us", text: "Need an automation, a dashboard or a custom tool? Tell us what you are trying to get done.", status: "Taking requests", live: true, href: "mailto:hello@golidee.com?subject=Working%20with%20GOLIDE", external: true },
 ];
 
-const projects = [
-  { no:"01", title:"SYLA Analytics", area:"AI / Data", image:"/syla-card.webp", href:"/projects/syla", video:true },
-  { no:"02", title:"Malaria Intelligence", area:"DHIS2 / Health", image:"/dhis2-card.webp", href:"/projects/malaria", video:true },
-  { no:"03", title:"Tinospora Phylogenetics", area:"Bioinformatics", image:"/tinospora.webp", href:"/projects/tinospora" },
-  { no:"04", title:"Child Mortality Patterns", area:"UNICEF / R", image:"/unicef.webp", href:"/projects/child-mortality" },
+const research = [
+  { title: "Malaria facility intelligence", field: "Public health data", image: "/dhis2-card.webp", href: "/projects/malaria" },
+  { title: "Tinospora phylogenetics", field: "Computational biology", image: "/tinospora.webp", href: "/projects/tinospora" },
+  { title: "Child mortality patterns", field: "Global health", image: "/unicef.webp", href: "/projects/child-mortality" },
 ];
 
-export default function Home(){return <main className="neo-site"><Header/>
-  <section className="neo-hero hero-banner">
-    <div className="hero-future-field" aria-hidden="true">
-      <span className="future-line future-1">IDEAS → SYSTEMS</span>
-      <span className="future-line future-2">GLOBAL BY DESIGN</span>
-      <span className="future-line future-3">SCIENCE × SOFTWARE</span>
-      <span className="future-line future-4">RESEARCH → PRODUCT</span>
-      <span className="future-line future-5">BUILD / TEST / SHIP</span>
-      <span className="future-line future-6">INTELLIGENCE</span>
-      <span className="future-line future-7">FROM ZAMBIA</span>
-      <span className="future-line future-8">WHAT COMES NEXT?</span>
-      <span className="future-line future-9">AUTOMATION / DATA / SYSTEMS</span>
-      <span className="future-line future-10">NEXT: GLOBAL SCALE</span>
-      <div className="future-wire wire-a"/>
-      <div className="future-wire wire-b"/>
-      <div className="future-noise"/>
-    </div>
-    <HeroPortrait />
-    <div className="hero-banner-grid"/>
-    <div className="hero-banner-scan"/>
-    <div className="neo-copy hero-banner-copy">
-      <p className="neo-kicker"><Radio/> GOLIDE NETWORK / ACTIVE</p>
-      <h1>What if you could become <span>what you always wanted?</span></h1>
-      <p className="hero-prompt">Visit our marketplace.</p>
-      <p className="hero-undertext">Discover practical digital products, tools, templates, software and learning systems built to turn ideas into action.</p>
-      <div className="neo-actions"><Link className="neo-button solid" href="https://marketplace.golidee.com/">Visit marketplace <ArrowRight/></Link><Link className="neo-button bare" href="/founder">Founder profile <MoveUpRight/></Link></div>
-    </div>
-    <FloatingBadge/>
-  </section>
-  <Marquee items={["SOFTWARE","INTELLIGENCE","SCIENCE","MEDIA","CONNECTION"]}/>
+// The GOLIDE mark, drawn large: points of light gathered into a G, the last one gold.
+const DOTS = Array.from({ length: 11 }, (_, i) => {
+  const a = ((-40 + i * 29) * Math.PI) / 180;
+  return { x: +(32 + 22 * Math.cos(a)).toFixed(2), y: +(32 + 22 * Math.sin(a)).toFixed(2), r: +(1.6 + i * 0.22).toFixed(2) };
+});
 
-  <section className="neo-section shell" id="ecosystem"><div className="neo-section-head ecosystem-head"><div><p className="neo-kicker"><CircleDot/> ECOSYSTEM MAP</p><h2>Different disciplines.<br/><span>One compounding engine.</span></h2></div><div className="ecosystem-kinetic"><KineticHero/></div></div><div className="venture-stack">{ventures.map(({icon:Icon,...v})=><Link className={"neo-venture "+v.accent+(v.featured?" market-feature":"")} href={v.href} key={v.no}>{v.featured&&<span className="market-beams" aria-hidden="true"><i/><i/></span>}<span className="venture-no">{v.no}</span><div className="venture-icon"><Icon/></div><div className="venture-name"><small>{v.type}</small><h3>{v.name}</h3></div><p>{v.text}</p><div className="venture-state"><i/>{v.state}</div>{v.featured&&<span className="market-click-hint"><MousePointerClick/> Click to explore</span>}<ChevronRight/></Link>)}</div></section>
+function HeroMark() {
+  return <svg className={styles.mark} viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+    {DOTS.map((d, i) => <circle key={i} cx={d.x} cy={d.y} r={d.r} style={{ animationDelay: `${i * 70}ms` }} />)}
+    <circle cx={36} cy={32} r={2.2} className={styles.markInner} style={{ animationDelay: "820ms" }} />
+    <circle cx={44} cy={32} r={3.6} className={styles.markGold} style={{ animationDelay: "960ms" }} />
+  </svg>;
+}
 
-  <section className="product-signal"><div className="shell product-grid"><div className="product-copy"><p className="neo-kicker"><Workflow/> PRODUCT SIGNAL / 01</p><h2>SYLA is being rebuilt to make analysis feel immediate.</h2><p>The first GOLIDE SaaS product will bring visualisation, forecasting and file intelligence into one focused workspace.</p><Link className="neo-button solid" href="/projects/syla">See the product story <ArrowRight/></Link><CodePulse/></div><div className="video-console"><div className="console-bar"><span><i/><i/><i/></span><small>SYLA / PRODUCT ARCHIVE</small><strong>01:18</strong></div><video controls playsInline preload="metadata" poster="/syla-card.webp"><source src="/videos/projects/syla-demo-full.mp4" type="video/mp4"/></video><div className="console-overlay"><Play fill="currentColor"/><span>Platform walkthrough</span></div></div></div></section>
+export default async function Home() {
+  const products = (await listPublishedProducts()).slice(0, 3);
 
-  <section className="neo-section shell" id="projects"><div className="neo-section-head"><div><p className="neo-kicker"><Globe2/> SELECTED OUTPUT</p><h2>Projects that work<br/><span>beyond the thumbnail.</span></h2></div><Link className="neo-text-link" href="/research">All research <ArrowRight/></Link></div><div className="project-deck">{projects.map(p=><Link href={p.href} className="neo-project" key={p.no}><div className="project-media"><img className="raw-fill" src={p.image+"?v=20260907"} alt={p.title} loading="lazy"/><div className="project-scan"/>{p.video&&<span className="video-pill"><Play fill="currentColor"/> Video inside</span>}</div><div className="project-caption"><span>{p.no}</span><div><small>{p.area}</small><h3>{p.title}</h3></div><MoveUpRight/></div></Link>)}</div></section>
+  return <main className={`neo-site ${styles.home}`}>
+    <Header />
 
-  <section className="founder-window"><div className="founder-window-image"><img className="raw-fill" src="/founder/profile-suit-standing.webp?v=20260907-wide" alt="Esiah Kapinga, GOLIDE founder"/></div><div className="founder-window-copy"><p className="neo-kicker"><Beaker/> 01 / PROFILE / FOUNDER NODE</p><h2>Built by someone who refuses to stay in one box.</h2><p>Esiah Kapinga connects microbiology, software development, quality systems, data and digital business into one operating vision.</p><blockquote>Science trains the questions. Technology scales the answer.</blockquote><Link className="neo-button solid" href="/founder">Open full portfolio <ArrowRight/></Link></div></section>
-
-  <section className="journey-showcase">
-    <div className="shell journey-showcase-head">
-      <div><p className="neo-kicker"><Globe2/> THE ROAD SO FAR</p><h2>Not the finished story.<br/><span>The evidence that it has started.</span></h2></div>
-      <div className="journey-showcase-copy">
-        <p>Before there is a headline, there is a trail: Chinsanka, school, India, microbiology, laboratories, graduation, quality systems and now GOLIDE.</p>
-        <div className="journey-path"><span>ROOTS</span><i>→</i><span>LEARNING</span><i>→</i><span>SCIENCE</span><i>→</i><span>WORK</span><i>→</i><span>BUILDING</span></div>
+    <section className={`shell ${styles.hero}`}>
+      <div className={styles.heroCopy}>
+        <h1>Practical tools and AI software, built to move you forward.</h1>
+        <p>GOLIDE brings together products you can use today, software in the making and the research behind it. Start with what you need.</p>
+        <div className={styles.heroActions}>
+          <a className={styles.primary} href={MARKETPLACE_ORIGIN + "/"}>Browse the marketplace <ArrowRight size={18} aria-hidden="true" /></a>
+          <a className={styles.quiet} href="#everything">See everything we do</a>
+        </div>
       </div>
-    </div>
-    <div className="journey-visual-track" aria-label="GOLIDE founder journey image archive">
-      <div className="journey-visual-rail">
-        {[1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8].map((n,i)=><div className={"journey-visual frame-"+((i%4)+1)} key={n+"-"+i}><img src={"/experience/e-"+n+".webp?v=20260907"} alt="Founder journey archive"/><div className="journey-glitch"/><span>{String((i%8)+1).padStart(2,"0")}</span></div>)}
-      </div>
-    </div>
-    <div className="shell journey-showcase-foot"><Link className="neo-text-link" href="/founder">Open the full origin story <ArrowRight/></Link><small>THE ROAD CONTINUES / GOLIDE</small></div>
-  </section>
+      <HeroMark />
+    </section>
 
-  <section className="neo-cta shell"><div><p className="neo-kicker"><CircleDot/> OPEN CHANNEL</p><h2>Build something that earns its place.</h2></div><a className="neo-button invert" href="mailto:hello@golidee.com?subject=Hello%20GOLIDE">Start a conversation <ArrowRight/></a></section><Footer/>
- </main>}
+    <section className={`shell ${styles.doorsSection}`} id="everything" aria-labelledby="everything-title">
+      <h2 id="everything-title">Everything GOLIDE does, in one place.</h2>
+      <ul className={styles.doors}>
+        {doors.map((door) => {
+          const inner = <>
+            <span className={styles.doorName}>{door.name}</span>
+            <span className={styles.doorText}>{door.text}</span>
+            <span className={door.live ? styles.statusLive : styles.status}>{door.status}</span>
+            <ArrowUpRight className={styles.doorArrow} size={22} aria-hidden="true" />
+          </>;
+          return <li key={door.name}>
+            {door.external
+              ? <a className={styles.door} href={door.href}>{inner}</a>
+              : <Link className={styles.door} href={door.href}>{inner}</Link>}
+          </li>;
+        })}
+      </ul>
+    </section>
+
+    {products.length > 0 && <section className={`shell ${styles.block}`} aria-labelledby="products-title">
+      <div className={styles.blockHead}>
+        <h2 id="products-title">Available in the marketplace</h2>
+        <a className={styles.textLink} href={MARKETPLACE_ORIGIN + "/"}>All products <ArrowRight size={16} aria-hidden="true" /></a>
+      </div>
+      <div className={products.length === 1 ? styles.productSolo : styles.productGrid}>
+        {products.map((product) => <a className={styles.product} href={marketplaceProductUrl(product.slug)} key={product.id}>
+          <div className={styles.productImage}>
+            {product.imageUrl ? <img src={product.imageUrl} alt="" loading="lazy" /> : null}
+          </div>
+          <div className={styles.productBody}>
+            <span className={styles.productShelf}>{product.shelf}{product.format ? `, ${product.format.toLowerCase()}` : ""}</span>
+            <h3>{product.name}</h3>
+            <p>{product.summary}</p>
+            <span className={styles.productCta}>{product.priceText ? `${product.priceText}. ` : ""}See the product <ArrowRight size={16} aria-hidden="true" /></span>
+          </div>
+        </a>)}
+      </div>
+    </section>}
+
+    <section className={`shell ${styles.block}`} aria-labelledby="research-title">
+      <div className={styles.blockHead}>
+        <h2 id="research-title">From the research lab</h2>
+        <Link className={styles.textLink} href="/research">All research <ArrowRight size={16} aria-hidden="true" /></Link>
+      </div>
+      <div className={styles.researchGrid}>
+        {research.map((item) => <Link className={styles.research} href={item.href} key={item.href}>
+          <div className={styles.researchImage}><img src={item.image + "?v=20260907"} alt="" loading="lazy" /></div>
+          <span>{item.field}</span>
+          <h3>{item.title}</h3>
+        </Link>)}
+      </div>
+    </section>
+
+    <section className={`shell ${styles.founder}`} aria-labelledby="founder-title">
+      <img className={styles.founderPhoto} src="/founder/profile-suit-standing.webp?v=20260907-wide" alt="Esiah Kapinga, founder of GOLIDE" loading="lazy" />
+      <div>
+        <h2 id="founder-title">Built in Lusaka, Zambia.</h2>
+        <p>GOLIDE was started by Esiah Kapinga, a microbiologist and software developer who connects science, data and software into tools people can actually use.</p>
+        <Link className={styles.textLink} href="/founder">Read the founder story <ArrowRight size={16} aria-hidden="true" /></Link>
+      </div>
+    </section>
+
+    <section className={`shell ${styles.contact}`}>
+      <h2>Have something you want built?</h2>
+      <a className={styles.primary} href="mailto:hello@golidee.com?subject=Hello%20GOLIDE">Email hello@golidee.com <ArrowRight size={18} aria-hidden="true" /></a>
+    </section>
+
+    <Footer />
+  </main>;
+}

@@ -61,18 +61,15 @@ test("renders every public route", async () => {
   }
 });
 
-test("renders the approved GOLIDE branding, marketplace hero and search metadata", async () => {
+test("renders the GOLIDE hub hero, everything section and search metadata", async () => {
   const response = await render("/");
   const html = await response.text();
 
   assert.match(html, /Digital Products, Software &amp; Practical Tools \| GOLIDE/);
-  assert.match(html, /What if you could become/);
-  assert.match(html, /what you always wanted\?/);
-  assert.match(html, /Visit our marketplace\./);
-  assert.match(html, /href="\/ventures\/market-systems"/);
+  assert.match(html, /Practical tools and AI software, built to move you forward\./);
+  assert.match(html, /Everything GOLIDE does, in one place\./);
+  assert.match(html, /href="https:\/\/marketplace\.golidee\.com\/"/);
   assert.match(html, /rel="canonical" href="https:\/\/golidee\.com\/"/);
-  assert.match(html, /src="\/brand\/wordmark\.png[^\"]*" alt="G\$LIDE"/);
-  assert.match(html, /src="\/founder\/hero-white-shirt-cutout\.webp[^\"]*"/);
 });
 
 test("renders marketplace language for the complete catalog", async () => {

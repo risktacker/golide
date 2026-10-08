@@ -1,0 +1,119 @@
+/* GOLIDE homepage: a calm welcome that routes visitors to every part of GOLIDE.
+   Colours come from the site theme (dark default, light via data-theme). */
+.home{
+  --text:var(--neo-text,#ecedef);
+  --bg:var(--neo-bg,#0b0c10);
+  --muted:#9a9ea8;
+  --line:rgba(255,255,255,.09);
+  --surface:#121419;
+  --accent:#e9c46a;
+  --accent-ink:#17130a;
+  --live:#86c79f;
+  background:var(--bg);
+  color:var(--text);
+}
+:global([data-theme="light"]) .home{
+  --muted:#5b5f69;
+  --line:rgba(16,17,19,.1);
+  --surface:#ffffff;
+  --accent:#9d781f;
+  --accent-ink:#ffffff;
+  --live:#3f7a52;
+}
+.home :global(.shell){max-width:1180px}
+.home a{color:inherit}
+.home a:focus-visible{outline:2px solid var(--accent); outline-offset:4px; border-radius:6px}
+.home h1,.home h2,.home h3{font-family:var(--font-display); color:var(--text)}
+
+/* Buttons and links */
+.primary{display:inline-flex; align-items:center; gap:10px; padding:15px 22px; border-radius:12px; background:var(--accent); color:var(--accent-ink)!important; font-size:16px; font-weight:500; text-decoration:none; white-space:nowrap}
+.primary:hover{filter:brightness(1.07)}
+.quiet{color:var(--muted)!important; font-size:16px; text-decoration:underline; text-underline-offset:4px}
+.quiet:hover{color:var(--text)!important}
+.textLink{display:inline-flex; align-items:center; gap:6px; color:var(--muted)!important; font-size:15px; text-decoration:none}
+.textLink:hover{color:var(--text)!important}
+
+/* Hero */
+.hero{display:grid; grid-template-columns:minmax(0,1.35fr) minmax(0,1fr); align-items:center; gap:56px; padding:112px 0 120px}
+.heroCopy h1{max-width:15ch; margin:0 0 26px; font-size:clamp(42px,5.4vw,76px); line-height:1.04; font-weight:450; letter-spacing:-.035em; text-wrap:balance}
+.heroCopy p{max-width:46ch; margin:0; color:var(--muted); font-size:clamp(17px,1.3vw,20px); line-height:1.6}
+.heroActions{display:flex; flex-wrap:wrap; align-items:center; gap:26px; margin-top:40px}
+
+/* The one moment of motion: the mark gathers on load. */
+.mark{justify-self:center; width:min(400px,100%); height:auto; color:var(--text); overflow:visible}
+.mark circle{fill:currentColor; transform-box:fill-box; transform-origin:center; animation:gather .7s cubic-bezier(.2,.7,.2,1) both}
+.markInner{opacity:.55}
+.mark .markGold{fill:var(--accent); filter:drop-shadow(0 0 2.2px var(--accent))}
+@keyframes gather{from{opacity:0; transform:scale(.2)} to{opacity:1; transform:scale(1)}}
+.mark .markInner{animation-name:gatherHalf}
+@keyframes gatherHalf{from{opacity:0; transform:scale(.2)} to{opacity:.55; transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){.mark circle{animation:none}}
+
+/* Everything GOLIDE does */
+.doorsSection{padding:24px 0 96px}
+.doorsSection h2,.blockHead h2,.founder h2,.contact h2{margin:0; font-size:clamp(28px,3vw,40px); line-height:1.15; font-weight:450; letter-spacing:-.025em}
+.doors{margin:36px 0 0; padding:0; list-style:none; border-top:1px solid var(--line)}
+.doors li{border-bottom:1px solid var(--line)}
+.door{display:grid; grid-template-columns:200px minmax(0,1fr) 150px 28px; align-items:center; gap:28px; padding:30px 8px; text-decoration:none; transition:background .2s}
+.door:hover{background:var(--surface)}
+.doorName{font-size:24px; font-weight:450; letter-spacing:-.015em}
+.doorText{max-width:58ch; color:var(--muted); font-size:16px; line-height:1.55}
+.status,.statusLive{display:inline-flex; align-items:center; gap:8px; color:var(--muted); font-size:14px}
+.status::before,.statusLive::before{content:""; width:7px; height:7px; border-radius:50%; background:currentColor; opacity:.5}
+.statusLive{color:var(--live)}
+.statusLive::before{opacity:1}
+.doorArrow{color:var(--muted); transition:transform .2s,color .2s}
+.door:hover .doorArrow{color:var(--accent); transform:translate(2px,-2px)}
+@media (prefers-reduced-motion:reduce){.door,.doorArrow{transition:none}}
+
+/* Shared block heading */
+.block{padding:0 0 96px}
+.blockHead{display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:16px; margin-bottom:32px}
+
+/* Products */
+.productGrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:24px}
+.product{display:flex; flex-direction:column; overflow:hidden; border:1px solid var(--line); border-radius:18px; background:var(--surface); text-decoration:none}
+.productSolo .product{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr)}
+.productImage{aspect-ratio:4/3; background:var(--line); overflow:hidden}
+.productImage img{display:block; width:100%; height:100%; object-fit:cover}
+.productBody{display:flex; flex-direction:column; gap:12px; padding:32px}
+.productSolo .productBody{justify-content:center; padding:44px}
+.productShelf{color:var(--muted); font-size:14px}
+.productBody h3{margin:0; font-size:28px; line-height:1.15; font-weight:450; letter-spacing:-.02em}
+.productBody p{margin:0; color:var(--muted); font-size:16px; line-height:1.6}
+.productCta{display:inline-flex; align-items:center; gap:6px; margin-top:8px; color:var(--accent); font-size:15px; font-weight:500}
+.product:hover .productCta{text-decoration:underline; text-underline-offset:4px}
+
+/* Research */
+.researchGrid{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px}
+.research{display:flex; flex-direction:column; gap:6px; text-decoration:none}
+.researchImage{aspect-ratio:16/10; margin-bottom:12px; overflow:hidden; border-radius:14px; background:var(--line)}
+.researchImage img{display:block; width:100%; height:100%; object-fit:cover; transition:transform .4s}
+.research:hover .researchImage img{transform:scale(1.03)}
+.research span{color:var(--muted); font-size:14px}
+.research h3{margin:0; font-size:20px; font-weight:450; letter-spacing:-.01em}
+@media (prefers-reduced-motion:reduce){.researchImage img{transition:none}}
+
+/* Founder */
+.founder{display:grid; grid-template-columns:220px minmax(0,1fr); align-items:center; gap:44px; padding:56px 0 96px; border-top:1px solid var(--line)}
+.founderPhoto{width:220px; aspect-ratio:1; object-fit:cover; object-position:center 20%; border-radius:50%}
+.founder p{max-width:56ch; margin:14px 0 20px; color:var(--muted); font-size:17px; line-height:1.6}
+
+/* Contact */
+.contact{display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:24px; margin-bottom:96px; padding:48px; border-radius:22px; background:var(--surface); border:1px solid var(--line)}
+
+@media (max-width:960px){
+  .hero{grid-template-columns:1fr; gap:40px; padding:64px 0 72px}
+  .mark{order:-1; justify-self:start; width:140px}
+  .door{grid-template-columns:minmax(0,1fr) 24px; gap:8px 16px; padding:24px 4px}
+  .doorName{grid-column:1}
+  .doorText{grid-column:1}
+  .status,.statusLive{grid-column:1}
+  .doorArrow{grid-column:2; grid-row:1}
+  .productSolo .product{grid-template-columns:1fr}
+  .productSolo .productBody{padding:28px}
+  .researchGrid{grid-template-columns:1fr; gap:32px}
+  .founder{grid-template-columns:1fr; gap:24px}
+  .founderPhoto{width:120px}
+  .contact{padding:32px 24px}
+}
