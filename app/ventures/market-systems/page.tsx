@@ -21,7 +21,7 @@ export default async function Page() {
   const products = await listPublishedProducts();
   const user = await getGolideUser();
   const canManage = isAdminUser(user);
-  const showPartners = user?.email.trim().toLowerCase() === "esiahkapinga@gmail.com";
+  const showPartners = canManage;
 
   const marketplaceData = {
     "@context": "https://schema.org",

@@ -1,4 +1,4 @@
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { integer, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 export const marketProducts = sqliteTable("market_products", {
   id: text("id").primaryKey(),
@@ -47,6 +47,85 @@ export const partnerProspects = sqliteTable("partner_prospects", {
   affiliateLink: text("affiliate_link").notNull().default(""),
   notes: text("notes").notNull().default(""),
   lastContactedAt: integer("last_contacted_at"),
+  createdAt: integer("created_at").notNull(),
+  updatedAt: integer("updated_at").notNull(),
+});
+
+// Partner Engine tables. Created at runtime by app/api/partner-engine/route.ts
+// (ensureInfrastructure); declared here so the schema reflects the real database.
+export const partnerProductMatches = sqliteTable("partner_product_matches", {
+  id: text("id").primaryKey(),
+  prospectId: text("prospect_id").notNull(),
+  productId: text("product_id").notNull(),
+  fitScore: integer("fit_score").notNull().default(0),
+  reason: text("reason").notNull().default(""),
+  personalHook: text("personal_hook").notNull().default(""),
+  outreachMessage: text("outreach_message").notNull().default(""),
+  commissionRate: integer("commission_rate").notNull().default(0),
+  status: text("status").notNull().default("NEW"),
+  conversions: integer("conversions").notNull().default(0),
+  revenueCents: integer("revenue_cents").notNull().default(0),
+  createdAt: integer("created_at").notNull(),
+  updatedAt: integer("updated_at").notNull(),
+});
+
+export const audienceOpportunities = sqliteTable("audience_opportunities", {
+  id: text("id").primaryKey(),
+  title: text("title").notNull(),
+  niche: text("niche").notNull().default(""),
+  audienceProblem: text("audience_problem").notNull().default(""),
+  creatorSignals: text("creator_signals").notNull().default(""),
+  audienceMarket: text("audience_market").notNull().default(""),
+  creatorCount: integer("creator_count").notNull().default(0),
+  estimatedReach: integer("estimated_reach").notNull().default(0),
+  saturation: text("saturation").notNull().default(""),
+  status: text("status").notNull().default("AUDIENCE_OPPORTUNITY"),
+  linkedProductId: text("linked_product_id").notNull().default(""),
+  notes: text("notes").notNull().default(""),
+  createdAt: integer("created_at").notNull(),
+  updatedAt: integer("updated_at").notNull(),
+});
+
+export const audienceOpportunityCreators = sqliteTable("audience_opportunity_creators", {
+  id: text("id").primaryKey(),
+  opportunityId: text("opportunity_id").notNull(),
+  prospectId: text("prospect_id").notNull(),
+  notes: text("notes").notNull().default(""),
+  createdAt: integer("created_at").notNull(),
+});
+
+export const partnerSearchRuns = sqliteTable("partner_search_runs", {
+  id: text("id").primaryKey(),
+  mode: text("mode").notNull(),
+  productId: text("product_id").notNull().default(""),
+  niche: text("niche").notNull().default(""),
+  geography: text("geography").notNull().default(""),
+  platform: text("platform").notNull().default(""),
+  minFollowers: integer("min_followers").notNull().default(1000),
+  excludeProductSellers: integer("exclude_product_sellers").notNull().default(0),
+  queryBrief: text("query_brief").notNull().default(""),
+  status: text("status").notNull().default("QUEUED"),
+  maxWebSearchCalls: integer("max_web_search_calls").notNull().default(6),
+  candidateLimit: integer("candidate_limit").notNull().default(8),
+  webSearchCalls: integer("web_search_calls").notNull().default(0),
+  profilesAdded: integer("profiles_added").notNull().default(0),
+  inputTokens: integer("input_tokens").notNull().default(0),
+  outputTokens: integer("output_tokens").notNull().default(0),
+  estimatedCostUsd: real("estimated_cost_usd").notNull().default(0),
+  lastError: text("last_error").notNull().default(""),
+  targetUrl: text("target_url").notNull().default(""),
+  createdAt: integer("created_at").notNull(),
+  updatedAt: integer("updated_at").notNull(),
+});
+
+export const partnerResearchUsage = sqliteTable("partner_research_usage", {
+  id: text("id").primaryKey(),
+  runId: text("run_id").notNull().unique(),
+  dayKey: text("day_key").notNull(),
+  monthKey: text("month_key").notNull(),
+  reservedMicroUsd: integer("reserved_micro_usd").notNull(),
+  actualMicroUsd: integer("actual_micro_usd").notNull().default(0),
+  status: text("status").notNull().default("RESERVED"),
   createdAt: integer("created_at").notNull(),
   updatedAt: integer("updated_at").notNull(),
 });

@@ -4,207 +4,80 @@ import {
   ArrowLeft,
   BarChart3,
   Check,
-  Clipboard,
+  Copy,
   ExternalLink,
+  Lightbulb,
   LoaderCircle,
-  Plus,
-  Radar,
-  RefreshCw,
+  RotateCcw,
   Search,
-  Send,
-  Sparkles,
   Trash2,
   Users,
 } from "lucide-react";
-import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { FormEvent, type ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import styles from "./partner-engine.module.css";
 import { BrandLockup } from "../../../brand-mark";
 
-type SearchMode = "PRODUCT" | "AUTO" | "AUDIENCE_SCOUT" | "EXPAND" | "ALL";
 type Stage = "NEW" | "CONTACTED" | "REPLIED" | "PARTNER" | "SALE" | "NO_REPLY";
-type Tab = "partners" | "coverage" | "opportunities" | "searches";
+type View = "find" | "pipeline" | "ideas" | "reports";
 
-type Product = {
-  id: string;
-  slug: string;
-  name: string;
-  shelf: string;
-  lifecycle_status: string;
-  target_audience: string;
-  problem_solved: string;
-  keywords: string;
-  creator_niches: string;
-  target_geographies: string;
-  affiliate_rate: number;
-  launch_date: string;
-  priority: number;
-  last_partner_search_at: number | null;
-  published: number;
-  updated_at: number;
-};
-
+type Product = { id: string; slug: string; name: string; affiliate_rate: number; lifecycle_status: string };
 type Prospect = {
-  id: string;
-  name: string;
-  platform: string;
-  handle: string;
-  profile_url: string;
-  contact: string;
-  audience_size: number;
-  audience_market: string;
-  activity_evidence: string;
-  buyer_intent_evidence: string;
-  monetization_evidence: string;
-  reason: string;
-  personal_hook: string;
-  outreach_message: string;
-  status: Stage;
-  affiliate_link: string;
-  notes: string;
-  last_contacted_at: number | null;
-  created_at: number;
-  updated_at: number;
+  id: string; name: string; platform: string; handle: string; profile_url: string; contact: string;
+  audience_size: number; audience_market: string; activity_evidence: string; buyer_intent_evidence: string;
+  monetization_evidence: string; reason: string; personal_hook: string; outreach_message: string;
+  affiliate_link: string; notes: string; created_at: number; updated_at: number;
 };
-
 type Match = {
-  id: string;
-  prospect_id: string;
-  product_id: string;
-  fit_score: number;
-  reason: string;
-  personal_hook: string;
-  outreach_message: string;
-  commission_rate: number;
-  status: Stage;
-  conversions: number;
-  revenue_cents: number;
-  created_at: number;
-  updated_at: number;
+  id: string; prospect_id: string; product_id: string; fit_score: number; reason: string;
+  personal_hook: string; outreach_message: string; commission_rate: number; status: Stage;
+  conversions: number; revenue_cents: number; created_at: number; updated_at: number;
 };
-
 type Opportunity = {
-  id: string;
-  title: string;
-  niche: string;
-  audience_problem: string;
-  creator_signals: string;
-  audience_market: string;
-  creator_count: number;
-  estimated_reach: number;
-  saturation: string;
-  status: string;
-  linked_product_id: string;
-  notes: string;
-  created_at: number;
-  updated_at: number;
+  id: string; title: string; niche: string; audience_problem: string; creator_signals: string;
+  audience_market: string; saturation: string; linked_product_id: string; created_at: number;
 };
-
-type OpportunityCreator = {
-  id: string;
-  opportunity_id: string;
-  prospect_id: string;
-  notes: string;
-  created_at: number;
-};
-
+type OpportunityCreator = { id: string; opportunity_id: string; prospect_id: string };
 type SearchRun = {
-  id: string;
-  mode: SearchMode;
-  product_id: string;
-  niche: string;
-  geography: string;
-  platform: string;
-  min_followers: number;
-  exclude_product_sellers: number;
-  query_brief: string;
-  status: "QUEUED" | "RUNNING" | "DONE" | "FAILED";
-  max_web_search_calls: number;
-  candidate_limit: number;
-  web_search_calls: number;
-  profiles_added: number;
-  input_tokens: number;
-  output_tokens: number;
-  estimated_cost_usd: number;
-  last_error: string;
-  created_at: number;
-  updated_at: number;
+  id: string; mode: string; product_id: string; niche: string; target_url: string;
+  status: "QUEUED" | "RUNNING" | "DONE" | "FAILED"; profiles_added: number; web_search_calls: number;
+  estimated_cost_usd: number; last_error: string; created_at: number;
 };
-
 type Coverage = {
-  productId: string;
-  productName: string;
-  lifecycleStatus: string;
-  qualified: number;
-  contacted: number;
-  replied: number;
-  partners: number;
-  sales: number;
-  conversions: number;
-  revenueCents: number;
-  reachableAudience: number;
-  channels: string[];
-  channelGaps: string[];
-  markets: string[];
-  targetGeographies: string;
+  productId: string; productName: string; found: number; toContact: number; waiting: number; talking: number;
+  partners: number; notNow: number; conversions: number; revenueCents: number; reachableAudience: number; channels: string[];
 };
-
+type Budget = { dailyUsedUsd: number; dailyLimitUsd: number; monthlyUsedUsd: number; monthlyLimitUsd: number; runsLeftToday: number };
 type Snapshot = {
-  products: Product[];
-  prospects: Prospect[];
-  matches: Match[];
-  opportunities: Opportunity[];
-  opportunityCreators: OpportunityCreator[];
-  searchRuns: SearchRun[];
-  coverage: Coverage[];
-  researchBudget?: { perRunUsd: number; dailyLimitUsd: number; dailyUsedUsd: number; monthlyLimitUsd: number; monthlyUsedUsd: number };
+  products: Product[]; prospects: Prospect[]; matches: Match[]; opportunities: Opportunity[];
+  opportunityCreators: OpportunityCreator[]; searchRuns: SearchRun[]; coverage: Coverage[]; researchBudget?: Budget;
 };
+type Card = { match: Match; prospect: Prospect };
 
-const stages: Stage[] = ["NEW", "CONTACTED", "REPLIED", "PARTNER", "SALE", "NO_REPLY"];
-const opportunityStages = [
-  "AUDIENCE_OPPORTUNITY",
-  "PROPOSED_PRODUCT",
-  "PRE_LAUNCH",
-  "PRODUCT_CREATED",
-  "PARTNER_RECRUITMENT",
-  "LAUNCH",
-  "ACTIVE",
-  "MATURE",
-  "PAUSED",
-];
+const EMPTY: Snapshot = { products: [], prospects: [], matches: [], opportunities: [], opportunityCreators: [], searchRuns: [], coverage: [] };
+const PLATFORMS = ["Instagram", "TikTok", "YouTube", "X", "LinkedIn"];
 
 function compact(value: number) {
   return new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(value || 0);
 }
-
 function money(cents: number) {
   return new Intl.NumberFormat("en", { style: "currency", currency: "USD" }).format((cents || 0) / 100);
 }
-
-function pretty(value: string) {
-  return value.replaceAll("_", " ").toLowerCase().replace(/\b\w/g, (m) => m.toUpperCase());
+function when(ms: number) {
+  return new Intl.DateTimeFormat("en", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }).format(ms);
 }
-
-function nextAction(stage: Stage) {
-  return ({
-    NEW: "Send the personalized outreach.",
-    CONTACTED: "Watch for a reply and follow up with context, not a generic bump.",
-    REPLIED: "Qualify interest, share the product for review and agree on the tracked offer.",
-    PARTNER: "Make sure the tracked link and creative are live, then monitor conversions.",
-    SALE: "Keep what converted, deepen the relationship and test another suitable product.",
-    NO_REPLY: "Park or re-engage only when there is a genuinely new reason to contact them.",
-  } as Record<Stage, string>)[stage];
+function sourcesOf(notes: string) {
+  const match = notes.match(/(?:Research sources|Sources):\s*(.+)/);
+  return match ? match[1].split("|").map((s) => s.trim()).filter((s) => s.startsWith("https://")) : [];
 }
 
 export default function PartnersClient() {
-  const [data, setData] = useState<Snapshot>({ products: [], prospects: [], matches: [], opportunities: [], opportunityCreators: [], searchRuns: [], coverage: [] });
-  const [tab, setTab] = useState<Tab>("coverage");
-  const [selectedProduct, setSelectedProduct] = useState("");
-  const [stage, setStage] = useState<Stage | "ALL">("ALL");
-  const [mode, setMode] = useState<SearchMode>("PRODUCT");
-  const [message, setMessage] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [showAdd, setShowAdd] = useState(false);
-  const [showOpportunity, setShowOpportunity] = useState(false);
+  const [data, setData] = useState<Snapshot>(EMPTY);
+  const [loaded, setLoaded] = useState(false);
+  const [view, setView] = useState<View>("find");
+  const [productId, setProductId] = useState("");
+  const [working, setWorking] = useState<"" | "search" | "profile" | "scout" | "update">("");
+  const [notice, setNotice] = useState<{ kind: "ok" | "error"; text: string } | null>(null);
+  const [showManual, setShowManual] = useState(false);
 
   const api = useCallback(async (payload: Record<string, unknown>) => {
     const response = await fetch("/api/partner-engine", {
@@ -212,503 +85,400 @@ export default function PartnersClient() {
       headers: { "content-type": "application/json" },
       body: JSON.stringify(payload),
     });
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.error || "Partner Engine request failed.");
+    const result = await response.json().catch(() => ({ error: "The server sent an unreadable reply." }));
+    if (!response.ok) throw new Error(result.error || "Request failed.");
     return result;
   }, []);
 
-  const refresh = useCallback(async (success?: string) => {
-    setBusy(true);
+  const refresh = useCallback(async () => {
     try {
       const snapshot = await api({ action: "snapshot" }) as Snapshot;
       setData(snapshot);
-      if (!selectedProduct && snapshot.products.length) setSelectedProduct(snapshot.products[0].id);
-      if (success) setMessage(success);
+      setProductId((current) => current || snapshot.products[0]?.id || "");
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not load Partner Engine.");
+      setNotice({ kind: "error", text: error instanceof Error ? error.message : "Could not load the Partner Engine." });
     } finally {
-      setBusy(false);
+      setLoaded(true);
     }
-  }, [api, selectedProduct]);
+  }, [api]);
 
   useEffect(() => { void refresh(); }, [refresh]);
 
-  const productById = useMemo(
-    () => new Map(data.products.map((product) => [product.id, product])),
-    [data.products],
+  // Runs one action, then reloads everything so the screen always matches the database.
+  const act = useCallback(async (payload: Record<string, unknown>, success?: string, kind: typeof working = "update") => {
+    setWorking(kind);
+    setNotice(null);
+    try {
+      const result = await api(payload);
+      if (result?.error) setNotice({ kind: "error", text: result.error });
+      else if (success) setNotice({ kind: "ok", text: success.replace("{added}", String(result?.added ?? 0)) });
+      return result;
+    } catch (error) {
+      setNotice({ kind: "error", text: error instanceof Error ? error.message : "Something went wrong." });
+      return null;
+    } finally {
+      await refresh();
+      setWorking("");
+    }
+  }, [api, refresh]);
+
+  const product = data.products.find((item) => item.id === productId);
+  const prospectById = useMemo(() => new Map(data.prospects.map((p) => [p.id, p])), [data.prospects]);
+  const cards = useMemo(() => data.matches
+    .filter((m) => m.product_id === productId)
+    .map((match) => ({ match, prospect: prospectById.get(match.prospect_id) }))
+    .filter((c): c is Card => Boolean(c.prospect)), [data.matches, productId, prospectById]);
+  const byStage = (...stages: Stage[]) => cards.filter((c) => stages.includes(c.match.status));
+  const toContact = byStage("NEW");
+  const inProgress = byStage("CONTACTED", "REPLIED").length;
+  const budget = data.researchBudget;
+  const outOfBudget = budget ? budget.runsLeftToday < 1 : false;
+
+  async function findPartners(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!productId) return;
+    const form = new FormData(event.currentTarget);
+    await act({
+      action: "search", mode: "PRODUCT", productId,
+      platform: form.get("platform"), geography: form.get("geography"), niche: form.get("focus"),
+    }, "Found {added} new people to contact.", "search");
+  }
+
+  async function addProfile(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const result = await act({
+      action: "search", mode: "PROFILE", productId,
+      profileUrl: form.get("profileUrl"), niche: form.get("note"),
+    }, "Checked. {added} added to your list.", "profile");
+    if (result && !result.error) setShowManual(false);
+  }
+
+  async function explore(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    await act({
+      action: "search", mode: "AUDIENCE_SCOUT", niche: form.get("audience"), geography: form.get("geography"),
+    }, "Explored. {added} creators found for this audience.", "scout");
+  }
+
+  const move = (card: Card, status: Stage, text: string) => act({ action: "match-status", id: card.match.id, status }, text);
+
+  const productPicker = (className: string, label: string) => (
+    <select className={className} aria-label={label} value={productId} onChange={(e) => setProductId(e.target.value)}>
+      {data.products.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+    </select>
   );
-  const prospectById = useMemo(
-    () => new Map(data.prospects.map((prospect) => [prospect.id, prospect])),
-    [data.prospects],
-  );
 
-  const selectedMatches = useMemo(() => {
-    return data.matches.filter((match) =>
-      (!selectedProduct || match.product_id === selectedProduct) &&
-      (stage === "ALL" || match.status === stage)
-    );
-  }, [data.matches, selectedProduct, stage]);
-
-  const relationshipCards = useMemo(() => {
-    return selectedMatches
-      .map((match) => ({ match, prospect: prospectById.get(match.prospect_id) }))
-      .filter((item): item is { match: Match; prospect: Prospect } => Boolean(item.prospect));
-  }, [selectedMatches, prospectById]);
-
-  const selectedCoverage = data.coverage.find((item) => item.productId === selectedProduct);
-  const totalReach = data.coverage.reduce((sum, item) => sum + item.reachableAudience, 0);
-  const totalPartners = data.coverage.reduce((sum, item) => sum + item.partners, 0);
-  const totalSales = data.coverage.reduce((sum, item) => sum + item.sales, 0);
-
-  async function runSearch(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const form = new FormData(event.currentTarget);
-    if ((mode === "PRODUCT" || mode === "EXPAND") && !selectedProduct) {
-      setMessage("Choose a product first.");
-      return;
-    }
-    setBusy(true); setMessage("");
-    try {
-      const result = await api({
-        action: "search",
-        mode,
-        productId: selectedProduct,
-        niche: form.get("niche"),
-        geography: form.get("geography"),
-        platform: form.get("platform"),
-        minFollowers: form.get("minFollowers"),
-        excludeProductSellers: form.get("excludeProductSellers") === "on" || mode === "AUDIENCE_SCOUT",
-      });
-      await refresh(`${result.queued} search job${result.queued === 1 ? "" : "s"} queued.`);
-      setTab("searches");
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not queue search.");
-      setBusy(false);
-    }
-  }
-
-  async function addProspect(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const form = new FormData(event.currentTarget);
-    setBusy(true); setMessage("");
-    try {
-      await api({
-        action: "create-prospect",
-        productId: form.get("productId"),
-        prospect: {
-          name: form.get("name"), platform: form.get("platform"), handle: form.get("handle"),
-          profileUrl: form.get("profileUrl"), contact: form.get("contact"),
-          audienceSize: form.get("audienceSize"), audienceMarket: form.get("audienceMarket"),
-          activityEvidence: form.get("activityEvidence"), buyerIntentEvidence: form.get("buyerIntentEvidence"),
-          monetizationEvidence: form.get("monetizationEvidence"), reason: form.get("reason"),
-          personalHook: form.get("personalHook"), outreachMessage: form.get("outreachMessage"),
-          affiliateLink: form.get("affiliateLink"), notes: form.get("notes"), fitScore: form.get("fitScore"),
-        },
-      });
-      setShowAdd(false);
-      await refresh("Prospect added and linked to product.");
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not add prospect.");
-      setBusy(false);
-    }
-  }
-
-  async function changeMatchStage(match: Match, next: Stage) {
-    setBusy(true);
-    try {
-      await api({ action: "match-status", id: match.id, status: next });
-      await refresh(`Moved to ${pretty(next)}.`);
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not update stage.");
-      setBusy(false);
-    }
-  }
-
-  async function removeProspect(prospect: Prospect) {
-    if (!confirm(`Remove @${prospect.handle} and all product relationships?`)) return;
-    setBusy(true);
-    try {
-      await api({ action: "delete-prospect", id: prospect.id });
-      await refresh("Prospect removed.");
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not remove prospect.");
-      setBusy(false);
-    }
-  }
-
-  async function removeSearchRun(run: SearchRun) {
-    if (!confirm("Remove this search result from the queue?")) return;
-    setBusy(true);
-    try {
-      await api({ action: "search-delete", id: run.id });
-      await refresh("Search result removed.");
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not remove search result.");
-      setBusy(false);
-    }
-  }
-
-  async function copy(text: string) {
-    await navigator.clipboard.writeText(text);
-    setMessage("Outreach copied.");
-  }
-
-  async function addOpportunity(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const form = new FormData(event.currentTarget);
-    setBusy(true);
-    try {
-      await api({
-        action: "opportunity-create",
-        opportunity: {
-          title: form.get("title"), niche: form.get("niche"), audienceProblem: form.get("audienceProblem"),
-          creatorSignals: form.get("creatorSignals"), audienceMarket: form.get("audienceMarket"),
-          creatorCount: form.get("creatorCount"), estimatedReach: form.get("estimatedReach"),
-          saturation: form.get("saturation"), notes: form.get("notes"),
-        },
-      });
-      setShowOpportunity(false);
-      await refresh("Audience opportunity saved.");
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not save opportunity.");
-      setBusy(false);
-    }
-  }
-
-  async function linkOpportunityCreator(item: Opportunity, prospectId: string) {
-    if (!prospectId) return;
-    setBusy(true);
-    try {
-      await api({ action: "opportunity-link-creator", opportunityId: item.id, prospectId });
-      await refresh("Creator linked to audience opportunity.");
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not link creator.");
-      setBusy(false);
-    }
-  }
-
-  async function unlinkOpportunityCreator(item: Opportunity, prospectId: string) {
-    setBusy(true);
-    try {
-      await api({ action: "opportunity-unlink-creator", opportunityId: item.id, prospectId });
-      await refresh("Creator removed from audience opportunity.");
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not unlink creator.");
-      setBusy(false);
-    }
-  }
-
-  async function linkOpportunity(item: Opportunity, productId: string) {
-    setBusy(true);
-    try {
-      await api({ action: "opportunity-link-product", id: item.id, productId });
-      await refresh(productId ? "Opportunity linked to product." : "Opportunity unlinked.");
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not link opportunity.");
-      setBusy(false);
-    }
-  }
-
-  async function moveOpportunity(item: Opportunity, next: string) {
-    setBusy(true);
-    try {
-      await api({ action: "opportunity-status", id: item.id, status: next });
-      await refresh(`Opportunity moved to ${pretty(next)}.`);
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not update opportunity.");
-      setBusy(false);
-    }
-  }
-
-  async function removeOpportunity(item: Opportunity) {
-    if (!confirm(`Delete "${item.title}"?`)) return;
-    setBusy(true);
-    try {
-      await api({ action: "opportunity-delete", id: item.id });
-      await refresh("Opportunity removed.");
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not remove opportunity.");
-      setBusy(false);
-    }
-  }
+  const nav: Array<[View, string, typeof Search, number | null]> = [
+    ["find", "Find partners", Search, toContact.length || null],
+    ["pipeline", "Pipeline", Users, inProgress || null],
+    ["ideas", "Ideas", Lightbulb, data.opportunities.length || null],
+    ["reports", "Reports", BarChart3, null],
+  ];
 
   return (
-    <main className={styles.page}>
-      <div className={styles.shell}>
-        <div className={styles.topbar}>
-          <a className={styles.brand} href="https://marketplace.golidee.com/"><BrandLockup/></a>
-          <div className={styles.topLinks}>
-            <a className={styles.domainLink} href="https://marketplace.golidee.com/"><ArrowLeft size={13}/><span>Marketplace</span></a>
-            <button className={styles.iconButton} type="button" onClick={() => void refresh("Engine refreshed.")} disabled={busy}>
-              <RefreshCw size={14} className={busy ? styles.spin : ""}/> Refresh
+    <div className={styles.app}>
+      <aside className={styles.sidebar}>
+        <a className={styles.brand} href="https://marketplace.golidee.com/"><BrandLockup /></a>
+        <p className={styles.appName}>Partner Engine</p>
+        <nav className={styles.nav} aria-label="Partner Engine">
+          {nav.map(([value, label, Icon, count]) => (
+            <button key={value} type="button" className={view === value ? styles.navActive : styles.navItem}
+              aria-current={view === value ? "page" : undefined} onClick={() => setView(value)}>
+              <Icon size={17} aria-hidden="true" /><span>{label}</span>{count ? <b>{count}</b> : null}
             </button>
-          </div>
-        </div>
-
-        <section className={styles.hero}>
-          <div className={styles.heroCopy}>
-            <p className={styles.eyebrow}><Sparkles size={13}/> MULTI-PRODUCT DISTRIBUTION</p>
-            <h1>Partner <span>Engine.</span></h1>
-            <p className={styles.heroText}>Products are inputs, not assumptions. Search for a specific product, let the engine rotate priorities, or scout audiences before we build.</p>
-          </div>
-          <div className={styles.heroActions}>
-            <button className={styles.secondaryButton} type="button" onClick={() => { setShowOpportunity(true); setTab("opportunities"); }}><Radar size={14}/> New opportunity</button>
-            <button className={styles.primaryButton} type="button" onClick={() => setShowAdd((value) => !value)}><Plus size={14}/> Add prospect</button>
-          </div>
-        </section>
-
-        <section className={styles.commandPanel}>
-          {data.researchBudget && <p className={styles.budgetGuard}><strong>OpenAI hard guard:</strong> ${data.researchBudget.perRunUsd.toFixed(2)} per run · ${data.researchBudget.dailyUsedUsd.toFixed(2)} / ${data.researchBudget.dailyLimitUsd.toFixed(2)} today · ${data.researchBudget.monthlyUsedUsd.toFixed(2)} / ${data.researchBudget.monthlyLimitUsd.toFixed(2)} this month</p>}
-          <div className={styles.commandModes}>
-            {([
-              ["PRODUCT", "Product Search", Search],
-              ["AUTO", "Auto Search", Sparkles],
-              ["AUDIENCE_SCOUT", "Audience Scout", Radar],
-              ["EXPAND", "Expand Search", Users],
-              ["ALL", "All Products", BarChart3],
-            ] as const).map(([value, label, Icon]) => (
-              <button key={value} type="button" className={mode === value ? styles.modeActive : styles.modeButton} onClick={() => setMode(value)}>
-                <Icon size={14}/><span>{label}</span>
-              </button>
-            ))}
-          </div>
-          <form className={styles.searchForm} onSubmit={runSearch}>
-            <label>Product
-              <select value={selectedProduct} onChange={(event) => setSelectedProduct(event.target.value)} disabled={mode === "AUDIENCE_SCOUT" || mode === "AUTO" || mode === "ALL"}>
-                <option value="">Choose product</option>
-                {data.products.map((product) => <option key={product.id} value={product.id}>{product.name} · {pretty(product.lifecycle_status)}</option>)}
-              </select>
-            </label>
-            <label>Niche / audience<input name="niche" placeholder={mode === "AUDIENCE_SCOUT" ? "e.g. solo creators struggling with invoicing" : "Optional narrowing"}/></label>
-            <label>Geography<input name="geography" placeholder="US, UK, Zambia..."/></label>
-            <label>Platform
-              <select name="platform"><option value="">Any</option><option>Instagram</option><option>TikTok</option><option>YouTube</option><option>X</option><option>LinkedIn</option></select>
-            </label>
-            <label>Minimum followers<input name="minFollowers" type="number" min="1000" defaultValue={10000}/></label>
-            <label className={styles.checkLabel}><input name="excludeProductSellers" type="checkbox" defaultChecked={mode === "AUDIENCE_SCOUT"}/> Prefer creators without equivalent product</label>
-            <button className={styles.primaryButton} type="submit" disabled={busy}><Search size={14}/> Run research</button>
-          </form>
-          <p className={styles.searchHint}>
-            {mode === "AUTO" && "Auto uses lifecycle, product priority, partner coverage, outreach gap and search freshness. New and under-covered products rise first."}
-            {mode === "AUDIENCE_SCOUT" && "Audience Scout is pre-product discovery: find strong audiences, repeated pain and creators who could become launch distribution before anything is built."}
-            {mode === "PRODUCT" && "Search only for the selected product using its audience, problem, creator niches, keywords and target markets."}
-            {mode === "EXPAND" && "Expand deliberately looks beyond the creator pockets already covered for the selected product."}
-            {mode === "ALL" && "Queue a distributed search across the strongest current product priorities without treating every product equally."}
-          </p>
-          <p className={styles.searchHint}><strong>Hard limit:</strong> one product run uses at most 6 web searches and returns at most 8 qualified profiles. All Products is capped at 3 product runs (18 web searches / 24 profiles maximum). Nothing researches in the background unless you press Run research.</p>
-        </section>
-
-        <section className={styles.stats}>
-          <button className={styles.stat} type="button" onClick={() => setTab("coverage")}><span className={styles.statNumber}>{data.products.length}</span><span className={styles.statLabel}>Products</span></button>
-          <button className={styles.stat} type="button" onClick={() => setTab("partners")}><span className={styles.statNumber}>{data.prospects.length}</span><span className={styles.statLabel}>Creators</span></button>
-          <button className={styles.stat} type="button" onClick={() => setTab("partners")}><span className={styles.statNumber}>{totalPartners}</span><span className={styles.statLabel}>Partners</span></button>
-          <button className={styles.stat} type="button" onClick={() => setTab("partners")}><span className={styles.statNumber}>{totalSales}</span><span className={styles.statLabel}>Sales relationships</span></button>
-          <button className={styles.stat} type="button" onClick={() => setTab("coverage")}><span className={styles.statNumber}>{compact(totalReach)}</span><span className={styles.statLabel}>Reach mapped</span></button>
-          <button className={styles.stat} type="button" onClick={() => setTab("opportunities")}><span className={styles.statNumber}>{data.opportunities.length}</span><span className={styles.statLabel}>Opportunities</span></button>
-        </section>
-
-        {message && <p className={styles.message}>{message}</p>}
-
-        <nav className={styles.tabs}>
-          {([["partners","Partners"],["coverage","Product Coverage"],["opportunities","Opportunities"],["searches","Search Queue"]] as const).map(([value,label]) =>
-            <button key={value} type="button" className={tab === value ? styles.tabActive : styles.tabButton} onClick={() => setTab(value)}>{label}</button>
-          )}
+          ))}
         </nav>
+        <div className={styles.sideFoot}>
+          {budget && <p className={styles.budget}>
+            <span>{budget.runsLeftToday} {budget.runsLeftToday === 1 ? "search" : "searches"} left today</span>
+            <small>${budget.monthlyUsedUsd.toFixed(2)} of ${budget.monthlyLimitUsd.toFixed(2)} used this month</small>
+          </p>}
+          <a className={styles.back} href="https://marketplace.golidee.com/"><ArrowLeft size={14} /> Marketplace</a>
+        </div>
+      </aside>
 
-        {showAdd && (
-          <form className={styles.addPanel} onSubmit={addProspect}>
-            <label>Product / scout use<select name="productId" defaultValue={selectedProduct}><option value="">Audience Scout · no product yet</option>{data.products.map((product) => <option key={product.id} value={product.id}>{product.name}</option>)}</select></label>
-            <label>Fit score<input name="fitScore" type="number" min="0" max="100" defaultValue="80"/></label>
-            <label>Name<input name="name" placeholder="Creator name"/></label>
-            <label>Platform<select name="platform"><option>Instagram</option><option>TikTok</option><option>YouTube</option><option>X</option><option>LinkedIn</option></select></label>
-            <label>Handle<input name="handle" required placeholder="@creator"/></label>
-            <label>Audience size<input name="audienceSize" required type="number" min="10000" placeholder="10000"/></label>
-            <label className={styles.full}>Profile URL<input name="profileUrl" type="url" placeholder="Optional if handle maps cleanly"/></label>
-            <label>Contact<input name="contact" placeholder="Email / preferred channel"/></label>
-            <label>Affiliate link<input name="affiliateLink" placeholder="Tracked link when available"/></label>
-            <label className={styles.full}>Audience market<textarea name="audienceMarket" required rows={2} placeholder="Who follows them and where buyers are concentrated."/></label>
-            <label className={styles.full}>Recent activity evidence<textarea name="activityEvidence" required rows={2} placeholder="Current posts/videos showing the creator is active."/></label>
-            <label className={styles.full}>Buyer-intent evidence<textarea name="buyerIntentEvidence" required rows={2} placeholder="Evidence the audience acts on practical recommendations."/></label>
-            <label className={styles.full}>Monetization evidence<textarea name="monetizationEvidence" required rows={2} placeholder="Existing paid resources, sponsors, services or links."/></label>
-            <label className={styles.full}>Why this product fits<textarea name="reason" required rows={2}/></label>
-            <label className={styles.full}>Current personal hook<textarea name="personalHook" required rows={2}/></label>
-            <label className={styles.full}>Personalized outreach<textarea name="outreachMessage" required rows={6}/></label>
-            <label className={styles.full}>Notes<textarea name="notes" rows={2}/></label>
-            <div className={styles.formActions}><button type="button" className={styles.secondaryButton} onClick={() => setShowAdd(false)}>Cancel</button><button className={styles.primaryButton} disabled={busy}>Save prospect</button></div>
-          </form>
-        )}
+      <main className={styles.main}>
+        {notice && <p className={notice.kind === "error" ? styles.noticeError : styles.noticeOk} role="status">
+          {notice.text}<button type="button" onClick={() => setNotice(null)} aria-label="Dismiss">×</button>
+        </p>}
 
-        {tab === "partners" && (
-          <>
-            <div className={styles.filterBar}>
-              <label>Product<select value={selectedProduct} onChange={(event) => setSelectedProduct(event.target.value)}><option value="">All products</option>{data.products.map((product) => <option key={product.id} value={product.id}>{product.name}</option>)}</select></label>
-              <label>Stage<select value={stage} onChange={(event) => setStage(event.target.value as Stage | "ALL")}><option value="ALL">All stages</option>{stages.map((value) => <option key={value}>{value}</option>)}</select></label>
-              {selectedCoverage && <div className={styles.coverageMini}><strong>{selectedCoverage.qualified}</strong> qualified · <strong>{selectedCoverage.partners}</strong> partners · <strong>{compact(selectedCoverage.reachableAudience)}</strong> reach</div>}
-            </div>
-
-            {busy && !relationshipCards.length ? <div className={styles.loading}><LoaderCircle className={styles.spin} size={15}/> Loading relationships…</div> :
-              relationshipCards.length ? <section className={styles.queue}>
-                {relationshipCards.map(({ match, prospect }) => {
-                  const product = productById.get(match.product_id);
-                  const creatorMatches = data.matches.filter((item) => item.prospect_id === prospect.id);
-                  const matchedProducts = creatorMatches
-                    .map((item) => productById.get(item.product_id)?.name)
-                    .filter(Boolean) as string[];
-                  return <details className={styles.card} key={match.id}>
-                    <summary className={styles.cardSummary}>
-                      <span><strong>{prospect.name || `@${prospect.handle}`}</strong><small>@{prospect.handle} · {prospect.platform} · {compact(prospect.audience_size)} followers</small></span>
-                      <span className={styles.statusChip}>{pretty(match.status)}</span>
-                    </summary>
-                    <div className={styles.cardGrid}>
-                      <div className={styles.identity}>
-                        <div className={styles.chips}>
-                          <span className={styles.chip}>{prospect.platform}</span>
-                          <span className={styles.chip}>{compact(prospect.audience_size)} followers</span>
-                          <span className={styles.statusChip}>{pretty(match.status)}</span>
-                          <span className={styles.fitChip}>Fit {match.fit_score}/100</span>
-                        </div>
-                        <h2 className={styles.name}>{prospect.name || `@${prospect.handle}`}</h2>
-                        <p className={styles.handle}>@{prospect.handle}</p>
-                        <div className={styles.productMatch}><span>Matched product</span><strong>{product?.name || "Unknown product"}</strong><small>{match.commission_rate}% affiliate · Fits: {matchedProducts.join(" · ") || "this product"}</small></div>
-                        <p className={styles.reason}>{match.reason || prospect.reason}</p>
-                        <p className={styles.hook}><strong>Hook:</strong> {match.personal_hook || prospect.personal_hook}</p>
-                        <div className={styles.qualificationGrid}>
-                          <div><span>Market</span><p>{prospect.audience_market}</p></div>
-                          <div><span>Activity</span><p>{prospect.activity_evidence}</p></div>
-                          <div><span>Buying intent</span><p>{prospect.buyer_intent_evidence}</p></div>
-                          <div><span>Monetization</span><p>{prospect.monetization_evidence}</p></div>
-                        </div>
-                        <div className={styles.cardActions}>
-                          <a className={styles.openButton} href={prospect.profile_url} target="_blank" rel="noreferrer"><ExternalLink size={13}/> Open profile</a>
-                          <button className={styles.copyButton} type="button" onClick={() => void copy(match.outreach_message || prospect.outreach_message)}><Clipboard size={13}/> Copy outreach</button>
-                        </div>
-                      </div>
-                      <div className={styles.messageBox}>
-                        <p className={styles.messageTitle}>Product-specific outreach</p>
-                        <p className={styles.messageBody}>{match.outreach_message || prospect.outreach_message}</p>
-                        <div className={styles.nextAction}><strong>Next action</strong><span>{nextAction(match.status)}</span></div>
-                        <div className={styles.performanceStrip}><span>{match.conversions} conversions</span><span>{money(match.revenue_cents)} tracked revenue</span></div>
-                      </div>
-                    </div>
-                    <div className={styles.stageBar}>
-                      {stages.map((next) => <button key={next} type="button" className={next === "SALE" ? styles.saleButton : styles.stageButton} disabled={match.status === next || busy} onClick={() => void changeMatchStage(match, next)}>{next === match.status && <Check size={11}/>} {pretty(next)}</button>)}
-                      <button type="button" className={styles.deleteButton} onClick={() => void removeProspect(prospect)} aria-label={`Remove @${prospect.handle}`}><Trash2 size={13}/></button>
-                    </div>
-                  </details>;
-                })}
-              </section> : <div className={styles.empty}><div className={styles.emptyIcon}><Users size={22}/></div><h2>No relationships in this view.</h2><p>Choose another product/stage or queue a search. Creators live once in the engine and can match multiple products.</p></div>
-            }
-          </>
-        )}
-
-        {tab === "coverage" && (
-          <section className={styles.coverageGrid}>
-            {data.coverage.map((item) => {
-              const product = productById.get(item.productId);
-              return <article className={styles.coverageCard} key={item.productId}>
-                <div className={styles.coverageHead}><div><span>{pretty(item.lifecycleStatus)}</span><h2>{item.productName}</h2></div><strong>P{product?.priority ?? 50}</strong></div>
-                <div className={styles.coverageNumbers}>
-                  <div><b>{item.qualified}</b><span>Qualified</span></div>
-                  <div><b>{item.contacted}</b><span>Contacted</span></div>
-                  <div><b>{item.replied}</b><span>Replies</span></div>
-                  <div><b>{item.partners}</b><span>Partners</span></div>
-                  <div><b>{item.conversions}</b><span>Conversions</span></div>
-                  <div><b>{compact(item.reachableAudience)}</b><span>Reach</span></div>
-                </div>
-                <p><strong>Covered:</strong> {item.channels.length ? item.channels.join(" · ") : "No channels yet"}</p>
-                <p><strong>Channel gaps:</strong> {item.channelGaps.length ? item.channelGaps.join(" · ") : "None across tracked channels"}</p>
-                <p><strong>Target geographies:</strong> {item.targetGeographies || "Not set"}</p>
-                <p><strong>Observed markets:</strong> {item.markets.length ? item.markets.join(" · ") : "No audience-market evidence yet"}</p>
-                <div className={styles.coverageActions}>
-                  <button type="button" onClick={() => { setSelectedProduct(item.productId); setMode("PRODUCT"); setTab("partners"); }}>Open partners</button>
-                  <button type="button" onClick={() => { setSelectedProduct(item.productId); setMode("EXPAND"); window.scrollTo({ top: 0, behavior: "smooth" }); }}>Expand search</button>
-                </div>
-              </article>;
-            })}
-            {!data.coverage.length && <div className={styles.noResults}>No products are registered yet. Add products in Marketplace Manage first.</div>}
-          </section>
-        )}
-
-        {tab === "opportunities" && (
-          <>
-            <div className={styles.sectionToolbar}>
-              <div><p className={styles.eyebrow}>BUILD AFTER DISTRIBUTION</p><h2>Audience opportunities</h2></div>
-              <button className={styles.primaryButton} type="button" onClick={() => setShowOpportunity((value) => !value)}><Plus size={14}/> Add opportunity</button>
-            </div>
-            {showOpportunity && <form className={styles.addPanel} onSubmit={addOpportunity}>
-              <label>Opportunity title<input name="title" required placeholder="Creator bookkeeping pain"/></label>
-              <label>Niche<input name="niche" placeholder="Creator finance"/></label>
-              <label className={styles.full}>Repeated audience problem<textarea name="audienceProblem" required rows={3}/></label>
-              <label className={styles.full}>Creator / content signals<textarea name="creatorSignals" rows={3} placeholder="Who has the audience, what keeps recurring, strong posts/videos."/></label>
-              <label>Audience market<input name="audienceMarket" placeholder="US / UK creator economy"/></label>
-              <label>Saturation<input name="saturation" placeholder="Low / medium / crowded + evidence"/></label>
-              <label>Creators observed<input name="creatorCount" type="number" min="0"/></label>
-              <label>Estimated reachable audience<input name="estimatedReach" type="number" min="0"/></label>
-              <label className={styles.full}>Notes<textarea name="notes" rows={2}/></label>
-              <div className={styles.formActions}><button type="button" className={styles.secondaryButton} onClick={() => setShowOpportunity(false)}>Cancel</button><button className={styles.primaryButton} disabled={busy}>Save opportunity</button></div>
-            </form>}
-            <section className={styles.opportunityGrid}>
-              {data.opportunities.map((item) => {
-                const creatorLinks = data.opportunityCreators.filter((link) => link.opportunity_id === item.id);
-                const linkedCreatorIds = new Set(creatorLinks.map((link) => link.prospect_id));
-                const availableCreators = data.prospects.filter((prospect) => !linkedCreatorIds.has(prospect.id));
-                return <article className={styles.opportunityCard} key={item.id}>
-                <div className={styles.opportunityHead}><span>{pretty(item.status)}</span><button type="button" onClick={() => void removeOpportunity(item)}><Trash2 size={13}/></button></div>
-                <h2>{item.title}</h2><p className={styles.opportunityProblem}>{item.audience_problem}</p>
-                <div className={styles.opportunityMeta}><span>{item.niche || "Unspecified niche"}</span><span>{item.creator_count} creators</span><span>{compact(item.estimated_reach)} reach</span></div>
-                {item.creator_signals && <p><strong>Signals:</strong> {item.creator_signals}</p>}
-                {item.audience_market && <p><strong>Market:</strong> {item.audience_market}</p>}
-                {item.saturation && <p><strong>Saturation:</strong> {item.saturation}</p>}
-                <div className={styles.opportunityLink}>
-                  <a href="/manage?mode=add" target="_blank" rel="noreferrer"><Plus size={12}/> Create product</a>
-                  <select value={item.linked_product_id || ""} onChange={(event) => void linkOpportunity(item, event.target.value)} disabled={busy}>
-                    <option value="">Not linked to a product</option>
-                    {data.products.map((product) => <option key={product.id} value={product.id}>{product.name}</option>)}
-                  </select>
-                </div>
-                <div className={styles.scoutCreators}>
-                  <strong>Audience creators</strong>
-                  <div className={styles.scoutCreatorList}>
-                    {creatorLinks.map((link) => {
-                      const creator = prospectById.get(link.prospect_id);
-                      return creator ? <span key={link.id}><a href={creator.profile_url} target="_blank" rel="noreferrer">@{creator.handle}</a><button type="button" onClick={() => void unlinkOpportunityCreator(item, creator.id)} aria-label={`Unlink @${creator.handle}`}>×</button></span> : null;
-                    })}
-                    {!creatorLinks.length && <em>No creators linked yet.</em>}
-                  </div>
-                  <select value="" onChange={(event) => void linkOpportunityCreator(item, event.target.value)} disabled={busy || !availableCreators.length}>
-                    <option value="">Link a researched creator…</option>
-                    {availableCreators.map((creator) => <option key={creator.id} value={creator.id}>@{creator.handle} · {creator.platform} · {compact(creator.audience_size)}</option>)}
-                  </select>
-                </div>
-                <select value={item.status} onChange={(event) => void moveOpportunity(item, event.target.value)} disabled={busy}>{opportunityStages.map((value) => <option key={value} value={value}>{pretty(value)}</option>)}</select>
-              </article>;
-              })}
-              {!data.opportunities.length && <div className={styles.empty}><div className={styles.emptyIcon}><Radar size={22}/></div><h2>No audience opportunities yet.</h2><p>Run Audience Scout or add one from research. The goal is to know the audience and likely distribution before building the next product.</p></div>}
+        {!loaded ? <p className={styles.loading}><LoaderCircle className={styles.spin} size={16} /> Loading…</p> :
+          !data.products.length ? (
+            <section className={styles.emptyLarge}>
+              <h1>Add a product first.</h1>
+              <p>The engine finds partners for products in your marketplace. Add one, then come back.</p>
+              <a className={styles.primary} href="/manage?mode=add">Add a product</a>
             </section>
+          ) : (
+          <>
+            {view === "find" && (
+              <section>
+                <form onSubmit={findPartners} className={styles.ask}>
+                  <h1 className={styles.question}>
+                    <span>Who should sell</span>
+                    {productPicker(styles.headlinePicker, "Product")}
+                    <span>?</span>
+                  </h1>
+                  <p className={styles.lede}>The engine searches the web for real creators whose audience fits this product and writes the first message for you. Each search takes about a minute.</p>
+                  <details className={styles.options}>
+                    <summary>Narrow it down</summary>
+                    <div className={styles.optionGrid}>
+                      <label>Platform
+                        <select name="platform" defaultValue=""><option value="">Any</option>{PLATFORMS.map((p) => <option key={p}>{p}</option>)}</select>
+                      </label>
+                      <label>Audience country<input name="geography" placeholder="e.g. Nigeria, UK" /></label>
+                      <label className={styles.wide}>Anything specific?<input name="focus" placeholder="e.g. career coaches who post about CVs" /></label>
+                    </div>
+                  </details>
+                  <div className={styles.askActions}>
+                    <button className={styles.primary} type="submit" disabled={Boolean(working) || outOfBudget}>
+                      {working === "search" ? <><LoaderCircle className={styles.spin} size={16} /> Searching the web…</> : <><Search size={16} /> Find partners</>}
+                    </button>
+                    <button className={styles.textButton} type="button" onClick={() => setShowManual((v) => !v)}>I already found someone</button>
+                  </div>
+                  {outOfBudget && <p className={styles.hint}>Today&apos;s search budget is used up. It resets at midnight UTC.</p>}
+                </form>
+
+                {showManual && (
+                  <form className={styles.manual} onSubmit={addProfile}>
+                    <label>Their profile link<input name="profileUrl" type="url" required placeholder="https://www.instagram.com/…" /></label>
+                    <label>Why them? (optional)<input name="note" placeholder="e.g. posts weekly about job interviews" /></label>
+                    <div className={styles.manualActions}>
+                      <button className={styles.primary} type="submit" disabled={Boolean(working) || outOfBudget}>
+                        {working === "profile" ? <><LoaderCircle className={styles.spin} size={16} /> Checking…</> : "Check and add"}
+                      </button>
+                      <span className={styles.hint}>The engine verifies the profile and writes the message. Uses one search.</span>
+                    </div>
+                  </form>
+                )}
+
+                <h2 className={styles.sectionTitle}>Ready to contact <span>{toContact.length}</span></h2>
+                {toContact.length ? (
+                  <div className={styles.list}>
+                    {toContact.map((card) => <ContactCard key={card.match.id} card={card} busy={Boolean(working)}
+                      onSent={() => move(card, "CONTACTED", `Moved @${card.prospect.handle} to Waiting for reply.`)}
+                      onSkip={() => move(card, "NO_REPLY", `Skipped @${card.prospect.handle}.`)}
+                      onCopied={() => setNotice({ kind: "ok", text: "Message copied. Paste it in their DMs or email." })} />)}
+                  </div>
+                ) : (
+                  <p className={styles.empty}>Nobody waiting to be contacted. Press <strong>Find partners</strong> to get a fresh list.</p>
+                )}
+              </section>
+            )}
+
+            {view === "pipeline" && (
+              <section>
+                <header className={styles.viewHead}>
+                  <h1>Pipeline</h1>
+                  {productPicker(styles.inlinePicker, "Product")}
+                </header>
+                <div className={styles.columns}>
+                  <Column title="Waiting for reply" items={byStage("CONTACTED")} empty="People you've messaged show up here.">
+                    {(card) => <>
+                      <button type="button" className={styles.small} disabled={Boolean(working)} onClick={() => move(card, "REPLIED", "Moved to Talking.")}>They replied</button>
+                      <button type="button" className={styles.smallQuiet} disabled={Boolean(working)} onClick={() => move(card, "NO_REPLY", "Moved to Not now.")}>No reply</button>
+                    </>}
+                  </Column>
+                  <Column title="Talking" items={byStage("REPLIED")} empty="Replies show up here.">
+                    {(card) => <>
+                      <button type="button" className={styles.small} disabled={Boolean(working)} onClick={() => move(card, "PARTNER", `@${card.prospect.handle} is now a partner.`)}>They&apos;re in</button>
+                      <button type="button" className={styles.smallQuiet} disabled={Boolean(working)} onClick={() => move(card, "NO_REPLY", "Moved to Not now.")}>Not now</button>
+                    </>}
+                  </Column>
+                  <Column title="Partners" items={byStage("PARTNER", "SALE")} empty="Creators who agree to promote show up here." partner>
+                    {(card) => <PartnerTools card={card} busy={Boolean(working)}
+                      onSale={(amountUsd) => act({ action: "record-sale", id: card.match.id, amountUsd }, "Sale logged.")}
+                      onSave={(values) => act({ action: "update-prospect", id: card.prospect.id, ...values }, "Saved.")} />}
+                  </Column>
+                </div>
+                {byStage("NO_REPLY").length > 0 && (
+                  <details className={styles.parked}>
+                    <summary>Not now ({byStage("NO_REPLY").length})</summary>
+                    <ul>
+                      {byStage("NO_REPLY").map((card) => <li key={card.match.id}>
+                        <a href={card.prospect.profile_url} target="_blank" rel="noreferrer">@{card.prospect.handle}</a>
+                        <span>{card.prospect.platform}</span>
+                        <button type="button" className={styles.textButton} disabled={Boolean(working)} onClick={() => move(card, "NEW", "Moved back to Ready to contact.")}>Bring back</button>
+                        <button type="button" className={styles.iconQuiet} aria-label={`Delete @${card.prospect.handle}`} disabled={Boolean(working)}
+                          onClick={() => { if (confirm(`Delete @${card.prospect.handle} for good?`)) void act({ action: "delete-prospect", id: card.prospect.id }, "Deleted."); }}><Trash2 size={14} /></button>
+                      </li>)}
+                    </ul>
+                  </details>
+                )}
+              </section>
+            )}
+
+            {view === "ideas" && (
+              <section>
+                <form className={styles.ask} onSubmit={explore}>
+                  <h1 className={styles.questionSmall}>What audience could your next product serve?</h1>
+                  <p className={styles.lede}>Describe a group of people. The engine finds creators who already talk to them and the problem they keep raising, before you build anything.</p>
+                  <div className={styles.scoutRow}>
+                    <input name="audience" required placeholder="e.g. nurses moving abroad, first-time freelancers in Lagos" aria-label="Audience" />
+                    <input name="geography" placeholder="Country (optional)" aria-label="Country" />
+                    <button className={styles.primary} type="submit" disabled={Boolean(working) || outOfBudget}>
+                      {working === "scout" ? <><LoaderCircle className={styles.spin} size={16} /> Exploring…</> : "Explore"}
+                    </button>
+                  </div>
+                </form>
+                {data.opportunities.length ? (
+                  <div className={styles.list}>
+                    {data.opportunities.map((idea) => {
+                      const creators = data.opportunityCreators.filter((c) => c.opportunity_id === idea.id).map((c) => prospectById.get(c.prospect_id)).filter(Boolean) as Prospect[];
+                      return <article className={styles.idea} key={idea.id}>
+                        <h2>{idea.title}</h2>
+                        <p>{idea.audience_problem}</p>
+                        {idea.saturation && <p className={styles.muted}>Competition: {idea.saturation}</p>}
+                        {creators.length > 0 && <p className={styles.creatorLinks}>
+                          {creators.map((c) => <a key={c.id} href={c.profile_url} target="_blank" rel="noreferrer">@{c.handle} <small>{compact(c.audience_size)}</small></a>)}
+                        </p>}
+                        <div className={styles.ideaActions}>
+                          <label>Linked product
+                            <select value={idea.linked_product_id || ""} disabled={Boolean(working)}
+                              onChange={(e) => void act({ action: "opportunity-link-product", id: idea.id, productId: e.target.value }, e.target.value ? "Linked. Its creators are now in that product's list." : "Unlinked.")}>
+                              <option value="">Not built yet</option>
+                              {data.products.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+                            </select>
+                          </label>
+                          <a className={styles.textButton} href="/manage?mode=add" target="_blank" rel="noreferrer">Create a product</a>
+                          <button type="button" className={styles.iconQuiet} aria-label="Delete idea" disabled={Boolean(working)}
+                            onClick={() => { if (confirm(`Delete "${idea.title}"?`)) void act({ action: "opportunity-delete", id: idea.id }, "Idea deleted."); }}><Trash2 size={14} /></button>
+                        </div>
+                      </article>;
+                    })}
+                  </div>
+                ) : <p className={styles.empty}>No ideas yet. Describe an audience above to explore one.</p>}
+              </section>
+            )}
+
+            {view === "reports" && (
+              <section>
+                <header className={styles.viewHead}><h1>Reports</h1></header>
+                <div className={styles.table} role="table" aria-label="Results by product">
+                  <div className={styles.tr} role="row">
+                    {["Product", "Found", "Contacted", "Replied", "Partners", "Sales", "Revenue"].map((h) => <span key={h} role="columnheader">{h}</span>)}
+                  </div>
+                  {data.coverage.map((row) => <div className={styles.tr} role="row" key={row.productId}>
+                    <span role="cell">{row.productName}</span>
+                    <span role="cell">{row.found}</span>
+                    <span role="cell">{row.found - row.toContact}</span>
+                    <span role="cell">{row.talking + row.partners}</span>
+                    <span role="cell">{row.partners}</span>
+                    <span role="cell">{row.conversions}</span>
+                    <span role="cell">{money(row.revenueCents)}</span>
+                  </div>)}
+                </div>
+
+                <h2 className={styles.sectionTitle}>Search history</h2>
+                {data.searchRuns.length ? <ul className={styles.history}>
+                  {data.searchRuns.map((run) => {
+                    const name = run.mode === "AUDIENCE_SCOUT" ? `Explored: ${run.niche}` :
+                      run.mode === "PROFILE" ? `Checked: ${run.target_url.replace(/^https:\/\/(www\.)?/, "")}` :
+                      `Partners for ${data.products.find((p) => p.id === run.product_id)?.name || "a deleted product"}`;
+                    return <li key={run.id}>
+                      <div>
+                        <strong>{name}</strong>
+                        <small>{when(run.created_at)} — {run.status === "DONE" ? `${run.profiles_added} added` : run.status === "FAILED" ? "Failed" : "Running"}, ${Number(run.estimated_cost_usd || 0).toFixed(3)}</small>
+                        {run.last_error && <p className={styles.error}>{run.last_error}</p>}
+                      </div>
+                      <div className={styles.historyActions}>
+                        {run.status === "FAILED" && <button type="button" className={styles.small} disabled={Boolean(working) || outOfBudget}
+                          onClick={() => void act({ action: "search-retry", id: run.id }, "Retried. {added} added.", "search")}><RotateCcw size={13} /> Retry</button>}
+                        {run.status !== "RUNNING" && <button type="button" className={styles.iconQuiet} aria-label="Remove from history" disabled={Boolean(working)}
+                          onClick={() => void act({ action: "search-delete", id: run.id })}><Trash2 size={14} /></button>}
+                      </div>
+                    </li>;
+                  })}
+                </ul> : <p className={styles.empty}>No searches yet.</p>}
+                {budget && <p className={styles.hint}>Spending limits: $0.10 per search, ${budget.dailyLimitUsd.toFixed(2)} per day, ${budget.monthlyLimitUsd.toFixed(2)} per month. Used today: ${budget.dailyUsedUsd.toFixed(2)}.</p>}
+              </section>
+            )}
           </>
         )}
+        {product && view === "find" && product.affiliate_rate > 0 && <p className={styles.footnote}>Messages offer {product.affiliate_rate}% commission on {product.name}.</p>}
+      </main>
+    </div>
+  );
+}
 
-        {tab === "searches" && (
-          <section className={styles.searchQueue}>
-            {data.searchRuns.map((run) => {
-              const product = productById.get(run.product_id);
-              return <article className={styles.searchRun} key={run.id}>
-                <div className={styles.searchRunHead}><span>{pretty(run.mode)}</span><div><strong className={styles[`run${pretty(run.status).replaceAll(" ", "")}`] || ""}>{run.status}</strong><button type="button" className={styles.deleteButton} onClick={() => void removeSearchRun(run)} aria-label="Remove search result"><Trash2 size={13}/></button></div></div>
-                <h2>{run.mode === "AUDIENCE_SCOUT" ? (run.niche || "Audience discovery") : (product?.name || "Product search")}</h2>
-                <p>{run.query_brief}</p>
-                <div className={styles.searchRunMeta}><span>{run.platform || "Any platform"}</span><span>{run.geography || "Any geography"}</span><span>{compact(run.min_followers)}+ followers</span>{run.exclude_product_sellers ? <span>Exclude equivalent sellers</span> : null}<span>{run.web_search_calls || 0}/{run.max_web_search_calls || 6} web searches</span><span>{run.profiles_added || 0}/{run.candidate_limit || 8} profiles added</span><span>Est. {money(Math.round(Number(run.estimated_cost_usd || 0) * 100))}</span>{run.input_tokens || run.output_tokens ? <span>{compact(run.input_tokens || 0)} in · {compact(run.output_tokens || 0)} out tokens</span> : null}</div>
-                {run.last_error ? <p>Research error: {run.last_error}</p> : null}
-              </article>;
-            })}
-            {!data.searchRuns.length && <div className={styles.empty}><div className={styles.emptyIcon}><Search size={22}/></div><h2>No search jobs yet.</h2><p>Use the command panel above to queue Product, Auto, Audience Scout, Expand or All Products search work.</p></div>}
-          </section>
-        )}
-
-        <footer className={styles.footerNote}>
-          <span><strong>GOLIDE Partner Engine</strong> · product-aware distribution workspace</span>
-          <span>Audience → Product → Partners → Launch → Coverage</span>
-        </footer>
+function ContactCard({ card, busy, onSent, onSkip, onCopied }: { card: Card; busy: boolean; onSent: () => void; onSkip: () => void; onCopied: () => void }) {
+  const { match, prospect } = card;
+  const message = match.outreach_message || prospect.outreach_message;
+  const sources = sourcesOf(prospect.notes);
+  async function copy() {
+    try { await navigator.clipboard.writeText(message); onCopied(); } catch { /* clipboard blocked; text stays selectable */ }
+  }
+  return (
+    <article className={styles.card}>
+      <header className={styles.cardHead}>
+        <div>
+          <h3>{prospect.name || `@${prospect.handle}`}</h3>
+          <p className={styles.muted}>@{prospect.handle} on {prospect.platform}, {compact(prospect.audience_size)} followers</p>
+        </div>
+        <span className={styles.fit} title="How well their audience fits this product">{match.fit_score}% fit</span>
+      </header>
+      <p className={styles.why}>{match.reason || prospect.reason}</p>
+      <blockquote className={styles.message}>{message}</blockquote>
+      <div className={styles.cardActions}>
+        <button type="button" className={styles.primary} onClick={() => void copy()}><Copy size={15} /> Copy message</button>
+        <a className={styles.secondary} href={prospect.profile_url} target="_blank" rel="noreferrer"><ExternalLink size={15} /> Open profile</a>
+        <button type="button" className={styles.secondary} disabled={busy} onClick={onSent}><Check size={15} /> I sent it</button>
+        <button type="button" className={styles.textButton} disabled={busy} onClick={onSkip}>Not a fit</button>
       </div>
-    </main>
+      <details className={styles.evidence}>
+        <summary>Why the engine picked them</summary>
+        <dl>
+          {prospect.audience_market && <><dt>Audience</dt><dd>{prospect.audience_market}</dd></>}
+          {prospect.activity_evidence && <><dt>Recently active</dt><dd>{prospect.activity_evidence}</dd></>}
+          {prospect.buyer_intent_evidence && <><dt>Audience buys</dt><dd>{prospect.buyer_intent_evidence}</dd></>}
+          {prospect.monetization_evidence && <><dt>Already earns</dt><dd>{prospect.monetization_evidence}</dd></>}
+          {prospect.contact && <><dt>Contact</dt><dd>{prospect.contact}</dd></>}
+        </dl>
+        {sources.length > 0 && <p className={styles.sources}>Checked on: {sources.map((url, i) => <a key={url} href={url} target="_blank" rel="noreferrer">{i ? ", " : ""}{new URL(url).hostname.replace(/^www\./, "")}</a>)}</p>}
+      </details>
+    </article>
+  );
+}
+
+function Column({ title, items, empty, partner = false, children }: { title: string; items: Card[]; empty: string; partner?: boolean; children: (card: Card) => ReactNode }) {
+  return (
+    <section className={partner ? styles.columnPartner : styles.column}>
+      <h2>{title} <span>{items.length}</span></h2>
+      {items.length ? items.map((card) => (
+        <article className={styles.mini} key={card.match.id}>
+          <a href={card.prospect.profile_url} target="_blank" rel="noreferrer"><strong>{card.prospect.name || `@${card.prospect.handle}`}</strong></a>
+          <small>@{card.prospect.handle} on {card.prospect.platform}, {compact(card.prospect.audience_size)}</small>
+          <div className={styles.miniActions}>{children(card)}</div>
+        </article>
+      )) : <p className={styles.columnEmpty}>{empty}</p>}
+    </section>
+  );
+}
+
+function PartnerTools({ card, busy, onSale, onSave }: { card: Card; busy: boolean; onSale: (amountUsd: number) => void; onSave: (values: { contact: string; affiliateLink: string; notes: string }) => void }) {
+  const [amount, setAmount] = useState("");
+  return (
+    <div className={styles.partnerTools}>
+      <p className={styles.muted}>{card.match.conversions} {card.match.conversions === 1 ? "sale" : "sales"}, {money(card.match.revenue_cents)}</p>
+      <form className={styles.saleForm} onSubmit={(e) => { e.preventDefault(); onSale(Number(amount || 0)); setAmount(""); }}>
+        <input type="number" min="0" step="0.01" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Sale $" aria-label="Sale amount in dollars" />
+        <button type="submit" className={styles.small} disabled={busy}>Log a sale</button>
+      </form>
+      <details>
+        <summary>Contact and link</summary>
+        <form className={styles.editForm} onSubmit={(e) => {
+          e.preventDefault();
+          const form = new FormData(e.currentTarget);
+          onSave({ contact: String(form.get("contact") || ""), affiliateLink: String(form.get("affiliateLink") || ""), notes: String(form.get("notes") || "") });
+        }}>
+          <label>Contact<input name="contact" defaultValue={card.prospect.contact} placeholder="Email or DM handle" /></label>
+          <label>Their affiliate link<input name="affiliateLink" defaultValue={card.prospect.affiliate_link} placeholder="https://whop.com/…" /></label>
+          <label>Notes<textarea name="notes" rows={2} defaultValue={card.prospect.notes} /></label>
+          <button type="submit" className={styles.small} disabled={busy}>Save</button>
+        </form>
+      </details>
+    </div>
   );
 }
