@@ -951,3 +951,42 @@ linear-gradient(90deg,#f9f9fa 0%,#f9f9fa 52%,#f9f9fa 100%)}
 .founder-profiles{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 0}
 .founder-profiles a{border:1px solid var(--neo-line,var(--line));border-radius:999px;padding:7px 12px;font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--cyan,inherit)}
 .founder-profiles a:hover{background:rgba(233,196,106,0.08)}
+
+/* Founder hero banner: always rendered in its dark look, even when the site is in light theme.
+   Generated from the light overrides above; keeps the portrait, ribbons and text treatment as designed. */
+[data-theme="light"] .hero-banner.founder-banner{--neo-bg:#0b0c10;--neo-panel:#0b0c10;--neo-line:rgba(233,196,106,0.18);--neo-text:#ecedef;--neo-muted:#6b6f79;--cyan:#e9c46a;--gold:#e9c46a;--gold2:#e9c46a;--paper:#ecedef;--muted:#9a9ea8;--line:rgba(255,255,255,0.12);--ink:#0b0c10;background:#0b0c10!important;box-shadow:0 34px 100px rgba(0,0,0,0.42),0 0 55px rgba(233,196,106,0.06)!important;color:#ecedef}
+[data-theme="light"] .hero-banner.founder-banner h1{color:#ecedef}
+[data-theme="light"] .hero-banner.founder-banner .hero-undertext strong{color:#ecedef}
+.founder-banner .founder-profiles{margin:18px 0 6px}
+.founder-banner .hero-undertext{max-width:560px}
+[data-theme="light"] .founder-banner .neo-copy h1 span{-webkit-text-stroke:1px rgba(255,255,255,0.7)!important}
+[data-theme="light"] .founder-banner .neo-copy>p:not(.neo-kicker){color:#9a9ea8!important}
+[data-theme="light"] .founder-banner .neo-button.solid{color:var(--gold-ink)!important;box-shadow:0 0 35px rgba(233,196,106,0.15)!important}
+[data-theme="light"] .founder-banner .neo-button.bare{color:#9a9ea8!important}
+[data-theme="light"] .founder-banner .neo-button.invert{background:#0b0c10!important;border-color:#0b0c10!important}
+[data-theme="light"] .founder-banner .neo-cta .neo-kicker{color:#0b0c10!important}
+[data-theme="light"] .founder-banner .project-hero-grid>div:first-child>p:not(.neo-kicker){color:#9a9ea8!important}
+[data-theme="light"] .founder-banner .coming-hero>p:not(.neo-kicker):not(.risk-note){color:#9a9ea8!important}
+[data-theme="light"] .neo-hero.hero-banner.founder-banner{box-shadow:none!important}
+[data-theme="light"] .founder-banner .hero-banner-media{background:#0b0c10!important}
+[data-theme="light"] .founder-banner .hero-banner-media:after{background:linear-gradient(90deg,rgba(0,0,0,0.92) 0%,rgba(0,0,0,0.76) 42%,rgba(0,0,0,0.34) 72%,rgba(0,0,0,0.5) 100%),linear-gradient(180deg,rgba(11,12,16,0.16),rgba(11,12,16,0.58))!important}
+[data-theme="light"] .founder-banner .hero-banner-grid{background-image:linear-gradient(rgba(233,196,106,0.045) 1px,transparent 1px),linear-gradient(90deg,rgba(233,196,106,0.045) 1px,transparent 1px)!important;mask-image:linear-gradient(90deg,#0b0c10 0%,rgba(0,0,0,0.7) 62%,transparent 100%)!important}
+[data-theme="light"] .founder-banner .hero-banner-scan{background:linear-gradient(180deg,transparent,rgba(233,196,106,0.14),transparent)!important}
+[data-theme="light"] .founder-banner .hero-banner-copy h1{text-shadow:0 12px 42px rgba(0,0,0,0.5)!important}
+[data-theme="light"] .founder-banner .hero-banner-copy h1 span{color:#ecedef!important}
+[data-theme="light"] .hero-banner.founder-banner .neo-copy>p.hero-undertext{color:#9a9ea8!important}
+[data-theme="light"] .hero-banner.founder-banner .floating-badge{background:rgba(184,243,91,.92)!important;box-shadow:0 18px 50px rgba(0,0,0,0.28),0 0 40px rgba(184,243,91,.12)!important}
+[data-theme="light"] .founder-banner .hero-future-field{background:radial-gradient(circle at 72% 44%,rgba(255,255,255,0.03),transparent 24%),
+radial-gradient(circle at 87% 54%,rgba(233,196,106,0.025),transparent 32%),
+linear-gradient(90deg,#0b0c10 0%,#0b0c10 52%,#0b0c10 100%)!important}
+[data-theme="light"] .founder-banner .future-line{color:rgba(255,255,255,0.22)!important;text-shadow:0 0 16px rgba(255,255,255,0.08)!important}
+[data-theme="light"] .founder-banner .future-wire{background:linear-gradient(90deg,transparent,rgba(255,255,255,0.18),rgba(233,196,106,0.15),transparent)!important}
+[data-theme="light"] .founder-banner .future-noise{background-image:radial-gradient(circle,rgba(255,255,255,0.088) 0 1px,transparent 1.5px)!important;mask-image:linear-gradient(90deg,transparent 22%,#0b0c10 55%,#0b0c10)!important}
+[data-theme="light"] .founder-banner .hero-real-portrait img{drop-shadow:0 30px 60px rgba(0,0,0,0.5)!important;filter:contrast(1.06) brightness(.96) drop-shadow(-14px 10px 28px rgba(0,0,0,0.7)) drop-shadow(2px -2px 13px rgba(255,255,255,0.15))!important}
+[data-theme="light"] .hero-banner.founder-banner:after{background:linear-gradient(90deg,rgba(0,0,0,0.96) 0%,rgba(0,0,0,0.78) 35%,rgba(0,0,0,0.18) 60%,rgba(0,0,0,0.02) 82%),linear-gradient(0deg,rgba(0,0,0,0.5),transparent 48%)!important}
+@media (max-width:620px){[data-theme="light"] .hero-banner.founder-banner:after{background:linear-gradient(90deg,rgba(0,0,0,0.96) 0%,rgba(0,0,0,0.78) 35%,rgba(0,0,0,0.18) 60%,rgba(0,0,0,0.02) 82%),linear-gradient(0deg,rgba(0,0,0,0.5),transparent 48%)!important}}
+[data-theme="light"] .founder-banner .hero-prompt{color:#ecedef!important}
+[data-theme="light"] .hero-banner.founder-banner .hero-undertext{color:#6b6f79!important}
+[data-theme="light"] .founder-banner .hero-ribbons{filter:drop-shadow(0 0 25px rgba(233,196,106,0.14))!important}
+[data-theme="light"] .founder-banner .hero-ribbon{border:1px solid rgba(255,255,255,0.54)!important;background:linear-gradient(90deg,#181b21 0%,#e9c46a 18%,#ecedef 38%,#e9c46a 54%,#ecedef 67%,#343842 100%)!important;box-shadow:inset 0 2px rgba(255,255,255,0.62),inset 0 -3px rgba(0,0,0,0.68),0 0 22px rgba(233,196,106,0.25)!important}
+[data-theme="light"] .founder-banner .neo-button:not(.solid){color:#ecedef!important}

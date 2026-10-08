@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowDown, ArrowRight, BrainCircuit, Code2, Dna, Download, Globe2, ShieldCheck, Workflow } from "lucide-react";
 import { Footer, Header } from "../shared";
 import { MediaSlot } from "../media-slot";
+import { HeroPortrait } from "../kinetic";
 
 const PROFILES = [
   { label: "LinkedIn", href: "https://www.linkedin.com/in/esiah-kapinga" },
@@ -58,7 +59,33 @@ const experienceImages = [1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8];
 
 export default function FounderPage() {
   return <main className="neo-site founder-page"><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(profilePage).replace(/</g, "\\u003c") }} /><Header/>
-    <section className="founder-hero shell"><div className="founder-hero-copy"><p className="eyebrow"><span/> Founder / Builder / Scientist</p><h1>Esiah<br/><em>Kapinga.</em></h1><p><strong>Esiah Kapinga</strong> is a Zambian microbiologist, software developer and the founder of GOLIDE. From a village in Samfya to microbiology, software, quality systems and digital products - the work is built around one idea: capability compounds when disciplines connect.</p><p className="founder-profiles">{PROFILES.map(p=><a key={p.href} href={p.href} target="_blank" rel="me noreferrer">{p.label}</a>)}</p><a className="scroll-cue" href="#story">The origin <ArrowDown size={17}/></a></div><div className="portrait-frame"><img className="raw-fill" src="/founder/profile-auditorium-bw.webp?v=20260907-final" alt="Esiah Kapinga, founder of GOLIDE"/><div className="portrait-grid"/><div className="portrait-label"><span>Founder, GOLIDE</span><strong>Lusaka, Zambia</strong></div></div></section>
+    <section className="neo-hero hero-banner founder-banner">
+      <div className="hero-future-field" aria-hidden="true">
+        <span className="future-line future-1">IDEAS → SYSTEMS</span>
+        <span className="future-line future-2">GLOBAL BY DESIGN</span>
+        <span className="future-line future-3">SCIENCE × SOFTWARE</span>
+        <span className="future-line future-4">RESEARCH → PRODUCT</span>
+        <span className="future-line future-5">BUILD / TEST / SHIP</span>
+        <span className="future-line future-6">INTELLIGENCE</span>
+        <span className="future-line future-7">FROM ZAMBIA</span>
+        <span className="future-line future-8">WHAT COMES NEXT?</span>
+        <span className="future-line future-9">AUTOMATION / DATA / SYSTEMS</span>
+        <span className="future-line future-10">NEXT: GLOBAL SCALE</span>
+        <div className="future-wire wire-a"/>
+        <div className="future-wire wire-b"/>
+        <div className="future-noise"/>
+      </div>
+      <HeroPortrait />
+      <div className="hero-banner-grid"/>
+      <div className="hero-banner-scan"/>
+      <div className="neo-copy hero-banner-copy">
+        <p className="neo-kicker">Founder / Builder / Scientist</p>
+        <h1>Esiah <span>Kapinga.</span></h1>
+        <p className="hero-undertext"><strong>Esiah Kapinga</strong> is a Zambian microbiologist, software developer and the founder of GOLIDE. From a village in Samfya to microbiology, software, quality systems and digital products - the work is built around one idea: capability compounds when disciplines connect.</p>
+        <p className="founder-profiles">{PROFILES.map(p=><a key={p.href} href={p.href} target="_blank" rel="me noreferrer">{p.label}</a>)}</p>
+        <div className="neo-actions"><a className="neo-button solid" href="#story">The origin <ArrowDown/></a></div>
+      </div>
+    </section>
 
     <section className="founder-intro shell" id="story"><div className="origin-heading"><p className="big-index">01</p><div><p className="eyebrow"><span/> Origin</p><h2>The road to GOLIDE<br/>started long before the code.</h2></div><p>Not a polished founder myth. A sequence of small environments, academic pressure, curiosity and increasingly larger systems.</p></div><div className="origin-opening"><div className="origin-opening-media"><img src="/founder/origin-childhood-clean.webp?v=20260907-wide" alt="Childhood photograph from Chinsanka Village"/><div className="origin-archive-mark"><span>ARCHIVE / ROOTS</span><strong>Chinsanka Village · Samfya</strong></div></div><div className="origin-opening-copy"><span>Before the degree. Before the code. Before GOLIDE.</span><p>The story begins in Chinsanka Village, Samfya - where curiosity and ambition started long before software, laboratories or GOLIDE.</p></div></div><div className="origin-storyboard">{origin.map((item,i)=><article key={item.year+"-"+i}><span>{item.year}</span><h3>{item.title}</h3><p>{item.copy}</p></article>)}</div></section>
 
