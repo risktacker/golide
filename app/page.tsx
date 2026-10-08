@@ -36,15 +36,18 @@ const DOTS = Array.from({ length: 11 }, (_, i) => {
 });
 
 function HeroMark() {
-  return <svg className={styles.mark} viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+  return <svg className={styles.mark} viewBox="0 0 64 64" aria-hidden="true" focusable="false"><g className={styles.markSpin}>
     {DOTS.map((d, i) => <circle key={i} cx={d.x} cy={d.y} r={d.r} style={{ animationDelay: `${i * 70}ms` }} />)}
     <circle cx={36} cy={32} r={2.2} className={styles.markInner} style={{ animationDelay: "820ms" }} />
     <circle cx={44} cy={32} r={3.6} className={styles.markGold} style={{ animationDelay: "960ms" }} />
-  </svg>;
+  </g></svg>;
 }
 
 export default async function Home() {
-  const products = (await listPublishedProducts()).slice(0, 3);
+  // Featured products first (set in Manage), then the newest. Up to three.
+  const products = (await listPublishedProducts())
+    .sort((a, b) => Number(b.featured) - Number(a.featured) || b.createdAt - a.createdAt)
+    .slice(0, 3);
 
   return <main className={`neo-site ${styles.home}`}>
     <Header />

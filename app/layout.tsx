@@ -26,10 +26,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark" data-theme="dark" suppressHydrationWarning>
+    <html lang="en" data-theme="light" suppressHydrationWarning>
       <head>
         <link rel="preload" href="/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
-        <script dangerouslySetInnerHTML={{ __html: "try{var t=localStorage.getItem('golide-theme');if(t==='light'){document.documentElement.dataset.theme='light';document.documentElement.classList.remove('dark')}if(!sessionStorage.getItem('golide-splash')&&!/^\\/(auth|login)/.test(location.pathname)){document.documentElement.dataset.splash='1'}}catch(e){}" }} />
+        <script dangerouslySetInnerHTML={{ __html: "try{var t=localStorage.getItem('golide-theme');if(t==='dark'){document.documentElement.dataset.theme='dark';document.documentElement.classList.add('dark')}if(!sessionStorage.getItem('golide-splash')&&!/^\\/(auth|login)/.test(location.pathname)){document.documentElement.dataset.splash='1'}}catch(e){}" }} />
         <link rel="icon" href="/favicon.ico?v=20261006" sizes="any" />
         <link rel="icon" href="/brand/favicon.png?v=20261006" sizes="512x512" type="image/png" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20261006" />

@@ -4,7 +4,7 @@ import { Moon, Sun } from "lucide-react";
 
 const KEY = "golide-theme";
 
-// Dark is the GOLIDE default; the visitor's choice is remembered per device.
+// Light is the GOLIDE default; the visitor's choice is remembered per device.
 // CSS shows the sun in dark mode and the moon in light mode, so the button
 // renders identically on the server and needs no state.
 export default function ThemeToggle({ className = "theme-toggle" }: { className?: string }) {
