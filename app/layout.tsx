@@ -36,6 +36,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         <EntrySplash/>
+        <script src="/debug-paint.js" defer />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
           "@context": "https://schema.org",
           "@graph": [
