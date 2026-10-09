@@ -5,6 +5,7 @@ import AdminStudioLink from "./admin-studio-link";
 import MobileNav from "./mobile-nav";
 import ThemeToggle from "./theme-toggle";
 import { BrandLockup } from "./brand-mark";
+import headerStyles from "./site-header.module.css";
 
 export function Logo() {
   return <a className="logo brand-logo" href="https://golidee.com/" aria-label="GOLIDE home">
@@ -13,23 +14,21 @@ export function Logo() {
 }
 
 export function Header({ utility }: { utility?: ReactNode } = {}) {
-  return <header className="site-header">
-    <div className="shell nav-wrap">
-      <Logo/>
-      <nav className="desktop-nav" aria-label="Primary navigation">
-        <div className="nav-primary">
-          <a href="https://golidee.com/">Ventures</a>
-          <a href="https://golidee.com/research">Research</a>
-          <a href="https://golidee.com/founder">Founder</a>
-        </div>
-        <div className="nav-system">
+  return <header className={headerStyles.bar}>
+    <div className={headerStyles.inner}>
+      <a className={headerStyles.brand} href="https://golidee.com/" aria-label="GOLIDE home"><BrandLockup/></a>
+      <nav className={headerStyles.links} aria-label="Primary navigation">
+        <a href="https://golidee.com/">Ventures</a>
+        <a href="https://golidee.com/research">Research</a>
+        <a href="https://golidee.com/founder">Founder</a>
+        <span className={headerStyles.system}>
           <AdminStudioLink className="nav-studio-link"/>
           <AccountControl/>
-        </div>
+        </span>
       </nav>
       {utility}
-      <ThemeToggle/>
-      <a className="nav-cta" href="https://marketplace.golidee.com/">Marketplace <ArrowUpRight size={15}/></a>
+      <ThemeToggle className={headerStyles.icon}/>
+      <a className={headerStyles.cta} href="https://marketplace.golidee.com/">Marketplace <ArrowUpRight size={15}/></a>
       <MobileNav/>
     </div>
   </header>;
