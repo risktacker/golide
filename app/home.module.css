@@ -45,7 +45,10 @@
 .mark{justify-self:center; width:min(400px,100%); height:auto; color:var(--text); overflow:visible}
 .mark circle{fill:currentColor; transform-box:fill-box; transform-origin:center; animation:build 7s cubic-bezier(.2,.7,.2,1) infinite both}
 .mark .markInner{animation-name:buildHalf}
-.mark .markGold{fill:var(--accent); filter:drop-shadow(0 0 2.2px var(--accent))}
+.mark .markGold{fill:var(--accent)}
+/* Glow is an SVG gradient, not a CSS filter: Safari draws CSS filters on SVG parts as a black box. */
+.mark .markHalo{fill:url(#golideHalo)}
+.mark stop{stop-color:var(--accent)}
 @keyframes build{
   0%{opacity:0; transform:scale(.2)}
   9%,84%{opacity:1; transform:scale(1)}

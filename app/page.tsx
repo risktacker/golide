@@ -37,8 +37,15 @@ const DOTS = Array.from({ length: 11 }, (_, i) => {
 
 function HeroMark() {
   return <svg className={styles.mark} viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+    <defs>
+      <radialGradient id="golideHalo">
+        <stop offset="35%" stopOpacity="0.45" />
+        <stop offset="100%" stopOpacity="0" />
+      </radialGradient>
+    </defs>
     {DOTS.map((d, i) => <circle key={i} cx={d.x} cy={d.y} r={d.r} style={{ animationDelay: `${i * 70}ms` }} />)}
     <circle cx={36} cy={32} r={2.2} className={styles.markInner} style={{ animationDelay: "820ms" }} />
+    <circle cx={44} cy={32} r={7} className={styles.markHalo} style={{ animationDelay: "960ms" }} />
     <circle cx={44} cy={32} r={3.6} className={styles.markGold} style={{ animationDelay: "960ms" }} />
   </svg>;
 }
