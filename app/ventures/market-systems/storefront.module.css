@@ -124,3 +124,7 @@
 :global([data-theme="light"]) .marketHero{border-color:rgba(18,20,26,0.086)!important}
 :global([data-theme="light"]) .eyebrow{color:#9d781f!important}
 /* @light-theme:end */
+
+/* Shelf cards: product renders are 3D objects, show the whole object, never crop.
+   The image is pinned inside the visual box so its height can't overflow it. */
+.productVisual .productImage{position:absolute;inset:18px 16px 10px;width:calc(100% - 32px);height:calc(100% - 28px);object-fit:contain;object-position:center}
