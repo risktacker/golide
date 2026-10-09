@@ -990,3 +990,9 @@ linear-gradient(90deg,#0b0c10 0%,#0b0c10 52%,#0b0c10 100%)!important}
 [data-theme="light"] .founder-banner .hero-ribbons{filter:drop-shadow(0 0 25px rgba(233,196,106,0.14))!important}
 [data-theme="light"] .founder-banner .hero-ribbon{border:1px solid rgba(255,255,255,0.54)!important;background:linear-gradient(90deg,#181b21 0%,#e9c46a 18%,#ecedef 38%,#e9c46a 54%,#ecedef 67%,#343842 100%)!important;box-shadow:inset 0 2px rgba(255,255,255,0.62),inset 0 -3px rgba(0,0,0,0.68),0 0 22px rgba(233,196,106,0.25)!important}
 [data-theme="light"] .founder-banner .neo-button:not(.solid){color:#ecedef!important}
+
+/* The header scrolls with the page, so a backdrop blur has nothing to blur. On iPhone it also
+   painted a black block at the left edge under the header. Solid header background instead. */
+.site-header{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+.site-header,.neo-site .site-header{background:var(--ink,#0b0c10)}
+[data-theme="light"] .site-header,[data-theme="light"] .neo-site .site-header{background:#f7f8fa}
