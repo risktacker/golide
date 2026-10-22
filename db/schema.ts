@@ -11,6 +11,8 @@ export const marketProducts = sqliteTable("market_products", {
   transformation: text("transformation").notNull().default(""),
   imageUrl: text("image_url").notNull().default(""),
   whopUrl: text("whop_url").notNull().default(""),
+  amazonUrl: text("amazon_url").notNull().default(""),
+  bookPriceText: text("book_price_text").notNull().default(""),
   featured: integer("featured", { mode: "boolean" }).notNull().default(false),
   published: integer("published", { mode: "boolean" }).notNull().default(false),
   sortOrder: integer("sort_order").notNull().default(0),

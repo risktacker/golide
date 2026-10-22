@@ -19,7 +19,7 @@ import {
 import type { CSSProperties } from "react";
 import { useMemo, useState } from "react";
 import type { MarketProduct } from "./market-data";
-import { marketplaceProductPath } from "./market-links";
+import { marketplaceProductPath, primaryPurchase } from "./market-links";
 import styles from "./storefront.module.css";
 
 type Props = { products: MarketProduct[]; canManage: boolean };
@@ -36,6 +36,7 @@ const shelves = [
 function ProductCard({ product, accent, rgb, onOpen, canManage }: { product: MarketProduct; accent: string; rgb: string; onOpen: () => void; canManage: boolean }) {
   const style = { "--accent": accent, "--accent-rgb": rgb } as ShelfStyle;
   const productPath = marketplaceProductPath(product.slug);
+  const purchase = primaryPurchase(product);
   return <article className={styles.productCard} style={style}>
     <button className={styles.productVisual} type="button" onClick={onOpen} aria-label={`Preview ${product.name}`}>
       <span className={styles.productHalo}/>
@@ -48,7 +49,7 @@ function ProductCard({ product, accent, rgb, onOpen, canManage }: { product: Mar
       <p>{product.summary}</p>
       <div className={styles.productActions}>
         <a className={styles.viewButton} href={productPath}>View <ArrowRight size={15}/></a>
-        {product.whopUrl ? <a className={styles.buyButton} href={product.whopUrl} target="_blank" rel="noreferrer">Get access <ArrowUpRight size={15}/></a> : <a className={styles.buyButton} href={productPath}>Get details <ArrowRight size={15}/></a>}
+        {purchase ? <a className={styles.buyButton} href={purchase.href} target="_blank" rel="noreferrer">{purchase.label} <ArrowUpRight size={15}/></a> : <a className={styles.buyButton} href={productPath}>Get details <ArrowRight size={15}/></a>}
       </div>
     </div>
     {canManage && <a className={styles.editProduct} href={`/manage?edit=${encodeURIComponent(product.id)}`} aria-label={`Edit ${product.name}`}><Pencil size={12}/> Edit</a>}
@@ -139,6 +140,6 @@ export default function MarketClient({ products, canManage }: Props) {
 
     <section className={styles.marketPromise}><div><strong>Useful first.</strong><span>Products built around a clear problem.</span></div><div><strong>Immediate access.</strong><span>Digital delivery after checkout.</span></div><div><strong>One marketplace.</strong><span>Career, business, creator and learning systems.</span></div></section>
 
-    {selected && <div className={styles.modalBackdrop} onClick={() => setSelected(null)}><article className={styles.productModal} onClick={(event) => event.stopPropagation()}><button className={styles.closeButton} onClick={() => setSelected(null)} aria-label="Close"><X size={18}/></button><div className={styles.modalVisual}>{selected.imageUrl ? <img src={selected.imageUrl} alt={`${selected.name} product preview`}/> : <span className={styles.generatedCover}><small>{selected.format}</small><strong>{selected.name}</strong><em>GOLIDE</em></span>}</div><div className={styles.modalCopy}><p className={styles.eyebrow}>{selected.shelf} / {selected.format}</p><h2>{selected.name}</h2><p>{selected.summary}</p>{selected.transformation && <blockquote>{selected.transformation}</blockquote>}<div className={styles.modalActions}>{selected.priceText && <strong>{selected.priceText}</strong>}<a href={marketplaceProductPath(selected.slug)}>View details <ArrowRight size={15}/></a>{selected.whopUrl && <a className={styles.modalBuy} href={selected.whopUrl} target="_blank" rel="noreferrer">Get access <ArrowUpRight size={16}/></a>}</div></div></article></div>}
+    {selected && <div className={styles.modalBackdrop} onClick={() => setSelected(null)}><article className={styles.productModal} onClick={(event) => event.stopPropagation()}><button className={styles.closeButton} onClick={() => setSelected(null)} aria-label="Close"><X size={18}/></button><div className={styles.modalVisual}>{selected.imageUrl ? <img src={selected.imageUrl} alt={`${selected.name} product preview`}/> : <span className={styles.generatedCover}><small>{selected.format}</small><strong>{selected.name}</strong><em>GOLIDE</em></span>}</div><div className={styles.modalCopy}><p className={styles.eyebrow}>{selected.shelf} / {selected.format}</p><h2>{selected.name}</h2><p>{selected.summary}</p>{selected.transformation && <blockquote>{selected.transformation}</blockquote>}<div className={styles.modalActions}>{selected.priceText && <strong>{selected.priceText}</strong>}<a href={marketplaceProductPath(selected.slug)}>View details <ArrowRight size={15}/></a>{primaryPurchase(selected) && <a className={styles.modalBuy} href={primaryPurchase(selected)!.href} target="_blank" rel="noreferrer">{primaryPurchase(selected)!.label} <ArrowUpRight size={16}/></a>}</div></div></article></div>}
   </>;
 }

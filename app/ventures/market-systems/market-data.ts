@@ -49,6 +49,8 @@ export async function ensureMarketTable() {
       transformation TEXT NOT NULL DEFAULT '',
       image_url TEXT NOT NULL DEFAULT '',
       whop_url TEXT NOT NULL DEFAULT '',
+      amazon_url TEXT NOT NULL DEFAULT '',
+      book_price_text TEXT NOT NULL DEFAULT '',
       featured INTEGER NOT NULL DEFAULT 0,
       published INTEGER NOT NULL DEFAULT 0,
       sort_order INTEGER NOT NULL DEFAULT 0,
@@ -79,6 +81,8 @@ export async function ensureMarketTable() {
     ["launch_date", "ALTER TABLE market_products ADD COLUMN launch_date TEXT NOT NULL DEFAULT ''"],
     ["priority", "ALTER TABLE market_products ADD COLUMN priority INTEGER NOT NULL DEFAULT 50"],
     ["last_partner_search_at", "ALTER TABLE market_products ADD COLUMN last_partner_search_at INTEGER"],
+    ["amazon_url", "ALTER TABLE market_products ADD COLUMN amazon_url TEXT NOT NULL DEFAULT ''"],
+    ["book_price_text", "ALTER TABLE market_products ADD COLUMN book_price_text TEXT NOT NULL DEFAULT ''"],
   ] as const;
   for (const [name, sql] of registryAdditions) {
     if (!productColumns.has(name)) await env.DB.prepare(sql).run();
