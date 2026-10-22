@@ -79,7 +79,7 @@ export default function ManagerClient() {
     setLoading(true); setMessage("");
     try {
       await api({ action: "create", product: {
-        name: form.get("name"), shelf, format: form.get("format"), priceText: form.get("priceText"), summary: form.get("summary"), transformation: form.get("transformation"), imageUrl: createImageData || form.get("imageUrl"), whopUrl: form.get("whopUrl"), featured: form.get("featured") === "on", published: form.get("published") === "on", sortOrder: form.get("sortOrder"),
+        name: form.get("name"), shelf, format: form.get("format"), priceText: form.get("priceText"), summary: form.get("summary"), transformation: form.get("transformation"), imageUrl: createImageData || form.get("imageUrl"), whopUrl: form.get("whopUrl"), amazonUrl: form.get("amazonUrl"), bookPriceText: form.get("bookPriceText"), featured: form.get("featured") === "on", published: form.get("published") === "on", sortOrder: form.get("sortOrder"),
         lifecycleStatus: form.get("lifecycleStatus"), targetAudience: form.get("targetAudience"), problemSolved: form.get("problemSolved"), keywords: form.get("keywords"), creatorNiches: form.get("creatorNiches"), targetGeographies: form.get("targetGeographies"), affiliateRate: form.get("affiliateRate"), launchDate: form.get("launchDate"), priority: form.get("priority"),
       }});
       window.location.href = "/manage";
@@ -93,7 +93,7 @@ export default function ManagerClient() {
     setLoading(true); setMessage("");
     try {
       await api({ action: "update", id: editing.id, product: {
-        name: form.get("name"), shelf: editShelf, format: form.get("format"), priceText: form.get("priceText"), summary: form.get("summary"), transformation: form.get("transformation"), imageUrl: editImageData || form.get("imageUrl"), whopUrl: form.get("whopUrl"), featured: form.get("featured") === "on", published: form.get("published") === "on", sortOrder: form.get("sortOrder"),
+        name: form.get("name"), shelf: editShelf, format: form.get("format"), priceText: form.get("priceText"), summary: form.get("summary"), transformation: form.get("transformation"), imageUrl: editImageData || form.get("imageUrl"), whopUrl: form.get("whopUrl"), amazonUrl: form.get("amazonUrl"), bookPriceText: form.get("bookPriceText"), featured: form.get("featured") === "on", published: form.get("published") === "on", sortOrder: form.get("sortOrder"),
         lifecycleStatus: form.get("lifecycleStatus"), targetAudience: form.get("targetAudience"), problemSolved: form.get("problemSolved"), keywords: form.get("keywords"), creatorNiches: form.get("creatorNiches"), targetGeographies: form.get("targetGeographies"), affiliateRate: form.get("affiliateRate"), launchDate: form.get("launchDate"), priority: form.get("priority"),
       }});
       window.location.href = "/manage";
@@ -135,7 +135,9 @@ export default function ManagerClient() {
       <label className={styles.managerFull}>Discovery keywords<input name="keywords" defaultValue={product?.keywords || ""} placeholder="Comma-separated search and content-fit terms"/></label>
       <label>Affiliate rate %<input name="affiliateRate" type="number" min="0" max="100" defaultValue={product?.affiliateRate ?? 0}/></label>
       <label>Distribution priority<input name="priority" type="number" min="0" max="100" defaultValue={product?.priority ?? 50}/></label>
-      <label>Whop purchase URL<input name="whopUrl" type="url" defaultValue={product?.whopUrl || ""} placeholder="https://whop.com/..."/></label>
+      <label>Whop purchase URL<input name="whopUrl" type="url" defaultValue={product?.whopUrl || ""} placeholder="https://whop.com/... (digital product)"/></label>
+      <label>Amazon book URL<input name="amazonUrl" type="url" defaultValue={product?.amazonUrl || ""} placeholder="https://www.amazon.com/dp/..."/></label>
+      <label>Book price (Amazon)<input name="bookPriceText" defaultValue={product?.bookPriceText || ""} placeholder="$9.99 — only needed when there is also a Whop product"/></label>
       <label>{isEdit ? "Upload replacement image" : "Upload product image"}<input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => isEdit ? chooseEditImage(event.currentTarget.files?.[0]) : chooseCreateImage(event.currentTarget.files?.[0])}/></label>
       <label>Or image path / URL<input name="imageUrl" defaultValue={isEdit && product?.imageUrl && !product.imageUrl.startsWith("data:image/") ? product.imageUrl : ""} placeholder="Optional: /market/... or https://..."/></label>
       {((isEdit ? editImageData : createImageData) || (isEdit && product?.imageUrl)) && <div className={styles.managerPreview}><img src={(isEdit ? editImageData : createImageData) || product?.imageUrl || ""} alt="Product preview"/><span>{isEdit && !editImageData ? "Current product image" : "Image ready"} <Upload size={14}/></span></div>}

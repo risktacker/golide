@@ -5,6 +5,7 @@ import { getDb } from "../../../db";
 import { marketProducts } from "../../../db/schema";
 import { getGolideUser, isAdminUser } from "../../golide-auth";
 import { ensureMarketTable, listAllProducts } from "../../ventures/market-systems/market-data";
+import { isAmazonUrl } from "../../ventures/market-systems/market-links";
 
 const MAX_IMAGE_BYTES = 2_000_000;
 
@@ -24,6 +25,12 @@ function safeWhopUrl(value: unknown) {
     if (url.protocol !== "https:" || !/(^|\.)whop\.com$/i.test(url.hostname)) return "";
     return url.toString();
   } catch { return ""; }
+}
+
+function safeAmazonUrl(value: unknown) {
+  const raw = text(value, 1000);
+  if (!raw || !isAmazonUrl(raw)) return "";
+  return new URL(raw).toString();
 }
 
 function safeRemoteImageUrl(value: unknown) {
@@ -67,8 +74,15 @@ export async function POST(request: Request) {
 
   if (action === "list") return NextResponse.json({ products: await listAllProducts() });
 
+  const linkError = (product: Record<string, unknown>) => {
+    if (text(product.whopUrl, 1000) && !safeWhopUrl(product.whopUrl)) return "The Whop URL must be an https://whop.com link.";
+    if (text(product.amazonUrl, 1000) && !safeAmazonUrl(product.amazonUrl)) return "The Amazon URL must be an https:// Amazon product link.";
+    return "";
+  };
+
   if (action === "create") {
     const product = (body.product ?? {}) as Record<string, unknown>;
+    if (linkError(product)) return NextResponse.json({ error: linkError(product) }, { status: 400 });
     const name = text(product.name, 120);
     const summary = text(product.summary, 700);
     if (!name || !summary) return NextResponse.json({ error: "Name and summary are required." }, { status: 400 });
@@ -85,6 +99,8 @@ export async function POST(request: Request) {
       priceText: text(product.priceText, 40), summary,
       transformation: text(product.transformation, 1000), imageUrl,
       whopUrl: safeWhopUrl(product.whopUrl),
+      amazonUrl: safeAmazonUrl(product.amazonUrl),
+      bookPriceText: text(product.bookPriceText, 40),
       featured: Boolean(product.featured), published,
       sortOrder: Number.isFinite(Number(product.sortOrder)) ? Math.trunc(Number(product.sortOrder)) : 0,
       lifecycleStatus: text(product.lifecycleStatus, 40).toUpperCase() || (published ? "ACTIVE" : "PRE_LAUNCH"),
@@ -105,6 +121,7 @@ export async function POST(request: Request) {
   if (action === "update") {
     const id = text(body.id, 80);
     const product = (body.product ?? {}) as Record<string, unknown>;
+    if (linkError(product)) return NextResponse.json({ error: linkError(product) }, { status: 400 });
     const name = text(product.name, 120);
     const summary = text(product.summary, 700);
     if (!id) return NextResponse.json({ error: "Missing product id." }, { status: 400 });
@@ -119,6 +136,8 @@ export async function POST(request: Request) {
       priceText: text(product.priceText, 40), summary,
       transformation: text(product.transformation, 1000), imageUrl,
       whopUrl: safeWhopUrl(product.whopUrl),
+      amazonUrl: safeAmazonUrl(product.amazonUrl),
+      bookPriceText: text(product.bookPriceText, 40),
       featured: Boolean(product.featured), published: Boolean(product.published),
       sortOrder: Number.isFinite(Number(product.sortOrder)) ? Math.trunc(Number(product.sortOrder)) : 0,
       lifecycleStatus: text(product.lifecycleStatus, 40).toUpperCase() || (Boolean(product.published) ? "ACTIVE" : "PRE_LAUNCH"),

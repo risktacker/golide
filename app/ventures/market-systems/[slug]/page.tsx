@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { Footer, Header } from "../../../shared";
 import { getPublishedProduct } from "../market-data";
 import styles from "../storefront.module.css";
-import { MARKETPLACE_ORIGIN, marketplaceProductUrl, marketplaceToolkitCheckoutUrl } from "../market-links";
+import { MARKETPLACE_ORIGIN, bookUpsell, marketplaceProductUrl, marketplaceToolkitCheckoutUrl, primaryPurchase } from "../market-links";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -33,6 +33,8 @@ export default async function ProductPage({ params }: Props) {
   const product = await getPublishedProduct(slug);
   if (!product) notFound();
 
+  const purchase = primaryPurchase(product);
+  const book = bookUpsell(product);
   const productData = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -41,7 +43,7 @@ export default async function ProductPage({ params }: Props) {
     url: marketplaceProductUrl(product.slug),
     ...(product.imageUrl ? { image: product.imageUrl.startsWith("http") ? product.imageUrl : `${MARKETPLACE_ORIGIN}${product.imageUrl}` } : {}),
     brand: { "@type": "Brand", name: "GOLIDE" },
-    ...(product.whopUrl ? { offers: { "@type": "Offer", url: product.whopUrl, availability: "https://schema.org/InStock", ...offerPrice(product.priceText) } } : {}),
+    ...(purchase ? { offers: { "@type": "Offer", url: purchase.href, availability: "https://schema.org/InStock", ...offerPrice(product.priceText) } } : {}),
   };
   const toolkitCheckout = marketplaceToolkitCheckoutUrl(product.slug);
 
@@ -61,8 +63,12 @@ export default async function ProductPage({ params }: Props) {
           {product.transformation && <div className={styles.detailTransformation}><strong>What changes</strong><br/>{product.transformation}</div>}
           <div className={styles.detailActions}>
             {product.priceText && <strong>{product.priceText}</strong>}
-            {product.whopUrl ? <a className={styles.detailPrimary} href={product.whopUrl} target="_blank" rel="noreferrer">Get the system <ArrowUpRight size={17}/></a> : <span>Checkout opening soon</span>}
+            {purchase ? <a className={styles.detailPrimary} href={purchase.href} target="_blank" rel="noreferrer">{product.whopUrl ? "Get the system" : purchase.label} <ArrowUpRight size={17}/></a> : <span>Checkout opening soon</span>}
           </div>
+          {book && <aside className={styles.toolkitUpsell}>
+            <div><small>PAPERBACK &amp; KINDLE</small><h2>Prefer the book?</h2><p>The same system as a book you can read anywhere, sold and shipped by Amazon.</p></div>
+            <a href={book.href} target="_blank" rel="noreferrer">{book.label}{book.price ? ` · ${book.price}` : ""} <ArrowUpRight size={16}/></a>
+          </aside>}
           {toolkitCheckout && <aside className={styles.toolkitUpsell}>
             <div><small>INTERACTIVE UPGRADE</small><h2>Want the live workspace?</h2><p>Move from the manual system into the interactive score, map, build and tracking toolkit.</p></div>
             <a href={toolkitCheckout} target="_blank" rel="noreferrer">Get Toolkit Pro · $29.99 <ArrowUpRight size={16}/></a>
