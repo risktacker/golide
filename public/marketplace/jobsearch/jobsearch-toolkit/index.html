@@ -689,7 +689,7 @@ function refreshShared(){renderNav()}
 
 /* ---------- account sync (golidee.com only) ---------- */
 function setSync(on,text){$('#sync').classList.toggle('on',on);$('#syncText').textContent=text||(on?'Synced to your account':'Saved on this device');
-  $('#signIn').hidden=on||!LIVE;$('#railSync').textContent=on?(cloudUser?`Signed in as ${String(cloudUser.displayName||cloudUser.email||'').split(/\s+/)[0]}. Your work follows you.`:'Synced.'):(LIVE?'Sign in to keep it across devices.':'Buyers can sign in on golidee.com to keep it across devices.')}
+  $('#signIn').hidden=on||!LIVE;$('#railSync').textContent=on?(cloudUser?`Signed in as ${String(cloudUser.displayName||cloudUser.email||'').split(/\s+/)[0]}. Your work follows you.`:'Synced.'):(LIVE?'Sign in to keep it across devices.':'Open it on golidee.com and sign in to keep it across devices.')}
 async function syncUp(){if(!cloudUser)return;try{const r=await fetch('/api/toolkit-state',{method:'PUT',headers:{'content-type':'application/json'},body:JSON.stringify({state:S})});if(r.ok){const j=await r.json();S.updatedAt=j.updatedAt||S.updatedAt;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}setSync(true)}else setSync(true,'Sync retrying')}catch(e){setSync(true,'Sync retrying')}}
 async function initAccount(){if(!LIVE){setSync(false);return}
   $('#signIn').href='/login?returnTo='+encodeURIComponent(location.pathname+location.search);
@@ -698,7 +698,7 @@ async function initAccount(){if(!LIVE){setSync(false);return}
     if(cloud&&ct>lt){S=norm(cloud);try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}buildScore();show(cur,true)}else if(lt){await syncUp()}setSync(true)}catch(e){setSync(false)}}
 
 /* ---------- boot ---------- */
-$('#previewBar').hidden=LIVE;
+$('#previewBar').hidden=window.GOLIDE_PARTNER_PREVIEW!==true;
 buildScore();
 const h=location.hash.slice(1);show(ORDER.includes(h)?h:'home',true);
 initAccount();
