@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { EntrySplash } from "./golide-loader";
+import ContactPanel from "./contact-panel";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://golidee.com"),
@@ -45,6 +46,7 @@ export default function RootLayout({
           ]
         }).replace(/</g, "\\u003c") }} />
         {children}
+        <ContactPanel/>
       </body>
     </html>
   );
