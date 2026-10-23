@@ -54,10 +54,6 @@ button,input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .num{font-variant-numeric:tabular-nums}
 .label{font-size:var(--label);letter-spacing:.14em;text-transform:uppercase;color:var(--faint);font-weight:500}
 
-/* Partner preview bar (shown only off golidee.com) */
-.preview{background:var(--gold-soft);border-bottom:1px solid var(--gold-line);padding-block:9px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;justify-content:space-between;font-size:var(--small);color:var(--muted)}
-.preview b{color:var(--fg);font-weight:600}
-.preview a{color:var(--gold);font-weight:600;text-decoration:none;white-space:nowrap}
 
 /* Header */
 .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
@@ -295,7 +291,6 @@ details p{color:var(--muted);margin-top:8px;max-width:70ch}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important;scroll-behavior:auto!important}}
 </style>
 
-<div class="preview" id="previewBar" hidden><span><b>Partner preview.</b> This is the full toolkit buyers get. Anything you type stays in your browser.</span><a href="https://whop.com/easy-with-golide/products/job-search-conversion-system/" target="_blank" rel="noopener">See it on Whop →</a></div>
 
 <header class="top">
   <div class="top-in">
@@ -698,7 +693,6 @@ async function initAccount(){if(!LIVE){setSync(false);return}
     if(cloud&&ct>lt){S=norm(cloud);try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}buildScore();show(cur,true)}else if(lt){await syncUp()}setSync(true)}catch(e){setSync(false)}}
 
 /* ---------- boot ---------- */
-$('#previewBar').hidden=window.GOLIDE_PARTNER_PREVIEW!==true;
 buildScore();
 const h=location.hash.slice(1);show(ORDER.includes(h)?h:'home',true);
 initAccount();
