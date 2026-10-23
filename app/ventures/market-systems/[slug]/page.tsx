@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { Footer, Header } from "../../../shared";
 import { getPublishedProduct } from "../market-data";
 import styles from "../storefront.module.css";
-import { MARKETPLACE_ORIGIN, bookUpsell, marketplaceProductUrl, marketplaceToolkitCheckoutUrl, primaryPurchase } from "../market-links";
+import { MARKETPLACE_ORIGIN, bookUpsell, marketplaceProductUrl, primaryPurchase } from "../market-links";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -45,7 +45,6 @@ export default async function ProductPage({ params }: Props) {
     brand: { "@type": "Brand", name: "GOLIDE" },
     ...(purchase ? { offers: { "@type": "Offer", url: purchase.href, availability: "https://schema.org/InStock", ...offerPrice(product.priceText) } } : {}),
   };
-  const toolkitCheckout = marketplaceToolkitCheckoutUrl(product.slug);
 
   return <main className={styles.detailPage}>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productData).replace(/</g, "\\u003c") }} />
@@ -66,12 +65,8 @@ export default async function ProductPage({ params }: Props) {
             {purchase ? <a className={styles.detailPrimary} href={purchase.href} target="_blank" rel="noreferrer">{product.whopUrl ? "Get the system" : purchase.label} <ArrowUpRight size={17}/></a> : <span>Checkout opening soon</span>}
           </div>
           {book && <aside className={styles.toolkitUpsell}>
-            <div><small>PAPERBACK &amp; KINDLE</small><h2>Prefer the book?</h2><p>The same system as a book you can read anywhere, sold and shipped by Amazon.</p></div>
+            <div><small>PAPERBACK &amp; KINDLE</small><h2>Just want the book?</h2><p>The book on its own, in paperback or Kindle, sold and shipped by Amazon. The interactive toolkit comes only with the full system above.</p></div>
             <a href={book.href} target="_blank" rel="noreferrer">{book.label}{book.price ? ` · ${book.price}` : ""} <ArrowUpRight size={16}/></a>
-          </aside>}
-          {toolkitCheckout && <aside className={styles.toolkitUpsell}>
-            <div><small>INTERACTIVE UPGRADE</small><h2>Want the live workspace?</h2><p>Move from the manual system into the interactive score, map, build and tracking toolkit.</p></div>
-            <a href={toolkitCheckout} target="_blank" rel="noreferrer">Get Toolkit Pro · $29.99 <ArrowUpRight size={16}/></a>
           </aside>}
         </article>
       </div>
