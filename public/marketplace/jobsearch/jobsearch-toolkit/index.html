@@ -1,71 +1,710 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Job Search Toolkit | GOLIDE Marketplace</title><meta name="description" content="Score roles, map evidence, tailor truthfully, and track what converts."><link rel="canonical" href="https://marketplace.golidee.com/jobsearch/jobsearch-toolkit/"><link rel="icon" type="image/png" href="/golide-logo.png"><link rel="preload" href="/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin><script src="/shared/theme.js"></script><style>@font-face{font-family:'Geist';src:url('/fonts/Geist-Variable.woff2') format('woff2');font-weight:100 900;font-display:swap}
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="icon" type="image/png" href="/brand/favicon.png">
+<title>Job Search Toolkit</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Score roles, map evidence, write truthful bullets and track what turns into interviews.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap">
+<script>try{var t=localStorage.getItem('golide-theme');if(t==='dark'||t==='light'){document.documentElement.dataset.theme=t}else if(/(^|\.)golidee\.com$|^localhost$|^127\.0\.0\.1$/.test(location.hostname)){document.documentElement.dataset.theme='light'}}catch(e){}</script>
+<style>
+@font-face{font-family:"Geist";src:url("/fonts/Geist-Variable.woff2") format("woff2");font-weight:100 900;font-display:swap}
+/* Layout: brand header, step rail on the left (desktop) / step strip on top (phone), one working sheet per step, sticky Back / Next. GOLIDE site tokens: ink + paper + gold, Geist. */
+:root{
+  --bg:#f9f9fa;--surface:#ffffff;--panel:#f2f2f4;--sunk:#ececef;
+  --fg:#101113;--muted:#575b65;--faint:#868a94;
+  --line:rgba(18,20,26,.13);--line-strong:rgba(18,20,26,.26);
+  --gold:#9d781f;--gold-soft:rgba(157,120,31,.10);--gold-line:rgba(157,120,31,.32);--on-gold:#ffffff;
+  --good:#3f7a4e;--good-soft:rgba(63,122,78,.11);--warn:#9a5b12;--warn-soft:rgba(154,91,18,.11);--bad:#a63d36;--bad-soft:rgba(166,61,54,.10);
+  --shadow:0 1px 0 rgba(18,20,26,.04),0 10px 30px rgba(18,20,26,.06);
+  --font:"Geist",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"Geist Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --text:clamp(15px,.18vw + 14.25px,17px);--small:13px;--label:11.5px;
+  --r-sm:8px;--r:12px;--r-lg:16px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0b0c10;--surface:#121419;--panel:#181b21;--sunk:#0f1115;
+  --fg:#ecedef;--muted:#9a9ea8;--faint:#6b6f79;
+  --line:rgba(255,255,255,.10);--line-strong:rgba(255,255,255,.22);
+  --gold:#e9c46a;--gold-soft:rgba(233,196,106,.09);--gold-line:rgba(233,196,106,.30);--on-gold:#0b0c10;
+  --good:#8dbf9a;--good-soft:rgba(141,191,154,.12);--warn:#e9b06a;--warn-soft:rgba(233,176,106,.12);--bad:#f08a80;--bad-soft:rgba(240,138,128,.12);
+  --shadow:0 1px 0 rgba(255,255,255,.03),0 14px 40px rgba(0,0,0,.35);color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0b0c10;--surface:#121419;--panel:#181b21;--sunk:#0f1115;
+  --fg:#ecedef;--muted:#9a9ea8;--faint:#6b6f79;
+  --line:rgba(255,255,255,.10);--line-strong:rgba(255,255,255,.22);
+  --gold:#e9c46a;--gold-soft:rgba(233,196,106,.09);--gold-line:rgba(233,196,106,.30);--on-gold:#0b0c10;
+  --good:#8dbf9a;--good-soft:rgba(141,191,154,.12);--warn:#e9b06a;--warn-soft:rgba(233,176,106,.12);--bad:#f08a80;--bad-soft:rgba(240,138,128,.12);
+  --shadow:0 1px 0 rgba(255,255,255,.03),0 14px 40px rgba(0,0,0,.35);color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font);font-size:var(--text);line-height:1.62;letter-spacing:-.008em;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+h1,h2,h3{font-weight:500;letter-spacing:-.03em;text-wrap:balance;margin:0}
+h1{font-size:clamp(28px,2.2vw + 18px,42px);line-height:1.06}
+h2{font-size:clamp(20px,.8vw + 16px,25px);line-height:1.2}
+h3{font-size:17px;line-height:1.3;letter-spacing:-.015em}
+p{margin:0;text-wrap:pretty}
+a{color:inherit}
+button,input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+.label{font-size:var(--label);letter-spacing:.14em;text-transform:uppercase;color:var(--faint);font-weight:500}
 
-:root{--ink:#0b0c10;--panel:#0b0c10;--panel2:#181b21;--cyan:#e9c46a;--gold:#e9c46a;--white:#ecedef;--muted:#6b6f79;--line:rgba(233,196,106,0.16);--good:#57e4a2;--warn:#e9c46a;--bad:#ff7d8c;--display:'Geist',ui-sans-serif,system-ui,sans-serif;--body:'Geist',ui-sans-serif,system-ui,sans-serif}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(720px 500px at 3% 3%,rgba(233,196,106,0.066),transparent 62%),radial-gradient(700px 460px at 98% 4%,rgba(233,196,106,0.055),transparent 62%),linear-gradient(180deg,#0b0c10,#0b0c10 55%,#0b0c10);color:var(--white);font:15px/1.55 var(--body);min-height:100vh}.shell{min-height:100vh;display:grid;grid-template-columns:248px minmax(0,1fr)}.side{position:sticky;top:0;height:100vh;padding:22px 14px;border-right:1px solid var(--line);background:rgba(0,0,0,0.92);backdrop-filter:blur(18px);z-index:20}.brand{display:flex;gap:11px;align-items:center;margin:0 7px 24px}.mark{width:42px;height:42px;border-radius:11px;object-fit:contain;display:block;border:1px solid rgba(233,196,106,0.26);background:#0b0c10;padding:4px}.brand b{display:block;font-family:var(--display);font-size:14px}.brand small{display:block;color:var(--muted);font-size:12px}.sync{margin:0 6px 18px;padding:10px 11px;border:1px solid rgba(233,196,106,0.16);border-radius:12px;background:rgba(233,196,106,0.035);font-size:12px;color:#9a9ea8}.sync strong{display:block;color:#e9c46a;margin-bottom:2px}.sync a{color:var(--cyan);text-decoration:none;font-weight:500}nav{display:grid;gap:4px}nav button{width:100%;border:1px solid transparent;background:transparent;color:#6b6f79;text-align:left;padding:10px 12px;border-radius:11px;font:500 13px var(--body);cursor:pointer}nav button:hover,nav button.active{background:linear-gradient(90deg,rgba(233,196,106,0.12),rgba(233,196,106,0.04));color:#ecedef;border-color:rgba(233,196,106,0.14)}nav button.active{box-shadow:inset 3px 0 var(--cyan)}.privacy{position:absolute;bottom:18px;left:20px;right:20px;color:#6b6f79;font-size:12px}.main{padding:28px clamp(16px,3.5vw,48px) 70px;max-width:none;width:100%;min-width:0}.top{display:flex;justify-content:space-between;gap:22px;align-items:flex-start;margin-bottom:22px}.eyebrow{color:var(--cyan);font:500 12px/1 var(--display);letter-spacing:.16em;text-transform:uppercase}.top h1{margin:7px 0 4px;font:500 clamp(28px,4vw,44px)/1.02 var(--display);letter-spacing:-.045em}.top p{margin:0;color:var(--muted)}.progress{min-width:210px;padding:13px 15px;background:linear-gradient(145deg,#121419,#0b0c10);border:1px solid var(--line);border-radius:15px}.progress b{font:500 13px var(--display)}.bar{height:6px;background:#181b21;border-radius:8px;overflow:hidden;margin-top:9px}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--gold));box-shadow:0 0 12px rgba(233,196,106,0.45);transition:.3s}.view{display:none}.view.active{display:block}.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:15px}.card{grid-column:span 6;background:linear-gradient(145deg,rgba(18,20,25,0.96),rgba(11,12,16,0.98));border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 18px 50px rgba(0,0,0,0.18)}.card.full{grid-column:1/-1}.card.third{grid-column:span 4}.card h2,.card h3{font-family:var(--display);letter-spacing:-.025em;margin:0 0 7px}.card h2{font-size:23px}.card h3{font-size:17px}.card p{color:var(--muted);margin:4px 0 13px}.metric{font:500 27px/1 var(--display);color:var(--cyan);letter-spacing:-.03em}label{display:block;color:#ecedef;font-size:12px;font-weight:500;margin:11px 0 5px}input,textarea,select{width:100%;background:#0b0c10;border:1px solid #181b21;border-radius:9px;color:#ecedef;padding:10px 11px;font:14px var(--body);outline:none}input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(233,196,106,0.07)}textarea{min-height:88px;resize:vertical}.row{display:grid;grid-template-columns:1.25fr .55fr 1.55fr;gap:9px;align-items:end}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}button.primary,button.ghost,.exportBtn{border:0;border-radius:9px;padding:10px 14px;font:500 13px var(--body);cursor:pointer}.primary{background:linear-gradient(135deg,var(--cyan),#e9c46a);color:#0b0c10}.ghost,.exportBtn{background:#181b21;color:#ecedef;border:1px solid rgba(255,255,255,0.06)}.exportBtn{display:inline-flex;align-items:center}.hint{border-left:2px solid var(--gold);padding:9px 12px;background:rgba(233,196,106,0.045);color:#9a9ea8;font-size:13px;margin:13px 0}.hint em{color:#ecedef}.scoreResult{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);margin-top:16px;padding-top:16px}.badge{padding:6px 9px;border-radius:99px;background:#181b21;color:var(--cyan);font-weight:500;font-size:13px}.road{display:grid;grid-template-columns:repeat(6,1fr);gap:9px}.step{background:#121419;border:1px solid var(--line);padding:15px 12px;border-radius:14px;min-height:135px}.step b{display:block;color:var(--gold);font:500 17px var(--display)}.step span{font:500 13px var(--display)}.step p{font-size:12px;margin-top:7px}.table{overflow:auto;margin-top:8px}.table table{width:100%;border-collapse:collapse;min-width:720px}th,td{border-bottom:1px solid var(--line);padding:9px;text-align:left;font-size:13px}th{color:var(--cyan);font-size:12px;text-transform:uppercase;letter-spacing:.08em}.faq details{border-bottom:1px solid var(--line);padding:13px 0}.faq summary{cursor:pointer;font:500 14px var(--display)}.faq p{margin:7px 0}.empty{color:#e9c46a;text-align:center;padding:20px}.toast{position:fixed;z-index:90;right:20px;bottom:20px;background:#ecedef;color:#07301f;padding:10px 14px;border-radius:11px;font-weight:500;display:none}.loginModal{position:fixed;z-index:100;inset:0;display:none;place-items:center;padding:18px;background:rgba(0,0,0,0.78);backdrop-filter:blur(10px)}.loginModal.show{display:grid}.loginCard{width:min(430px,100%);padding:24px;border:1px solid rgba(233,196,106,0.2);border-radius:20px;background:linear-gradient(145deg,#121419,#0b0c10);box-shadow:0 34px 100px rgba(0,0,0,0.55)}.loginCard h2{margin:8px 0;font:500 28px/1 var(--display);letter-spacing:-.04em}.loginCard p{color:#9a9ea8}.loginActions{display:flex;gap:8px;margin-top:18px}.loginActions a,.loginActions button{flex:1;text-align:center;text-decoration:none;border-radius:10px;padding:11px;font:500 13px var(--body)}.loginActions a{background:var(--cyan);color:#0b0c10}.loginActions button{border:1px solid rgba(255,255,255,0.1);background:#181b21;color:#ecedef}.topTools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.syncPill{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:999px;border:1px solid rgba(233,196,106,0.14);color:#6b6f79;background:#0b0c10;font-size:12px}.syncPill.on{color:#8ff0c4;border-color:rgba(87,228,162,.22)}
-@media(max-width:920px){.shell{grid-template-columns:minmax(0,1fr)}.side,.main{min-width:0}.theme-toggle{width:auto;margin:8px 4px 0}.side{position:sticky;height:auto;padding:10px 12px;border-right:0;border-bottom:1px solid var(--line)}.brand{margin:0 4px 8px}.sync,.privacy{display:none}nav{display:flex;gap:5px;overflow:auto;scrollbar-width:none}nav::-webkit-scrollbar{display:none}nav button{white-space:nowrap;width:auto;flex:0 0 auto;padding:9px 11px}.main{padding-top:20px}.top{display:block}.progress{margin-top:13px;min-width:0}.card,.card.third{grid-column:1/-1}.road{grid-template-columns:repeat(2,1fr)}.row{grid-template-columns:1fr}.scoreResult{align-items:flex-start;gap:14px;flex-direction:column}}@media(max-width:520px){body{font-size:14px}.main{padding-inline:12px}.top h1{font-size:29px}.card{padding:15px;border-radius:15px}.road{grid-template-columns:1fr}.metric{font-size:23px}.loginActions{flex-direction:column}.topTools{align-items:stretch;flex-direction:column}.exportBtn{justify-content:center}}
+/* Partner preview bar (shown only off golidee.com) */
+.preview{background:var(--gold-soft);border-bottom:1px solid var(--gold-line);padding-block:9px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;justify-content:space-between;font-size:var(--small);color:var(--muted)}
+.preview b{color:var(--fg);font-weight:600}
+.preview a{color:var(--gold);font-weight:600;text-decoration:none;white-space:nowrap}
 
-.theme-toggle{display:flex;align-items:center;justify-content:space-between;gap:8px;width:calc(100% - 12px);margin:10px 6px 0;padding:10px 12px;border:1px solid var(--line);border-radius:11px;background:transparent;color:var(--muted);font:500 13px var(--body);cursor:pointer}.theme-toggle:hover{color:var(--white);border-color:var(--cyan)}
-/* @light-theme:start (generated by scripts/generate-light-theme.py, do not edit) */
-:root[data-theme="light"]{--ink:#fafbfb;--panel:#f8f9f9;--panel2:#f5f6f7;--cyan:#099cb3;--gold:#a96e09;--white:#101314;--muted:#55656d;--line:rgba(15,129,153,0.16);--good:#25ae6e;--warn:#986908;--bad:#8e0717}
-[data-theme="light"] body{background:radial-gradient(720px 500px at 3% 3%,rgba(11,174,213,0.12),transparent 62%),radial-gradient(700px 460px at 98% 4%,rgba(186,117,10,0.1),transparent 62%),linear-gradient(180deg,#fafbfb,#f9f9fa 55%,#fafbfb)}
-[data-theme="light"] .side{background:rgba(247,248,250,0.92)}
-[data-theme="light"] .mark{border:1px solid rgba(9,156,179,0.26);background:#f8f9fa}
-[data-theme="light"] .sync{border:1px solid rgba(169,110,9,0.16);background:rgba(169,110,9,0.035);color:#49575d}
-[data-theme="light"] .sync strong{color:#7c5913}
-[data-theme="light"] nav button{color:#57676f}
-[data-theme="light"] nav button:hover,[data-theme="light"] nav button.active{background:linear-gradient(90deg,rgba(10,163,198,0.12),rgba(169,110,9,0.04));color:#121212;border-color:rgba(10,156,183,0.14)}
-[data-theme="light"] .privacy{color:#7f929b}
-[data-theme="light"] .progress{background:linear-gradient(145deg,#f6f7f8,#f8f9fa)}
-[data-theme="light"] .bar{background:#d2d8db}
-[data-theme="light"] .bar i{box-shadow:0 0 12px rgba(9,156,179,0.45)}
-[data-theme="light"] .card{background:linear-gradient(145deg,rgba(247,248,250,0.96),rgba(247,248,250,0.98));box-shadow:0 18px 50px rgba(18,20,26,0.063)}
-[data-theme="light"] label{color:#283034}
-[data-theme="light"] input,[data-theme="light"] textarea,[data-theme="light"] select{background:#f8f9fa;border:1px solid #d3dce0;color:#121212}
-[data-theme="light"] input:focus,[data-theme="light"] textarea:focus,[data-theme="light"] select:focus{box-shadow:0 0 0 3px rgba(9,156,179,0.07)}
-[data-theme="light"] .primary{background:linear-gradient(135deg,var(--cyan),#1aa2c6);color:#f9fafb}
-[data-theme="light"] .ghost,[data-theme="light"] .exportBtn{background:#f2f4f5;color:#191e20;border:1px solid rgba(18,20,26,0.069)}
-[data-theme="light"] .hint{background:rgba(169,110,9,0.045);color:#3b454a}
-[data-theme="light"] .hint em{color:#121212}
-[data-theme="light"] .badge{background:#dfe8ec}
-[data-theme="light"] .step{background:#f6f7f8}
-[data-theme="light"] .empty{color:#5f7382}
-[data-theme="light"] .toast{background:#101412;color:#e9f4ef}
-[data-theme="light"] .loginModal{background:rgba(247,248,250,0.78)}
-[data-theme="light"] .loginCard{border:1px solid rgba(9,156,179,0.2);background:linear-gradient(145deg,#f6f7f8,#f9f9fa);box-shadow:0 34px 100px rgba(18,20,26,0.193)}
-[data-theme="light"] .loginCard p{color:#526168}
-[data-theme="light"] .loginActions a{color:#f9fafb}
-[data-theme="light"] .loginActions button{border:1px solid rgba(18,20,26,0.115);background:#f4f5f6;color:#161a1c}
-[data-theme="light"] .syncPill{border:1px solid rgba(9,156,179,0.14);color:#63767e;background:#f8f9f9}
-[data-theme="light"] .syncPill.on{color:#177b4e;border-color:rgba(37,174,110,0.22)}
-/* @light-theme:end */
-</style></head><body>
-<div class="shell"><aside class="side"><div class="brand"><img class="mark" src="/golide-logo.png" alt="GOLIDE logo"><div><b>Easy With Golide</b><small>Job Search Toolkit</small></div></div><div class="sync"><strong id="sideSyncTitle">Saved on this device</strong><span id="sideSyncText">Sign in to sync across devices.</span> <a id="sideLogin" href="#">Sign in</a></div><nav id="nav"><button data-view="start" class="active">Start Here</button><button data-view="score">Role Fit Scorecard</button><button data-view="map">Evidence Mapper</button><button data-view="tailor">Bullet Builder</button><button data-view="track">Application Tracker</button><button data-view="review">Weekly Review</button><button data-view="roadmap">14-Day Roadmap</button><button data-view="faq">FAQ</button></nav><div class="privacy">Local autosave is always on. Signed-in users also get cloud sync.</div></aside>
-<main class="main"><header class="top"><div><div class="eyebrow">GOLIDE EXECUTION SYSTEM</div><h1 id="viewTitle">Start Here</h1><p id="viewSub">Score. Map. Tailor. Track.</p></div><div class="topTools"><span id="syncPill" class="syncPill">Device save</span><div class="progress"><b><span id="doneCount">0</span> of 6 stages reached</b><div class="bar"><i id="progressBar"></i></div></div></div></header>
-<section id="start" class="view active"><div class="grid"><article class="card full"><div class="eyebrow">YOUR FIRST WIN</div><h2>Make one clear Apply or Skip decision in about 20 minutes.</h2><p>Use one real job description. Score the role first. If it is worth your time, connect every important requirement to evidence you can defend.</p><div class="actions"><button class="primary jump" data-view="score">Score a role</button><button class="ghost jump" data-view="roadmap">See the full path</button></div></article><article class="card third"><div class="metric">01</div><h3>Score</h3><p>Test four must-haves before spending time tailoring.</p></article><article class="card third"><div class="metric">02</div><h3>Map</h3><p>Match the employer's words to proof from your real work.</p></article><article class="card third"><div class="metric">03</div><h3>Tailor</h3><p>Turn proof into concise, truthful application language.</p></article><article class="card third"><div class="metric">04</div><h3>Send + Track</h3><p>Save the exact version, response and next action.</p></article><article class="card third"><div class="metric">05</div><h3>Review</h3><p>Read the weekly response pattern.</p></article><article class="card third"><div class="metric">06</div><h3>Repeat</h3><p>Use the 14-day path to improve consistently.</p></article></div></section>
-<section id="score" class="view"><article class="card full"><h2>Role Fit Scorecard</h2><p>Score the four most important requirements from 0 to 3. Do not reward potential; score evidence you already have.</p><label>Role and company</label><input id="role" placeholder="e.g. Junior Product Analyst  -  Acme"><div id="scoreRows"></div><div class="hint"><em>Example:</em> “SQL reporting” → 2 → “Built five queries for a university sales dataset and presented weekly trends.”</div><div class="scoreResult"><div><small>TOTAL FIT SCORE</small><div class="metric"><span id="total">0</span>/12</div></div><div id="decision" class="badge">Add your scores</div></div><div class="actions"><button class="primary" id="saveScore">Save scorecard</button><button class="ghost" id="clearScore">Clear</button></div></article></section>
-<section id="map" class="view"><article class="card full"><h2>JD → Evidence Mapper</h2><p>For each requirement, capture the real proof you have. Write “missing” when evidence is missing.</p><div id="mapRows"></div><div class="hint"><em>Best-answer pattern:</em> Action + context + method + result or purpose.</div><div class="actions"><button class="primary" id="saveMap">Save evidence map</button><button class="ghost" id="addMap">Add requirement</button></div></article></section>
-<section id="tailor" class="view"><div class="grid"><article class="card"><h2>Bullet Builder</h2><p>Build a defensible bullet from facts. Leave a field blank when it is not true.</p><label>Action you took</label><input id="action" placeholder="Created, analysed, coordinated..."><label>Context</label><input id="context" placeholder="for a six-week student project"><label>Method or tool</label><input id="method" placeholder="using SQL and a weekly dashboard"><label>Result or purpose</label><input id="result" placeholder="to identify the strongest sales category"><div class="actions"><button class="primary" id="buildBullet">Build bullet</button></div></article><article class="card"><h2>Your draft</h2><p>Edit it until every word is accurate and natural.</p><textarea id="bullet" style="min-height:190px" placeholder="Your bullet will appear here."></textarea><div class="hint"><em>Check:</em> Could you explain every claim, tool and result in an interview?</div><button class="ghost" id="copyBullet">Copy draft</button></article></div></section>
-<section id="track" class="view"><article class="card full"><h2>Application Tracker</h2><p>Save the exact application version and its next action.</p><div class="row"><div><label>Role / company</label><input id="tRole"></div><div><label>Score</label><input id="tScore" type="number" min="0" max="12"></div><div><label>Status</label><select id="tStatus"><option>Preparing</option><option>Applied</option><option>Follow-up due</option><option>Interview</option><option>Closed</option></select></div></div><div class="row" style="grid-template-columns:1fr 1fr 1fr"><div><label>Version</label><input id="tVersion" placeholder="resume-v3.pdf"></div><div><label>Date</label><input id="tDate" type="date"></div><div><label>Next action</label><input id="tNext"></div></div><div class="actions"><button class="primary" id="addApplication">Add application</button><button class="ghost" id="exportCsv">Export CSV</button><button class="ghost" id="exportPdf">Export PDF</button></div><div class="table"><table><thead><tr><th>Date</th><th>Role</th><th>Score</th><th>Status</th><th>Version</th><th>Next action</th><th></th></tr></thead><tbody id="trackerBody"></tbody></table></div></article></section>
-<section id="review" class="view"><div class="grid"><article class="card"><h2>Weekly numbers</h2><label>Applications sent</label><input id="rSent" type="number" min="0"><label>Responses</label><input id="rResponses" type="number" min="0"><label>Interviews</label><input id="rInterviews" type="number" min="0"><div class="actions"><button class="primary" id="calcReview">Calculate</button></div></article><article class="card"><h2>Your signal</h2><div class="metric" id="responseRate">0%</div><p>Response rate</p><div class="metric" id="interviewRate">0%</div><p>Interview conversion</p></article><article class="card full"><h2>One useful experiment</h2><label>What pattern did you notice?</label><textarea id="pattern"></textarea><label>What one variable will you change?</label><textarea id="experiment"></textarea><button class="primary" id="saveReview">Save review</button></article></div></section>
-<section id="roadmap" class="view"><article class="card full"><h2>The complete path</h2><p>Move in order. A busy week is not progress unless it creates these outputs.</p><div class="road"><div class="step"><b>1-2</b><span>Set direction</span><p>Choose one primary role and list your real constraints.</p></div><div class="step"><b>3-4</b><span>Build evidence</span><p>Create six evidence entries. Score three real roles.</p></div><div class="step"><b>5-7</b><span>Map + tailor</span><p>Finish one defensible targeted application.</p></div><div class="step"><b>8</b><span>Send + save</span><p>Submit and store the exact version.</p></div><div class="step"><b>9-12</b><span>Repeat</span><p>Build stories and send a second strong application.</p></div><div class="step"><b>13-14</b><span>Review</span><p>Choose one experiment for the next week.</p></div></div></article></section>
-<section id="faq" class="view"><article class="card full faq"><h2>Frequently asked questions</h2><details><summary>Does this guarantee interviews or a job?</summary><p>No. It improves decisions, evidence quality and consistency. Hiring outcomes remain outside your control.</p></details><details><summary>Is this a way to beat an ATS?</summary><p>No. The method helps a human reader see truthful relevance. It does not promise to manipulate screening systems.</p></details><details><summary>What score should I apply with?</summary><p>Use 6/12 as the minimum working threshold. Skip any role with a hard legal, location, credential or practical barrier.</p></details><details><summary>Can I use AI?</summary><p>Yes, to organise and improve facts you provide. Never let it invent titles, tools, metrics, qualifications or results.</p></details><details><summary>Where is my information stored?</summary><p>Local autosave works on this device. If you sign in, your saved toolkit state is also synced to your GOLIDE account so it can be restored when you return.</p></details><details><summary>Can I back up my data?</summary><p>Yes. Export the application tracker as CSV or export a PDF summary of your toolkit data.</p></details></article></section>
-</main></div><div id="toast" class="toast">Saved</div><div id="loginModal" class="loginModal" role="dialog" aria-modal="true"><div class="loginCard"><div class="eyebrow">KEEP YOUR WORK</div><h2>Sign in before you build.</h2><p>You can continue on this device without an account, but signing in lets GOLIDE restore your saved toolkit data when you return.</p><div class="loginActions"><a id="loginLink" href="#">Sign in & sync</a><button id="continueLocal" type="button">Continue on this device</button></div></div></div>
+/* Header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:31;background:var(--bg)}
+.top-in{height:62px;display:flex;align-items:center;gap:14px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.lockup{display:flex;align-items:center;gap:10px;text-decoration:none;min-width:0}
+.gmark{width:28px;height:28px;color:var(--fg);flex:0 0 auto}
+.word{font-size:13px;letter-spacing:.18em;font-weight:500}
+.lockup .sub{color:var(--faint);font-size:var(--small);padding-left:12px;margin-left:2px;border-left:1px solid var(--line);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top-tools{margin-left:auto;display:flex;align-items:center;gap:8px}
+.sync{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted);padding:6px 10px;border:1px solid var(--line);border-radius:999px;white-space:nowrap}
+.sync i{width:7px;height:7px;border-radius:50%;background:var(--faint)}
+.sync.on i{background:var(--good)}
+.sync a{color:var(--gold);text-decoration:none;font-weight:600}
+.icon-btn{width:36px;height:36px;display:grid;place-items:center;border:1px solid var(--line);border-radius:999px;background:transparent;cursor:pointer;color:var(--fg)}
+.icon-btn:hover{border-color:var(--gold-line)}
+.icon-btn svg{width:17px;height:17px}
+.i-sun{display:none}
+:root[data-theme="dark"] .i-sun{display:block}:root[data-theme="dark"] .i-moon{display:none}
+@media (prefers-color-scheme:dark){:root:not([data-theme]) .i-sun{display:block}:root:not([data-theme]) .i-moon{display:none}}
+
+/* Shell */
+.shell{display:grid;grid-template-columns:248px minmax(0,1fr);max-width:1240px;margin-inline:auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));gap:40px}
+.rail{position:sticky;top:calc(env(safe-area-inset-top,0px) + 62px);align-self:start;padding-block:28px;display:flex;flex-direction:column;gap:22px}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.step-btn{width:100%;display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:10px;padding:9px 10px;border:1px solid transparent;border-radius:var(--r-sm);background:transparent;cursor:pointer;text-align:left;color:var(--muted);font-size:14.5px}
+.step-btn:hover{color:var(--fg);background:var(--panel)}
+.step-btn[aria-current="step"]{color:var(--fg);background:var(--surface);border-color:var(--line);box-shadow:var(--shadow)}
+.dot{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-family:var(--mono);border:1px solid var(--line-strong);color:var(--muted)}
+.step-btn[aria-current="step"] .dot{border-color:var(--gold);color:var(--gold)}
+.step-btn.done .dot{background:var(--gold);border-color:var(--gold);color:var(--on-gold)}
+.step-btn .tick{font-size:12px;color:var(--faint)}
+.rail-meter{padding:14px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+.meter{height:5px;border-radius:5px;background:var(--sunk);overflow:hidden;margin-top:9px}
+.meter i{display:block;height:100%;width:0;background:var(--gold);transition:width .35s ease}
+.rail-note{font-size:12.5px;color:var(--faint);line-height:1.5}
+.strip{display:none}
+
+main{padding-block:32px 120px;min-width:0}
+.view{display:none}.view.active{display:block}
+.head{display:flex;flex-direction:column;gap:8px;margin-bottom:24px;max-width:68ch}
+.head p{color:var(--muted)}
+.stack{display:flex;flex-direction:column;gap:16px}
+.sheet{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:clamp(18px,2.4vw,28px);box-shadow:var(--shadow);min-width:0}
+.sheet>h2+p,.sheet>h3+p{color:var(--muted);margin-top:4px}
+.cols{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:16px;align-items:start}
+.tip{border-left:2px solid var(--gold);background:var(--gold-soft);padding:12px 14px;border-radius:0 var(--r-sm) var(--r-sm) 0;font-size:14px;color:var(--muted)}
+.tip b{color:var(--fg);font-weight:600}
+
+/* Fields */
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field>span{font-size:13px;font-weight:500;color:var(--fg)}
+.field>small{color:var(--faint);font-size:12.5px}
+input[type=text],input[type=number],input[type=date],select,textarea{width:100%;min-width:0;background:var(--bg);border:1px solid var(--line-strong);border-radius:var(--r-sm);padding:10px 12px;font-size:15px;line-height:1.4;outline:none;transition:border-color .15s,box-shadow .15s}
+textarea{min-height:96px;resize:vertical;line-height:1.55}
+input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-soft)}
+input::placeholder,textarea::placeholder{color:var(--faint)}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:14.5px;cursor:pointer}
+.check input{width:18px;height:18px;margin:3px 0 0;accent-color:var(--gold);flex:0 0 auto}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:10px 16px;border-radius:var(--r-sm);border:1px solid var(--line-strong);background:transparent;cursor:pointer;font-size:12.5px;font-weight:500;letter-spacing:.09em;text-transform:uppercase;text-decoration:none;white-space:nowrap}
+.btn:hover{border-color:var(--fg)}
+.btn.primary{background:var(--gold);border-color:var(--gold);color:var(--on-gold)}
+.btn.primary:hover{filter:brightness(1.06)}
+.btn.quiet{border-color:transparent;color:var(--muted)}
+.btn.quiet:hover{color:var(--fg);border-color:var(--line)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.sm{min-height:34px;padding:6px 11px;font-size:11.5px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+
+/* Segmented scorer */
+.seg{display:inline-grid;grid-auto-flow:column;grid-auto-columns:1fr;border:1px solid var(--line-strong);border-radius:var(--r-sm);overflow:hidden;background:var(--bg)}
+.seg button{border:0;border-left:1px solid var(--line);background:transparent;padding:9px 0;min-width:44px;cursor:pointer;font-family:var(--mono);font-size:14px;color:var(--muted)}
+.seg button:first-child{border-left:0}
+.seg button:hover{background:var(--panel);color:var(--fg)}
+.seg button[aria-pressed="true"]{background:var(--gold);color:var(--on-gold)}
+.seg.words button{font-family:var(--font);font-size:13px;padding:9px 12px}
+.seg.words button[data-v="Strong"][aria-pressed="true"]{background:var(--good);color:var(--surface)}
+.seg.words button[data-v="Weak"][aria-pressed="true"]{background:var(--warn);color:var(--surface)}
+.seg.words button[data-v="Missing"][aria-pressed="true"]{background:var(--bad);color:var(--surface)}
+
+/* Score rows */
+.reqs{display:flex;flex-direction:column}
+.req{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:8px 14px;align-items:center;padding:16px 0;border-top:1px solid var(--line)}
+.req:first-child{border-top:0;padding-top:4px}
+.req .n{font-family:var(--mono);font-size:12px;color:var(--faint)}
+.req .proof{grid-column:2/-1}
+.scale{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;font-size:12.5px;color:var(--muted)}
+.scale div{padding:10px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--bg)}
+.scale b{display:block;font-family:var(--mono);color:var(--fg);font-weight:500}
+
+.verdict{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;align-items:center}
+.big{font-size:clamp(44px,4vw + 20px,64px);font-weight:400;letter-spacing:-.05em;line-height:1;font-variant-numeric:tabular-nums}
+.big small{font-size:.38em;color:var(--faint);letter-spacing:-.01em;margin-left:2px}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;font-size:12.5px;font-weight:500;border:1px solid transparent;white-space:nowrap}
+.pill.good{background:var(--good-soft);color:var(--good)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.bad{background:var(--bad-soft);color:var(--bad)}
+.pill.neutral{background:var(--panel);color:var(--muted)}
+.pill.gold{background:var(--gold-soft);color:var(--gold)}
+.gauge{height:8px;border-radius:8px;background:var(--sunk);position:relative;overflow:hidden;margin-top:12px}
+.gauge i{position:absolute;inset:0 auto 0 0;width:0;background:var(--gold);transition:width .3s}
+.gauge::after{content:"";position:absolute;left:50%;top:0;bottom:0;width:2px;background:var(--fg);opacity:.35}
+.gauge-legend{display:flex;justify-content:space-between;font-size:11.5px;color:var(--faint);margin-top:6px;font-family:var(--mono)}
+
+/* Map rows */
+.maprow{display:grid;grid-template-columns:minmax(0,1fr) auto 36px;gap:10px 12px;align-items:center;padding:14px 0;border-top:1px solid var(--line)}
+.maprow:first-child{border-top:0;padding-top:4px}
+.maprow .ev{grid-column:1/-1}
+.x{width:36px;height:36px;border:1px solid transparent;border-radius:var(--r-sm);background:transparent;cursor:pointer;color:var(--faint);font-size:18px;line-height:1}
+.x:hover{color:var(--bad);border-color:var(--line)}
+.tally{display:flex;flex-wrap:wrap;gap:8px}
+
+/* Bullet */
+.draft{font-size:17px;line-height:1.55;padding:16px;border:1px dashed var(--line-strong);border-radius:var(--r-sm);min-height:84px;background:var(--bg)}
+.draft.empty{color:var(--faint)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted)}
+.chip:hover{border-color:var(--gold-line);color:var(--fg)}
+.bank{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.bank li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:start;padding:12px 0;border-top:1px solid var(--line);font-size:15px}
+.bank li:first-child{border-top:0}
+
+/* Tracker */
+.form-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}
+.span2{grid-column:span 2}.span3{grid-column:span 3}.span1{grid-column:span 1}
+.apps{display:flex;flex-direction:column}
+.app{display:grid;grid-template-columns:minmax(0,1.6fr) 70px minmax(0,1fr) minmax(0,1.4fr) 36px;gap:12px;align-items:center;padding:14px 0;border-top:1px solid var(--line)}
+.app:first-child{border-top:0}
+.app .who b{display:block;font-weight:500;overflow-wrap:anywhere}
+.app .who small{color:var(--faint);font-size:12.5px}
+.app .next{font-size:14px;color:var(--muted);overflow-wrap:anywhere}
+.app select{padding:7px 10px;font-size:13.5px}
+.apps-head{display:grid;grid-template-columns:minmax(0,1.6fr) 70px minmax(0,1fr) minmax(0,1.4fr) 36px;gap:12px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.empty-state{padding:28px 8px;text-align:center;color:var(--muted)}
+.empty-state b{display:block;color:var(--fg);font-weight:500;margin-bottom:4px}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden}
+.stat{background:var(--surface);padding:18px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.stat .v{font-size:30px;letter-spacing:-.04em;line-height:1.05;font-variant-numeric:tabular-nums}
+.stat .v small{font-size:15px;color:var(--faint)}
+.stat .d{font-size:13px;color:var(--muted)}
+.flow{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;counter-reset:f}
+.flow li{border-top:2px solid var(--line-strong);padding-top:12px;display:flex;flex-direction:column;gap:4px}
+.flow li.done{border-color:var(--gold)}
+.flow .k{font-family:var(--mono);font-size:12px;color:var(--faint)}
+.flow p{font-size:14px;color:var(--muted)}
+.hero{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:24px;align-items:end}
+.hero p{color:var(--muted);max-width:56ch}
+.focus{border:1px solid var(--gold-line);background:var(--gold-soft);border-radius:var(--r-lg);padding:18px;display:flex;flex-direction:column;gap:10px}
+
+/* Review */
+.bars{display:flex;flex-direction:column;gap:10px}
+.bar{display:grid;grid-template-columns:110px minmax(0,1fr) 34px;gap:10px;align-items:center;font-size:13.5px}
+.bar .t{height:10px;border-radius:5px;background:var(--sunk);overflow:hidden}
+.bar .t i{display:block;height:100%;background:var(--gold)}
+.bar span:last-child{text-align:right;font-family:var(--mono);color:var(--muted)}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.compare div{padding:14px;border:1px solid var(--line);border-radius:var(--r);background:var(--bg)}
+.compare .v{font-size:26px;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.compare small{color:var(--faint);font-size:12.5px}
+
+/* Guide */
+.plan{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.plan li{display:grid;grid-template-columns:auto 72px minmax(0,1fr);gap:14px;align-items:start;padding:14px 0;border-top:1px solid var(--line)}
+.plan li:first-child{border-top:0}
+.plan .days{font-family:var(--mono);font-size:13px;color:var(--gold);padding-top:2px}
+.plan p{color:var(--muted);font-size:14.5px}
+.plan li.done b{text-decoration:line-through;text-decoration-color:var(--faint)}
+details{border-top:1px solid var(--line);padding:14px 0}
+details:first-of-type{border-top:0}
+summary{cursor:pointer;font-weight:500;list-style:none;display:flex;justify-content:space-between;gap:12px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--gold);font-family:var(--mono)}
+details[open] summary::after{content:"–"}
+details p{color:var(--muted);margin-top:8px;max-width:70ch}
+.confirm{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:12px;border:1px solid var(--bad);border-radius:var(--r-sm);background:var(--bad-soft);font-size:14px}
+
+/* Step footer */
+.pager{display:flex;justify-content:space-between;gap:10px;margin-top:24px;padding-top:20px;border-top:1px solid var(--line)}
+.saved{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:50;background:var(--fg);color:var(--bg);padding:10px 14px;border-radius:var(--r-sm);font-size:13.5px;display:flex;gap:12px;align-items:center;box-shadow:var(--shadow);transform:translateY(12px);opacity:0;pointer-events:none;transition:.2s}
+.saved.show{transform:none;opacity:1;pointer-events:auto}
+.saved button{background:transparent;border:0;color:var(--gold);font-weight:600;cursor:pointer;padding:0}
+
+@media (max-width:1000px){
+  .cols,.hero{grid-template-columns:minmax(0,1fr)}
+  .flow{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:860px){
+  .shell{grid-template-columns:minmax(0,1fr);gap:0}
+  .rail{display:none}
+  .strip{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));border-top:1px solid var(--line)}
+  .strip::-webkit-scrollbar{display:none}
+  .strip button{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:7px 12px 7px 8px;border:1px solid var(--line);border-radius:999px;background:transparent;font-size:13.5px;color:var(--muted);cursor:pointer}
+  .strip button .dot{width:20px;height:20px;font-size:11px}
+  .strip button[aria-current="step"]{color:var(--fg);border-color:var(--gold-line);background:var(--gold-soft)}
+  .strip button.done .dot{background:var(--gold);border-color:var(--gold);color:var(--on-gold)}
+  main{padding-block:22px 110px}
+  .lockup .sub{display:none}
+  .sync .txt{display:none}
+  .pager{position:fixed;left:0;right:0;bottom:0;z-index:25;margin:0;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);padding-top:10px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .view .pager{display:none}.view.active .pager{display:flex}
+  .pager .btn{flex:1}
+  .saved{bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+  .form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .span3,.span2{grid-column:1/-1}
+  .apps-head{display:none}
+  .app{grid-template-columns:minmax(0,1fr) auto 36px;gap:8px 12px}
+  .app .sc{grid-column:2;grid-row:1}
+  .app .x{grid-column:3;grid-row:1}
+  .app .st{grid-column:1/-1}
+  .app .next{grid-column:1/-1}
+}
+@media (max-width:520px){
+  .req{grid-template-columns:minmax(0,1fr)}
+  .req .n{display:none}
+  .req .proof{grid-column:1}
+  .seg{width:100%}
+  .scale{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .maprow{grid-template-columns:minmax(0,1fr) 36px}
+  .maprow .seg{grid-column:1/-1;grid-row:2}
+  .maprow .ev{grid-row:3}
+  .flow{grid-template-columns:minmax(0,1fr)}
+  .stat .v{font-size:26px}
+  .verdict{grid-template-columns:minmax(0,1fr)}
+  .plan li{grid-template-columns:auto minmax(0,1fr)}
+  .plan .days{grid-column:2}
+  .compare{grid-template-columns:minmax(0,1fr)}
+  .bar{grid-template-columns:92px minmax(0,1fr) 30px}
+  .top-in{gap:10px}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important;scroll-behavior:auto!important}}
+</style>
+
+<div class="preview" id="previewBar" hidden><span><b>Partner preview.</b> This is the full toolkit buyers get. Anything you type stays in your browser.</span><a href="https://whop.com/easy-with-golide/products/job-search-conversion-system/" target="_blank" rel="noopener">See it on Whop →</a></div>
+
+<header class="top">
+  <div class="top-in">
+    <a class="lockup" href="https://golidee.com" target="_blank" rel="noopener" aria-label="GOLIDE home">
+      <svg class="gmark" viewBox="0 0 64 64" aria-hidden="true"></svg>
+      <span class="word">GOLIDE</span>
+      <span class="sub">Job Search Toolkit</span>
+    </a>
+    <div class="top-tools">
+      <span class="sync" id="sync"><i></i><span class="txt" id="syncText">Saved on this device</span><a id="signIn" href="#" hidden>Sign in</a></span>
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Switch between light and dark theme">
+        <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      </button>
+    </div>
+  </div>
+  <nav class="strip" id="strip" aria-label="Toolkit steps"></nav>
+</header>
+
+<div class="shell">
+  <aside class="rail" aria-label="Toolkit steps">
+    <ol class="steps" id="steps"></ol>
+    <div class="rail-meter">
+      <div class="label">Your progress</div>
+      <div style="margin-top:6px;font-size:14.5px"><span class="num" id="doneCount">0</span> of 5 steps done</div>
+      <div class="meter"><i id="meterBar"></i></div>
+    </div>
+    <p class="rail-note">Everything saves as you type. <span id="railSync">Sign in on golidee.com to keep it across devices.</span></p>
+  </aside>
+
+  <main>
+    <!-- START -->
+    <section class="view" id="home" aria-labelledby="h-home">
+      <div class="stack">
+        <div class="hero">
+          <div class="head" style="margin:0">
+            <div class="label">Easy With Golide · Job Search Conversion System</div>
+            <h1 id="h-home">Fewer, better applications. More interviews.</h1>
+            <p>Score a role before you spend time on it. Prove your fit with real evidence. Track what gets replies, then change one thing a week.</p>
+          </div>
+          <div class="focus" id="focusCard"></div>
+        </div>
+        <div class="stats" id="stats"></div>
+        <div class="sheet">
+          <div class="row" style="justify-content:space-between;margin-bottom:16px"><h2>How it works</h2><span class="pill gold">About 20 minutes for your first decision</span></div>
+          <ol class="flow" id="flow"></ol>
+        </div>
+        <div class="sheet" id="exampleBox" hidden>
+          <h3>Want to see it filled in first?</h3>
+          <p style="color:var(--muted);margin:4px 0 14px">Load a worked example for a junior data analyst role. You can clear it from the Guide at any time.</p>
+          <button class="btn" type="button" id="loadExample">Load the example</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 1 SCORE -->
+    <section class="view" id="score" aria-labelledby="h-score">
+      <div class="head"><div class="label">Step 1 of 5</div><h1 id="h-score">Score the role</h1><p>Decide before you tailor. Pick the four must-haves from the job post and score only the evidence you already have.</p></div>
+      <div class="stack">
+        <div class="sheet stack">
+          <label class="field"><span>Role and company</span><input type="text" id="role" placeholder="e.g. Junior Data Analyst, Northwind Foods" autocomplete="off"></label>
+          <div class="scale" aria-label="Scoring scale">
+            <div><b>0</b>No evidence</div><div><b>1</b>Related exposure only</div><div><b>2</b>Done it for real</div><div><b>3</b>Done it, with a result</div>
+          </div>
+          <div class="reqs" id="reqs"></div>
+          <label class="check"><input type="checkbox" id="barrier"><span><b style="font-weight:500">There is a hard barrier.</b> <span style="color:var(--muted)">A legal, location, credential or practical requirement you can't meet.</span></span></label>
+        </div>
+        <div class="sheet">
+          <div class="verdict">
+            <div class="big num" id="total">0<small>/12</small></div>
+            <div class="stack" style="gap:8px">
+              <div><span class="pill neutral" id="decision">Score the four must-haves</span></div>
+              <p id="decisionWhy" style="color:var(--muted);font-size:14.5px">Six is the minimum working threshold.</p>
+            </div>
+          </div>
+          <div class="gauge"><i id="gauge"></i></div>
+          <div class="gauge-legend"><span>0</span><span>6 · apply line</span><span>12</span></div>
+        </div>
+        <div class="tip"><b>Example.</b> “SQL reporting” scores 2 when you can say: “Built five queries for a university sales dataset and presented weekly trends.”</div>
+      </div>
+      <div class="pager"><button class="btn quiet" type="button" data-go="prev">Back</button><button class="btn primary" type="button" data-go="next">Next: map evidence</button></div>
+    </section>
+
+    <!-- 2 MAP -->
+    <section class="view" id="map" aria-labelledby="h-map">
+      <div class="head"><div class="label">Step 2 of 5</div><h1 id="h-map">Map your evidence</h1><p>Match each requirement in the job post to proof from your real work, study or projects. Write “missing” where you have none.</p></div>
+      <div class="stack">
+        <div class="sheet">
+          <div class="row" style="justify-content:space-between;margin-bottom:6px"><div class="tally" id="tally"></div><div class="row"><button class="btn sm" type="button" id="pullReqs">Bring in my scorecard</button><button class="btn sm" type="button" id="addMap">Add requirement</button></div></div>
+          <div class="reqs" id="maprows"></div>
+        </div>
+        <div class="tip"><b>Pattern that reads well:</b> action + context + method + result or purpose. A gap marked “missing” is useful. It tells you what to build or what not to claim.</div>
+      </div>
+      <div class="pager"><button class="btn quiet" type="button" data-go="prev">Back</button><button class="btn primary" type="button" data-go="next">Next: write bullets</button></div>
+    </section>
+
+    <!-- 3 WRITE -->
+    <section class="view" id="write" aria-labelledby="h-write">
+      <div class="head"><div class="label">Step 3 of 5</div><h1 id="h-write">Write bullets you can defend</h1><p>Turn one piece of evidence into one application bullet. Leave a field empty when it isn't true.</p></div>
+      <div class="cols">
+        <div class="sheet stack">
+          <div class="stack" style="gap:8px" id="evidencePick" hidden><span class="label">Start from your evidence</span><div class="chips" id="evChips"></div></div>
+          <label class="field"><span>What you did</span><small>Start with a verb</small><input type="text" id="pAction" placeholder="Built, analysed, coordinated…" autocomplete="off"></label>
+          <label class="field"><span>Where or for what</span><input type="text" id="pContext" placeholder="for a six-week student project" autocomplete="off"></label>
+          <label class="field"><span>How (method or tool)</span><input type="text" id="pMethod" placeholder="using SQL and a weekly dashboard" autocomplete="off"></label>
+          <label class="field"><span>Result or purpose</span><input type="text" id="pResult" placeholder="to identify the strongest sales category" autocomplete="off"></label>
+        </div>
+        <div class="stack">
+          <div class="sheet stack">
+            <span class="label">Your bullet</span>
+            <div class="draft empty" id="draft" aria-live="polite">Your bullet appears here as you type.</div>
+            <div class="stack" style="gap:8px">
+              <label class="check"><input type="checkbox" class="honest"><span>Every fact in it is true.</span></label>
+              <label class="check"><input type="checkbox" class="honest"><span>I could explain every tool and number in an interview.</span></label>
+              <label class="check"><input type="checkbox" class="honest"><span>It uses the employer's words where they honestly fit.</span></label>
+            </div>
+            <div class="row"><button class="btn primary" type="button" id="keepBullet" disabled>Save to my bullets</button><button class="btn" type="button" id="copyDraft">Copy</button></div>
+          </div>
+          <div class="sheet">
+            <div class="row" style="justify-content:space-between"><h3>My bullets</h3><span class="pill neutral num" id="bankCount">0</span></div>
+            <ul class="bank" id="bank" style="margin-top:8px"></ul>
+          </div>
+        </div>
+      </div>
+      <div class="pager"><button class="btn quiet" type="button" data-go="prev">Back</button><button class="btn primary" type="button" data-go="next">Next: track it</button></div>
+    </section>
+
+    <!-- 4 TRACK -->
+    <section class="view" id="track" aria-labelledby="h-track">
+      <div class="head"><div class="label">Step 4 of 5</div><h1 id="h-track">Send it and track it</h1><p>Save which version you sent, when, and what happens next. This is the data your weekly review reads.</p></div>
+      <div class="stack">
+        <form class="sheet stack" id="appForm" novalidate>
+          <div class="row" style="justify-content:space-between"><h3>Add an application</h3><button class="btn sm" type="button" id="fromScore">Use my scorecard</button></div>
+          <div class="form-grid">
+            <label class="field span3"><span>Role and company</span><input type="text" id="tRole" autocomplete="off"></label>
+            <label class="field span1"><span>Fit score</span><input type="number" id="tScore" min="0" max="12" inputmode="numeric"></label>
+            <label class="field span2"><span>Status</span><select id="tStatus"></select></label>
+            <label class="field span2"><span>Version sent</span><input type="text" id="tVersion" placeholder="cv-data-v3.pdf" autocomplete="off"></label>
+            <label class="field span1"><span>Date</span><input type="date" id="tDate"></label>
+            <label class="field span3"><span>Next action</span><input type="text" id="tNext" placeholder="Follow up on 4 Nov" autocomplete="off"></label>
+          </div>
+          <div class="row"><button class="btn primary" type="submit">Add application</button></div>
+        </form>
+        <div class="sheet">
+          <div class="row" style="justify-content:space-between;margin-bottom:12px"><h3>Applications <span class="num" style="color:var(--faint)" id="appCount"></span></h3><div class="row" id="exportRow"></div></div>
+          <div class="apps-head label"><span>Role</span><span>Fit</span><span>Status</span><span>Next action</span><span></span></div>
+          <div class="apps" id="apps"></div>
+        </div>
+      </div>
+      <div class="pager"><button class="btn quiet" type="button" data-go="prev">Back</button><button class="btn primary" type="button" data-go="next">Next: weekly review</button></div>
+    </section>
+
+    <!-- 5 REVIEW -->
+    <section class="view" id="review" aria-labelledby="h-review">
+      <div class="head"><div class="label">Step 5 of 5</div><h1 id="h-review">Weekly review</h1><p>Read the pattern in your tracker, then change one variable next week. The numbers below fill in from your applications.</p></div>
+      <div class="stack">
+        <div class="stats" id="rStats"></div>
+        <div class="cols">
+          <div class="sheet"><h3>Where your applications are</h3><div class="bars" id="rBars" style="margin-top:14px"></div></div>
+          <div class="sheet"><h3>Does fit score predict replies?</h3><p style="color:var(--muted);font-size:14.5px;margin:4px 0 14px">Average fit score of applications that got a reply versus those that didn't.</p><div class="compare" id="rCompare"></div></div>
+        </div>
+        <div class="sheet stack">
+          <h3>One useful experiment</h3>
+          <label class="field"><span>What pattern did you notice?</span><textarea id="rPattern" placeholder="Roles scored 8 or more got most of the replies."></textarea></label>
+          <label class="field"><span>What one thing will you change next week?</span><textarea id="rExperiment" placeholder="Only apply to roles that score 8 or more."></textarea></label>
+        </div>
+      </div>
+      <div class="pager"><button class="btn quiet" type="button" data-go="prev">Back</button><button class="btn primary" type="button" data-go="next">Open the 14-day plan</button></div>
+    </section>
+
+    <!-- GUIDE -->
+    <section class="view" id="guide" aria-labelledby="h-guide">
+      <div class="head"><div class="label">Guide</div><h1 id="h-guide">The 14-day plan</h1><p>Move in order. A busy week only counts as progress if it produces these outputs.</p></div>
+      <div class="stack">
+        <div class="sheet"><ol class="plan" id="plan"></ol></div>
+        <div class="sheet" id="faq"><h2 style="margin-bottom:6px">Questions</h2></div>
+        <div class="sheet stack">
+          <h3>Start again</h3>
+          <p style="color:var(--muted);font-size:14.5px">Clears your scorecard, evidence, bullets, applications and review on this device<span id="resetCloud"></span>.</p>
+          <div id="resetArea"><button class="btn" type="button" id="resetBtn">Clear everything</button></div>
+        </div>
+      </div>
+      <div class="pager"><button class="btn quiet" type="button" data-go="prev">Back</button><button class="btn primary" type="button" data-go="home">Back to start</button></div>
+    </section>
+  </main>
+</div>
+
+<div class="saved" id="toast" role="status" aria-live="polite"><span id="toastText">Saved</span><button type="button" id="toastAction" hidden>Undo</button></div>
+
 <script>
 (()=>{
-const KEY='golideToolkit';const STAGES={score:1,map:2,tailor:3,track:4,review:5,roadmap:6};let cloudUser=null,cloudTimer=null;function loadLocal(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch{return{}}}let S=loadLocal();S.apps=Array.isArray(S.apps)?S.apps:[];S.stageReached=Number(S.stageReached||0);const titles={start:['Start Here','Score. Map. Tailor. Track.'],score:['Role Fit Scorecard','Decide before you tailor.'],map:['Evidence Mapper','Connect every requirement to proof.'],tailor:['Bullet Builder','Write only what you can defend.'],track:['Application Tracker','Save the version. Track the result.'],review:['Weekly Review','Read the pattern. Change one variable.'],roadmap:['14-Day Roadmap','From scattered applications to a repeatable system.'],faq:['FAQ','Clear answers before you act.']};
-const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];function toast(t='Saved'){const e=$('#toast');e.textContent=t;e.style.display='block';setTimeout(()=>e.style.display='none',1500)}function currentReturn(){return location.pathname+location.search+location.hash}function loginUrl(){return '/signin-with-chatgpt?return_to='+encodeURIComponent(currentReturn())}$('#loginLink').href=loginUrl();$('#sideLogin').href=loginUrl();
-function progress(){const n=Math.min(6,Math.max(0,Number(S.stageReached||0)));$('#doneCount').textContent=n;$('#progressBar').style.width=(n/6*100)+'%'}function markStage(view){const n=STAGES[view]||0;if(n>S.stageReached){S.stageReached=n;saveState(false)}}function saveState(showToast=true){S.updatedAt=Date.now();localStorage.setItem(KEY,JSON.stringify(S));progress();if(cloudUser)scheduleCloud();if(showToast)toast()}function scheduleCloud(){clearTimeout(cloudTimer);cloudTimer=setTimeout(()=>syncUp(),500)}async function syncUp(){if(!cloudUser)return;try{const r=await fetch('/api/toolkit-state',{method:'PUT',headers:{'content-type':'application/json'},body:JSON.stringify({state:S})});if(r.ok){const j=await r.json();S.updatedAt=j.updatedAt||S.updatedAt;localStorage.setItem(KEY,JSON.stringify(S));setSync(true)}}catch{setSync(true,'Cloud sync retrying')}}function setSync(on,text){$('#syncPill').classList.toggle('on',on);$('#syncPill').textContent=text||(on?'Cloud sync on':'Device save');$('#sideSyncTitle').textContent=on?'Synced to your account':'Saved on this device';$('#sideSyncText').textContent=on?(cloudUser?`Welcome ${String(cloudUser.displayName||'').split(/\s+/)[0]}. Your data will return with you.`:'Cloud sync on.'):'Sign in to sync across devices.';$('#sideLogin').style.display=on?'none':'inline'}
-function show(v){$$('.view').forEach(x=>x.classList.toggle('active',x.id===v));$$('nav button').forEach(x=>x.classList.toggle('active',x.dataset.view===v));$('#viewTitle').textContent=titles[v][0];$('#viewSub').textContent=titles[v][1];markStage(v);scrollTo({top:0,behavior:'smooth'})}$$('[data-view]').forEach(b=>b.onclick=()=>show(b.dataset.view));
-const sr=$('#scoreRows');for(let i=0;i<4;i++)sr.insertAdjacentHTML('beforeend',`<div class="row"><div><label>Must-have ${i+1}</label><input class="req" placeholder="Copy the requirement"></div><div><label>Score 0-3</label><select class="sc"><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div><div><label>Proof you have</label><input class="proof" placeholder="One real example"></div></div>`);function total(){const n=$$('.sc').reduce((a,x)=>a+Number(x.value),0);$('#total').textContent=n;const d=$('#decision');d.textContent=n>=6?'Apply  -  if no hard barrier':'Skip or build evidence';d.style.color=n>=6?'var(--good)':'var(--warn)'}$$('.sc').forEach(x=>x.onchange=total);$('#saveScore').onclick=()=>{S.score={role:$('#role').value,rows:$$('#scoreRows .row').map(r=>({req:r.querySelector('.req').value,score:r.querySelector('.sc').value,proof:r.querySelector('.proof').value}))};S.stageReached=Math.max(S.stageReached,1);saveState()};$('#clearScore').onclick=()=>{$('#role').value='';$$('#scoreRows input').forEach(x=>x.value='');$$('.sc').forEach(x=>x.value=0);total()};
-const mr=$('#mapRows');function addMapRow(v={}){const row=document.createElement('div');row.className='row maprow';row.innerHTML='<div><label>JD requirement</label><input class="mreq"></div><div><label>Strength</label><select class="mstrength"><option>Strong</option><option>Weak</option><option>Missing</option></select></div><div><label>Real evidence</label><input class="mevidence"></div>';row.querySelector('.mreq').value=v.req||'';row.querySelector('.mevidence').value=v.evidence||'';if(v.strength)row.querySelector('.mstrength').value=v.strength;mr.appendChild(row)}for(let i=0;i<4;i++)addMapRow();$('#addMap').onclick=()=>addMapRow();$('#saveMap').onclick=()=>{S.map=$$('.maprow').map(r=>({req:r.querySelector('.mreq').value,strength:r.querySelector('.mstrength').value,evidence:r.querySelector('.mevidence').value}));S.stageReached=Math.max(S.stageReached,2);saveState()};
-$('#buildBullet').onclick=()=>{const parts=[$('#action').value,$('#context').value,$('#method').value,$('#result').value].filter(Boolean);$('#bullet').value=parts.join(' ').replace(/\s+/g,' ').trim().replace(/\.?$/,'.');S.bullet=$('#bullet').value;S.stageReached=Math.max(S.stageReached,3);saveState()};$('#copyBullet').onclick=()=>navigator.clipboard.writeText($('#bullet').value).then(()=>toast('Copied'));
-function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}function renderApps(){$('#trackerBody').innerHTML=S.apps.length?S.apps.map((a,i)=>`<tr><td>${esc(a.date)}</td><td>${esc(a.role)}</td><td>${esc(a.score)}/12</td><td>${esc(a.status)}</td><td>${esc(a.version)}</td><td>${esc(a.next)}</td><td><button class="ghost del" data-i="${i}">×</button></td></tr>`).join(''):'<tr><td colspan="7" class="empty">No applications yet.</td></tr>';$$('.del').forEach(b=>b.onclick=()=>{S.apps.splice(Number(b.dataset.i),1);saveState(false);renderApps()})}$('#addApplication').onclick=()=>{if(!$('#tRole').value)return toast('Add a role first');S.apps.push({role:$('#tRole').value,score:$('#tScore').value,status:$('#tStatus').value,version:$('#tVersion').value,date:$('#tDate').value,next:$('#tNext').value});S.stageReached=Math.max(S.stageReached,4);saveState();renderApps();['tRole','tScore','tVersion','tNext'].forEach(id=>$('#'+id).value='')};
-$('#exportCsv').onclick=()=>{const q=x=>'"'+String(x||'').replaceAll('"','""')+'"';const csv=['Date,Role,Score,Status,Version,Next action',...S.apps.map(a=>[a.date,a.role,a.score,a.status,a.version,a.next].map(q).join(','))].join('\n');downloadBlob(new Blob([csv],{type:'text/csv'}),'golide-application-tracker.csv')};function downloadBlob(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1200)}
-function pdfEscape(s){return String(s||'').normalize('NFKD').replace(/[^\x20-\x7E]/g,' ').replace(/\\/g,'\\\\').replace(/\(/g,'\\(').replace(/\)/g,'\\)')}function wrap(text,max=82){const words=String(text||'').split(/\s+/);const lines=[];let line='';for(const word of words){if((line+' '+word).trim().length>max){if(line)lines.push(line);line=word}else line=(line+' '+word).trim()}if(line)lines.push(line);return lines}function buildPdf(){const lines=['GOLIDE Job Search Toolkit  -  Data Export',''];if(S.score){lines.push('ROLE FIT SCORECARD',`Role: ${S.score.role||''}`);(S.score.rows||[]).forEach((r,i)=>lines.push(`${i+1}. ${r.req||''} | ${r.score||0}/3 | ${r.proof||''}`));lines.push('')}if(S.map?.length){lines.push('EVIDENCE MAP');S.map.forEach((r,i)=>lines.push(`${i+1}. ${r.req||''} | ${r.strength||''} | ${r.evidence||''}`));lines.push('')}if(S.bullet){lines.push('LATEST BULLET',S.bullet,'')}if(S.apps?.length){lines.push('APPLICATION TRACKER');S.apps.forEach((a,i)=>lines.push(`${i+1}. ${a.date||''} | ${a.role||''} | ${a.score||''}/12 | ${a.status||''} | ${a.version||''} | ${a.next||''}`));lines.push('')}if(S.review){lines.push('WEEKLY REVIEW',`Sent: ${S.review.sent||0} | Responses: ${S.review.responses||0} | Interviews: ${S.review.interviews||0}`,`Pattern: ${S.review.pattern||''}`,`Experiment: ${S.review.experiment||''}`)}const wrapped=lines.flatMap(x=>wrap(x));let y=760,content='BT /F1 11 Tf 50 790 Td ';for(const line of wrapped){if(y<55){content+='ET ';break}content+=`(${pdfEscape(line)}) Tj 0 -16 Td `;y-=16}content+='ET';const objects=[null,'<< /Type /Catalog /Pages 2 0 R >>','<< /Type /Pages /Kids [3 0 R] /Count 1 >>','<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>',`<< /Length ${content.length} >>\nstream\n${content}\nendstream`,'<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>'];let pdf='%PDF-1.4\n',offsets=[0];for(let i=1;i<objects.length;i++){offsets[i]=pdf.length;pdf+=`${i} 0 obj\n${objects[i]}\nendobj\n`}const xref=pdf.length;pdf+=`xref\n0 ${objects.length}\n0000000000 65535 f \n`;for(let i=1;i<objects.length;i++)pdf+=String(offsets[i]).padStart(10,'0')+' 00000 n \n';pdf+=`trailer\n<< /Size ${objects.length} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;return new Blob([pdf],{type:'application/pdf'})}$('#exportPdf').onclick=()=>downloadBlob(buildPdf(),'golide-job-search-toolkit-data.pdf');
-$('#calcReview').onclick=()=>{const s=Number($('#rSent').value),r=Number($('#rResponses').value),i=Number($('#rInterviews').value);$('#responseRate').textContent=s?Math.round(r/s*100)+'%':'0%';$('#interviewRate').textContent=s?Math.round(i/s*100)+'%':'0%';S.stageReached=Math.max(S.stageReached,5);saveState(false)};$('#saveReview').onclick=()=>{S.review={sent:$('#rSent').value,responses:$('#rResponses').value,interviews:$('#rInterviews').value,pattern:$('#pattern').value,experiment:$('#experiment').value};S.stageReached=Math.max(S.stageReached,5);saveState()};
-function hydrate(){if(S.score){$('#role').value=S.score.role||'';(S.score.rows||[]).forEach((v,i)=>{const r=$$('#scoreRows .row')[i];if(r){r.querySelector('.req').value=v.req||'';r.querySelector('.sc').value=v.score||0;r.querySelector('.proof').value=v.proof||''}});total()}if(S.map?.length){mr.innerHTML='';S.map.forEach(addMapRow)}if(S.bullet)$('#bullet').value=S.bullet;if(S.review){$('#rSent').value=S.review.sent||'';$('#rResponses').value=S.review.responses||'';$('#rInterviews').value=S.review.interviews||'';$('#pattern').value=S.review.pattern||'';$('#experiment').value=S.review.experiment||'';$('#calcReview').click()}renderApps();progress()}
-async function initAccount(){try{const r=await fetch('/api/toolkit-state',{cache:'no-store'});if(r.status===401){setSync(false);if(sessionStorage.getItem('golide-toolkit-login-dismissed')!=='1')$('#loginModal').classList.add('show');return}if(!r.ok)throw new Error();const j=await r.json();cloudUser=j.user||null;const cloud=j.state;const cloudTime=Number(j.updatedAt||cloud?.updatedAt||0);const localTime=Number(S.updatedAt||0);if(cloud&&cloudTime>localTime){S=cloud;S.apps=Array.isArray(S.apps)?S.apps:[];S.stageReached=Number(S.stageReached||0);localStorage.setItem(KEY,JSON.stringify(S));hydrate()}else if(localTime||Object.keys(S).length>2){await syncUp()}setSync(true)}catch{setSync(false,'Device save')}}
-$('#continueLocal').onclick=()=>{sessionStorage.setItem('golide-toolkit-login-dismissed','1');$('#loginModal').classList.remove('show')};hydrate();initAccount();
-if(document.modelContext?.registerTool){document.modelContext.registerTool({name:'save_role_scorecard',title:'Save role scorecard',description:'Save four job requirements, scores, and evidence to the visible role scorecard.',inputSchema:{type:'object',properties:{role:{type:'string'},requirements:{type:'array',minItems:4,maxItems:4,items:{type:'object',properties:{requirement:{type:'string'},score:{type:'integer',minimum:0,maximum:3},evidence:{type:'string'}},required:['requirement','score','evidence'],additionalProperties:false}}},required:['role','requirements'],additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute(i){S.score={role:i.role,rows:i.requirements.map(x=>({req:x.requirement,score:String(x.score),proof:x.evidence}))};S.stageReached=Math.max(S.stageReached,1);saveState(false);hydrate();return{saved:true,total:i.requirements.reduce((a,x)=>a+x.score,0)}}}).catch(()=>{})}
+'use strict';
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const LIVE=/(^|\.)golidee\.com$|^localhost$|^127\.0\.0\.1$/.test(location.hostname);
+const KEY='golideToolkit';
+const ORDER=['home','score','map','write','track','review','guide'];
+const STEPS=[{id:'home',name:'Start'},{id:'score',name:'Score the role',n:1},{id:'map',name:'Map evidence',n:2},{id:'write',name:'Write bullets',n:3},{id:'track',name:'Track',n:4},{id:'review',name:'Weekly review',n:5},{id:'guide',name:'14-day plan & FAQ'}];
+const STATUSES=['Preparing','Applied','Follow-up due','Response','Interview','Offer','Closed'];
+const SENT=new Set(['Applied','Follow-up due','Response','Interview','Offer','Closed']);
+const REPLIED=new Set(['Response','Interview','Offer']);
+const INTERVIEW=new Set(['Interview','Offer']);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ---------- brand mark ---------- */
+(function(){let h='';for(let i=0;i<11;i++){const a=(-40+i*29)*Math.PI/180;h+=`<circle cx="${(32+22*Math.cos(a)).toFixed(2)}" cy="${(32+22*Math.sin(a)).toFixed(2)}" r="${(1.6+i*.22).toFixed(2)}" fill="currentColor"/>`}h+='<circle cx="36" cy="32" r="2.2" fill="currentColor" opacity=".55"/><circle cx="44" cy="32" r="3.6" style="fill:var(--gold)"/>';$$('.gmark').forEach(s=>s.innerHTML=h)})();
+
+/* ---------- theme ---------- */
+$('#themeBtn').onclick=()=>{const r=document.documentElement;const cur=r.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');const next=cur==='dark'?'light':'dark';r.dataset.theme=next;r.classList.toggle('dark',next==='dark');try{localStorage.setItem('golide-theme',next)}catch(e){}};
+
+/* ---------- state ---------- */
+function load(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){return{}}}
+function norm(s){s=s&&typeof s==='object'?s:{};
+  s.score=s.score&&typeof s.score==='object'?s.score:{};s.score.role=s.score.role||'';
+  const rows=Array.isArray(s.score.rows)?s.score.rows:[];s.score.rows=[0,1,2,3].map(i=>({req:rows[i]?.req||'',score:rows[i]?.score??'',proof:rows[i]?.proof||''}));s.score.barrier=!!s.score.barrier;
+  s.map=Array.isArray(s.map)?s.map.map(r=>({req:r.req||'',strength:r.strength||'',evidence:r.evidence||''})):[];
+  s.parts=s.parts&&typeof s.parts==='object'?s.parts:{};
+  s.bullets=Array.isArray(s.bullets)?s.bullets.filter(b=>typeof b==='string'&&b):[];
+  if(s.bullet&&!s.bullets.length&&typeof s.bullet==='string')s.bullets=[s.bullet];
+  s.apps=Array.isArray(s.apps)?s.apps:[];
+  s.review=s.review&&typeof s.review==='object'?s.review:{};
+  s.roadmapDone=Array.isArray(s.roadmapDone)?s.roadmapDone:[];
+  s.stageReached=Number(s.stageReached||0);return s}
+let S=norm(load());
+let cloudUser=null,cloudTimer=null,saveTimer=null;
+
+function persist(){S.updatedAt=Date.now();S.stageReached=Math.max(S.stageReached,doneSteps().length);try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}if(cloudUser){clearTimeout(cloudTimer);cloudTimer=setTimeout(syncUp,600)}}
+function save(quiet){clearTimeout(saveTimer);saveTimer=setTimeout(()=>{persist();if(!quiet)toast('Saved')},350);refreshShared()}
+let toastTimer;function toast(t,undo){$('#toastText').textContent=t;const a=$('#toastAction');a.hidden=!undo;a.onclick=undo?()=>{undo();hideToast()}:null;$('#toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(hideToast,undo?5000:1300)}
+function hideToast(){$('#toast').classList.remove('show')}
+
+/* ---------- derived ---------- */
+function total(){return S.score.rows.reduce((a,r)=>a+(Number(r.score)||0),0)}
+function scoredCount(){return S.score.rows.filter(r=>r.score!==''&&r.score!==null&&r.score!==undefined).length}
+function verdict(){const t=total(),n=scoredCount();
+  if(S.score.barrier)return{cls:'bad',text:'Skip this role',why:'A hard barrier overrides the score. Spend the time on a role you can actually take.'};
+  if(n<4)return{cls:'neutral',text:n?`Scored ${n} of 4`:'Score the four must-haves',why:'Six is the minimum working threshold.'};
+  if(t>=6)return{cls:'good',text:'Apply',why:t>=9?'Strong evidence across the must-haves. Worth a fully tailored application.':'You clear the line. Tailor carefully around your weakest must-have.'};
+  return{cls:'warn',text:'Skip or build evidence',why:'Below six. Either pass, or build the missing evidence before you apply.'}}
+function stepDone(id){switch(id){
+  case'score':return !!S.score.role&&scoredCount()===4;
+  case'map':return S.map.some(r=>r.evidence.trim());
+  case'write':return S.bullets.length>0;
+  case'track':return S.apps.length>0;
+  case'review':return !!(S.review.pattern||S.review.experiment);
+  default:return false}}
+function doneSteps(){return['score','map','write','track','review'].filter(stepDone)}
+function appStats(){const sent=S.apps.filter(a=>SENT.has(a.status));const rep=sent.filter(a=>REPLIED.has(a.status));const iv=sent.filter(a=>INTERVIEW.has(a.status));
+  const avg=l=>{const v=l.map(a=>Number(a.score)).filter(x=>!isNaN(x)&&x!=='');return v.length?(v.reduce((a,b)=>a+b,0)/v.length):null};
+  return{sent:sent.length,replied:rep.length,interviews:iv.length,rr:sent.length?Math.round(rep.length/sent.length*100):0,ir:sent.length?Math.round(iv.length/sent.length*100):0,avgRep:avg(rep),avgNo:avg(sent.filter(a=>!REPLIED.has(a.status)))}}
+
+/* ---------- navigation ---------- */
+function renderNav(){const cur=current();const done=new Set(doneSteps());
+  $('#steps').innerHTML=STEPS.map(s=>`<li><button class="step-btn${done.has(s.id)?' done':''}" type="button" data-nav="${s.id}"${s.id===cur?' aria-current="step"':''}><span class="dot">${s.n?(done.has(s.id)?'✓':s.n):(s.id==='home'?'•':'?')}</span><span>${s.name}</span><span class="tick"></span></button></li>`).join('');
+  $('#strip').innerHTML=STEPS.map(s=>`<button type="button" data-nav="${s.id}" class="${done.has(s.id)?'done':''}"${s.id===cur?' aria-current="step"':''}><span class="dot">${s.n?(done.has(s.id)?'✓':s.n):(s.id==='home'?'•':'?')}</span>${s.id==='guide'?'Plan & FAQ':s.name}</button>`).join('');
+  $$('[data-nav]').forEach(b=>b.onclick=()=>show(b.dataset.nav));
+  $('#doneCount').textContent=done.size;$('#meterBar').style.width=(done.size/5*100)+'%'}
+function centerStrip(){const a=$('#strip [aria-current]'),s=$('#strip');if(a&&s.scrollWidth>s.clientWidth)s.scrollLeft=a.offsetLeft-(s.clientWidth-a.offsetWidth)/2}
+let cur='home';function current(){return cur}
+function show(id,noScroll){if(!ORDER.includes(id))id='home';cur=id;$$('.view').forEach(v=>v.classList.toggle('active',v.id===id));
+  if(location.hash.slice(1)!==id){try{history.replaceState(null,'',id==='home'?location.pathname+location.search:'#'+id)}catch(e){}}
+  render(id);renderNav();centerStrip();if(!noScroll)scrollTo({top:0,behavior:'smooth'})}
+$$('[data-go]').forEach(b=>b.onclick=()=>{const g=b.dataset.go,i=ORDER.indexOf(cur);show(g==='next'?ORDER[Math.min(i+1,ORDER.length-1)]:g==='prev'?ORDER[Math.max(i-1,0)]:g)});
+function firstOpen(){return['score','map','write','track','review'].find(s=>!stepDone(s))||'review'}
+
+/* ---------- home ---------- */
+function renderHome(){const t=total(),v=verdict(),st=appStats(),gaps=S.map.filter(r=>r.req.trim()&&(r.strength==='Missing'||!r.evidence.trim())).length;const d=doneSteps().length;const next=firstOpen();const label=STEPS.find(s=>s.id===next).name;
+  $('#focusCard').innerHTML=S.score.role?`<span class="label">Role in focus</span><b style="font-weight:500;font-size:18px;overflow-wrap:anywhere">${esc(S.score.role)}</b><div class="row"><span class="pill ${v.cls}">${esc(v.text)}</span><span class="num" style="color:var(--muted)">${t}/12</span></div><button class="btn primary" type="button" data-nav="${next}">Continue: ${esc(label)}</button>`:`<span class="label">Your first win</span><b style="font-weight:500;font-size:18px">Make one clear Apply or Skip decision on a real job post.</b><button class="btn primary" type="button" data-nav="score">Score a role</button>`;
+  $('#stats').innerHTML=[[S.score.role&&scoredCount()?t+'<small>/12</small>':'–','Fit score, current role'],[S.map.length?gaps:'–','Evidence gaps to close'],[S.apps.length,'Applications tracked'],[st.sent?st.rr+'<small>%</small>':'–','Reply rate']].map(([a,b])=>`<div class="stat"><span class="v">${a}</span><span class="d">${b}</span></div>`).join('');
+  const flow=[['score','Score','Test four must-haves before you tailor anything.'],['map','Map','Match the employer’s words to proof from your real work.'],['write','Write','Turn proof into short, truthful bullets.'],['track','Track','Save the version you sent and what happens next.'],['review','Review','Read the pattern weekly. Change one variable.']];
+  $('#flow').innerHTML=flow.map(([id,n,p],i)=>`<li class="${stepDone(id)?'done':''}"><span class="k">0${i+1}</span><h3>${n}</h3><p>${p}</p></li>`).join('');
+  $('#exampleBox').hidden=!(d===0&&!S.score.role&&!S.apps.length);
+  $$('#focusCard [data-nav]').forEach(b=>b.onclick=()=>show(b.dataset.nav))}
+
+/* ---------- score ---------- */
+function buildScore(){$('#reqs').innerHTML=S.score.rows.map((r,i)=>`<div class="req" data-i="${i}">
+  <span class="n">0${i+1}</span>
+  <label class="field" style="gap:4px"><span class="label" style="letter-spacing:.1em">Must-have ${i+1}</span><input type="text" id="req-${i}" class="rq" placeholder="${['Copy a requirement from the job post','e.g. Advanced Excel','e.g. Stakeholder reporting','e.g. A degree in a related field'][i]}" autocomplete="off"></label>
+  <div class="seg" role="group" aria-label="Score for must-have ${i+1}">${[0,1,2,3].map(n=>`<button type="button" data-v="${n}" aria-pressed="false">${n}</button>`).join('')}</div>
+  <label class="field proof" style="gap:4px"><input type="text" id="proof-${i}" class="pf" placeholder="Your proof, in one line" autocomplete="off" aria-label="Proof for must-have ${i+1}"></label>
+  </div>`).join('');
+  $$('#reqs .req').forEach(el=>{const i=+el.dataset.i;el.querySelector('.rq').oninput=e=>{S.score.rows[i].req=e.target.value;save(true);paintVerdict()};el.querySelector('.pf').oninput=e=>{S.score.rows[i].proof=e.target.value;save(true)};
+    el.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{const v=b.dataset.v;S.score.rows[i].score=String(S.score.rows[i].score)===v?'':v;save();fillScore();})});
+  $('#role').oninput=e=>{S.score.role=e.target.value;save(true)};$('#barrier').onchange=e=>{S.score.barrier=e.target.checked;save();paintVerdict()}}
+function fillScore(){$('#role').value=S.score.role;$('#barrier').checked=S.score.barrier;S.score.rows.forEach((r,i)=>{const el=$(`#reqs .req[data-i="${i}"]`);if(!el)return;const rq=el.querySelector('.rq'),pf=el.querySelector('.pf');if(document.activeElement!==rq)rq.value=r.req;if(document.activeElement!==pf)pf.value=r.proof;el.querySelectorAll('.seg button').forEach(b=>b.setAttribute('aria-pressed',String(String(r.score)===b.dataset.v)))});paintVerdict()}
+function paintVerdict(){const t=total(),v=verdict();$('#total').innerHTML=`${t}<small>/12</small>`;const d=$('#decision');d.className='pill '+v.cls;d.textContent=v.text;$('#decisionWhy').textContent=v.why;$('#gauge').style.width=(t/12*100)+'%'}
+
+/* ---------- map ---------- */
+function renderMap(){const box=$('#maprows');
+  if(!S.map.length){box.innerHTML=`<div class="empty-state"><b>No requirements yet</b>${S.score.rows.some(r=>r.req.trim())?'Bring in the four must-haves from your scorecard, or add your own.':'Add a requirement from the job post to start.'}</div>`}
+  else box.innerHTML=S.map.map((r,i)=>`<div class="maprow" data-i="${i}">
+    <label class="field" style="gap:4px"><span class="label" style="letter-spacing:.1em">Requirement</span><input type="text" id="mreq-${i}" class="mq" value="${esc(r.req)}" placeholder="From the job post" autocomplete="off"></label>
+    <div class="seg words" role="group" aria-label="Evidence strength">${['Strong','Weak','Missing'].map(w=>`<button type="button" data-v="${w}" aria-pressed="${r.strength===w}">${w}</button>`).join('')}</div>
+    <button class="x" type="button" aria-label="Remove requirement">×</button>
+    <label class="field ev" style="gap:4px"><input type="text" id="mev-${i}" class="me" value="${esc(r.evidence)}" placeholder="Real evidence, or “missing”" autocomplete="off" aria-label="Evidence"></label></div>`).join('');
+  $$('#maprows .maprow').forEach(el=>{const i=+el.dataset.i;el.querySelector('.mq').oninput=e=>{S.map[i].req=e.target.value;save(true);paintTally()};el.querySelector('.me').oninput=e=>{S.map[i].evidence=e.target.value;save(true);paintTally()};
+    el.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{S.map[i].strength=S.map[i].strength===b.dataset.v?'':b.dataset.v;save();renderMap()});
+    el.querySelector('.x').onclick=()=>{const gone=S.map.splice(i,1)[0];save(true);renderMap();toast('Requirement removed',()=>{S.map.splice(i,0,gone);save(true);renderMap()})}});
+  $('#pullReqs').hidden=!S.score.rows.some(r=>r.req.trim());paintTally()}
+function paintTally(){const c={Strong:0,Weak:0,Missing:0};S.map.forEach(r=>{if(c[r.strength]!==undefined)c[r.strength]++});$('#tally').innerHTML=S.map.length?`<span class="pill good num">${c.Strong} strong</span><span class="pill warn num">${c.Weak} weak</span><span class="pill bad num">${c.Missing} missing</span>`:'<span class="pill neutral">0 requirements</span>'}
+$('#addMap').onclick=()=>{S.map.push({req:'',strength:'',evidence:''});save(true);renderMap();const l=$$('#maprows .mq').pop();if(l)l.focus()};
+$('#pullReqs').onclick=()=>{const have=new Set(S.map.map(r=>r.req.trim().toLowerCase()));let added=0;S.score.rows.forEach(r=>{const q=r.req.trim();if(q&&!have.has(q.toLowerCase())){const sc=Number(r.score);S.map.push({req:q,strength:r.score===''?'':sc>=2?'Strong':sc===1?'Weak':'Missing',evidence:r.proof||''});added++}});save(true);renderMap();toast(added?`Added ${added} from your scorecard`:'Already here')};
+
+/* ---------- write ---------- */
+const PARTS=[['pAction','action'],['pContext','context'],['pMethod','method'],['pResult','result']];
+function bulletText(){const p=PARTS.map(([,k])=>(S.parts[k]||'').trim()).filter(Boolean);if(!p.length)return'';let t=p.join(' ').replace(/\s+/g,' ').trim();t=t.charAt(0).toUpperCase()+t.slice(1);return t.replace(/[.\s]*$/,'.')}
+function paintDraft(){const t=bulletText(),d=$('#draft');d.textContent=t||'Your bullet appears here as you type.';d.classList.toggle('empty',!t);const ok=$$('.honest').every(c=>c.checked);$('#keepBullet').disabled=!(t&&ok);$('#keepBullet').title=t&&!ok?'Tick the three checks first':''}
+function renderWrite(){PARTS.forEach(([id,k])=>{const el=$('#'+id);if(document.activeElement!==el)el.value=S.parts[k]||''});
+  const ev=S.map.filter(r=>r.evidence.trim()&&r.evidence.trim().toLowerCase()!=='missing');$('#evidencePick').hidden=!ev.length;
+  $('#evChips').innerHTML=ev.map((r,i)=>`<button class="chip" type="button" data-i="${i}" title="${esc(r.evidence)}">${esc(r.req||r.evidence)}</button>`).join('');
+  $$('#evChips .chip').forEach(c=>c.onclick=()=>{const r=ev[+c.dataset.i];S.parts={action:r.evidence,context:'',method:'',result:''};$$('.honest').forEach(x=>x.checked=false);save(true);renderWrite();$('#pAction').focus()});
+  $('#bankCount').textContent=S.bullets.length;
+  $('#bank').innerHTML=S.bullets.length?S.bullets.map((b,i)=>`<li><span>${esc(b)}</span><span class="row" style="gap:4px"><button class="btn sm quiet" type="button" data-copy="${i}">Copy</button><button class="x" type="button" data-del="${i}" aria-label="Delete bullet">×</button></span></li>`).join(''):'<li class="empty-state" style="display:block"><b>No bullets saved yet</b>Build one on the left and tick the three checks.</li>';
+  $$('#bank [data-copy]').forEach(b=>b.onclick=()=>copy(S.bullets[+b.dataset.copy]));
+  $$('#bank [data-del]').forEach(b=>b.onclick=()=>{const i=+b.dataset.del,g=S.bullets.splice(i,1)[0];save(true);renderWrite();toast('Bullet deleted',()=>{S.bullets.splice(i,0,g);save(true);renderWrite()})});
+  paintDraft()}
+PARTS.forEach(([id,k])=>$('#'+id).oninput=e=>{S.parts[k]=e.target.value;S.bullet=bulletText();save(true);paintDraft()});
+$$('.honest').forEach(c=>c.onchange=paintDraft);
+$('#keepBullet').onclick=()=>{const t=bulletText();if(!t)return;S.bullets.unshift(t);S.bullet=t;S.parts={};$$('.honest').forEach(x=>x.checked=false);save(true);renderWrite();renderNav();toast('Saved to your bullets')};
+$('#copyDraft').onclick=()=>copy(bulletText());
+function copy(text){if(!text)return toast('Nothing to copy yet');const fallback=()=>{const ta=document.createElement('textarea');ta.value=text;ta.setAttribute('readonly','');ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand('copy')}catch(e){}ta.remove();toast(ok?'Copied':'Select the text and copy it manually')};try{navigator.clipboard.writeText(text).then(()=>toast('Copied'),fallback)}catch(e){fallback()}}
+
+/* ---------- track ---------- */
+$('#tStatus').innerHTML=STATUSES.map(s=>`<option>${s}</option>`).join('');
+function statusCls(s){return s==='Offer'||s==='Interview'?'good':s==='Response'?'gold':s==='Follow-up due'?'warn':s==='Closed'?'neutral':s==='Applied'?'gold':'neutral'}
+function renderTrack(){$('#appCount').textContent=S.apps.length?`(${S.apps.length})`:'';
+  $('#apps').innerHTML=S.apps.length?S.apps.map((a,i)=>`<div class="app" data-i="${i}">
+    <div class="who"><b>${esc(a.role)}</b><small class="num">${esc(a.date||'No date')}${a.version?' · '+esc(a.version):''}</small></div>
+    <div class="sc"><span class="pill neutral num">${a.score===''||a.score==null?'–':esc(a.score)}/12</span></div>
+    <div class="st"><select aria-label="Status for ${esc(a.role)}">${STATUSES.map(s=>`<option${s===a.status?' selected':''}>${s}</option>`).join('')}</select></div>
+    <div class="next">${esc(a.next||'')}</div>
+    <button class="x" type="button" aria-label="Delete application">×</button></div>`).join(''):`<div class="empty-state"><b>No applications yet</b>Add the first one above once you've sent it, or while you're preparing it.</div>`;
+  $$('#apps .app').forEach(el=>{const i=+el.dataset.i;el.querySelector('select').onchange=e=>{S.apps[i].status=e.target.value;save()};
+    el.querySelector('.x').onclick=()=>{const g=S.apps.splice(i,1)[0];save(true);renderTrack();toast('Application deleted',()=>{S.apps.splice(i,0,g);save(true);renderTrack()})}});
+  $('#exportRow').innerHTML=S.apps.length?(LIVE?'<button class="btn sm" type="button" id="csvBtn">Download CSV</button><button class="btn sm" type="button" id="pdfBtn">Download PDF</button>':'')+'<button class="btn sm" type="button" id="copyCsv">Copy as table</button>':'';
+  if($('#csvBtn'))$('#csvBtn').onclick=()=>download(new Blob([csv()],{type:'text/csv'}),'golide-application-tracker.csv');
+  if($('#pdfBtn'))$('#pdfBtn').onclick=()=>download(buildPdf(),'golide-job-search-toolkit.pdf');
+  if($('#copyCsv'))$('#copyCsv').onclick=()=>copy(csv('\t'))}
+$('#tDate').value=new Date().toISOString().slice(0,10);
+$('#fromScore').onclick=()=>{if(!S.score.role)return toast('Score a role first');$('#tRole').value=S.score.role;$('#tScore').value=total();$('#tRole').focus()};
+$('#appForm').onsubmit=e=>{e.preventDefault();const role=$('#tRole').value.trim();if(!role){$('#tRole').focus();return toast('Add the role and company first')}
+  S.apps.unshift({role,score:$('#tScore').value,status:$('#tStatus').value,version:$('#tVersion').value.trim(),date:$('#tDate').value,next:$('#tNext').value.trim()});
+  ['tRole','tScore','tVersion','tNext'].forEach(id=>$('#'+id).value='');$('#tStatus').value='Preparing';save(true);renderTrack();renderNav();toast('Application added')};
+function csv(sep=','){const q=x=>{x=String(x??'');return sep===','?'"'+x.replaceAll('"','""')+'"':x.replace(/\t|\n/g,' ')};return[['Date','Role','Fit score','Status','Version','Next action'].join(sep),...S.apps.map(a=>[a.date,a.role,a.score,a.status,a.version,a.next].map(q).join(sep))].join('\n')}
+function download(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1500)}
+function pdfEsc(s){return String(s||'').normalize('NFKD').replace(/[^\x20-\x7E]/g,' ').replace(/\\/g,'\\\\').replace(/\(/g,'\\(').replace(/\)/g,'\\)')}
+function wrap(t,m=86){const w=String(t||'').split(/\s+/),o=[];let l='';for(const x of w){if((l+' '+x).trim().length>m){if(l)o.push(l);l=x}else l=(l+' '+x).trim()}if(l)o.push(l);return o.length?o:['']}
+function buildPdf(){const L=['GOLIDE Job Search Toolkit',''];if(S.score.role){L.push('ROLE FIT SCORECARD',`Role: ${S.score.role}  |  Total: ${total()}/12  |  ${verdict().text}`);S.score.rows.forEach((r,i)=>L.push(`${i+1}. ${r.req} | ${r.score||0}/3 | ${r.proof}`));L.push('')}
+  if(S.map.length){L.push('EVIDENCE MAP');S.map.forEach((r,i)=>L.push(`${i+1}. ${r.req} | ${r.strength||'-'} | ${r.evidence}`));L.push('')}
+  if(S.bullets.length){L.push('BULLETS');S.bullets.forEach(b=>L.push('- '+b));L.push('')}
+  if(S.apps.length){L.push('APPLICATIONS');S.apps.forEach((a,i)=>L.push(`${i+1}. ${a.date||''} | ${a.role} | ${a.score||'-'}/12 | ${a.status} | ${a.version||''} | ${a.next||''}`));L.push('')}
+  const st=appStats();if(st.sent||S.review.pattern){L.push('WEEKLY REVIEW',`Sent: ${st.sent} | Replies: ${st.replied} (${st.rr}%) | Interviews: ${st.interviews} (${st.ir}%)`,`Pattern: ${S.review.pattern||''}`,`Experiment: ${S.review.experiment||''}`)}
+  const lines=L.flatMap(x=>wrap(x)),pages=[];for(let i=0;i<lines.length;i+=46)pages.push(lines.slice(i,i+46));
+  const objs=[null,'<< /Type /Catalog /Pages 2 0 R >>',null,'<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>'];const kids=[];
+  pages.forEach(pg=>{let c='BT /F1 11 Tf 50 760 Td 15 TL ';pg.forEach(l=>c+=`(${pdfEsc(l)}) Tj T* `);c+='ET';objs.push(`<< /Length ${c.length} >>\nstream\n${c}\nendstream`);const cid=objs.length-1;objs.push(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents ${cid} 0 R >>`);kids.push(objs.length-1)});
+  objs[2]=`<< /Type /Pages /Kids [${kids.map(k=>k+' 0 R').join(' ')}] /Count ${kids.length} >>`;
+  let pdf='%PDF-1.4\n';const off=[0];for(let i=1;i<objs.length;i++){off[i]=pdf.length;pdf+=`${i} 0 obj\n${objs[i]}\nendobj\n`}const x=pdf.length;pdf+=`xref\n0 ${objs.length}\n0000000000 65535 f \n`;for(let i=1;i<objs.length;i++)pdf+=String(off[i]).padStart(10,'0')+' 00000 n \n';pdf+=`trailer\n<< /Size ${objs.length} /Root 1 0 R >>\nstartxref\n${x}\n%%EOF`;return new Blob([pdf],{type:'application/pdf'})}
+
+/* ---------- review ---------- */
+function renderReview(){const st=appStats();S.review.sent=String(st.sent);S.review.responses=String(st.replied);S.review.interviews=String(st.interviews);
+  $('#rStats').innerHTML=[[st.sent,'Applications sent'],[st.replied,'Replies'],[st.sent?st.rr+'<small>%</small>':'–','Reply rate'],[st.sent?st.ir+'<small>%</small>':'–','Interview rate']].map(([a,b])=>`<div class="stat"><span class="v">${a}</span><span class="d">${b}</span></div>`).join('');
+  const counts=STATUSES.map(s=>[s,S.apps.filter(a=>a.status===s).length]);const max=Math.max(1,...counts.map(c=>c[1]));
+  $('#rBars').innerHTML=S.apps.length?counts.map(([s,n])=>`<div class="bar"><span>${s}</span><span class="t"><i style="width:${n/max*100}%"></i></span><span>${n}</span></div>`).join(''):'<div class="empty-state"><b>Nothing to read yet</b>Track a few applications and this fills in.</div>';
+  const f=v=>v==null?'–':(Math.round(v*10)/10);$('#rCompare').innerHTML=`<div><span class="v">${f(st.avgRep)}</span><br><small>Got a reply</small></div><div><span class="v">${f(st.avgNo)}</span><br><small>No reply yet</small></div>`;
+  ['rPattern','rExperiment'].forEach(id=>{const k=id==='rPattern'?'pattern':'experiment',el=$('#'+id);if(document.activeElement!==el)el.value=S.review[k]||''})}
+$('#rPattern').oninput=e=>{S.review.pattern=e.target.value;save(true)};$('#rExperiment').oninput=e=>{S.review.experiment=e.target.value;save(true)};
+
+/* ---------- guide ---------- */
+const PLAN=[['1–2','Set direction','Choose one primary role and write down your real constraints.'],['3–4','Build evidence','Write six evidence entries. Score three real job posts.'],['5–7','Map and write','Finish one defensible, targeted application.'],['8','Send and save','Submit it and store the exact version you sent.'],['9–12','Repeat','Prepare interview stories and send a second strong application.'],['13–14','Review','Read your numbers and choose one experiment for next week.']];
+function renderGuide(){$('#plan').innerHTML=PLAN.map(([d,t,p],i)=>{const on=S.roadmapDone.includes(i);return`<li class="${on?'done':''}"><input type="checkbox" id="plan-${i}" data-i="${i}"${on?' checked':''} style="width:18px;height:18px;margin-top:3px;accent-color:var(--gold)" aria-label="Mark days ${d} done"><span class="days">Day ${d}</span><label for="plan-${i}" style="cursor:pointer"><b style="font-weight:500">${t}</b><p>${p}</p></label></li>`}).join('');
+  $$('#plan input').forEach(c=>c.onchange=()=>{const i=+c.dataset.i;S.roadmapDone=c.checked?[...new Set([...S.roadmapDone,i])]:S.roadmapDone.filter(x=>x!==i);save();renderGuide()});
+  $('#resetCloud').textContent=cloudUser?' and in your GOLIDE account':''}
+const FAQ=[['Does this guarantee interviews or a job?','No. It improves your decisions, the quality of your evidence and your consistency. Hiring outcomes stay outside your control.'],['Is this a way to beat an ATS?','No. The method helps a human reader see truthful relevance. It does not try to game screening software.'],['What score should I apply with?','Six out of twelve is the minimum working threshold. Skip any role with a hard legal, location, credential or practical barrier, whatever the score.'],['Can I use AI?','Yes, to organise and polish facts you provide. Never let it invent titles, tools, numbers, qualifications or results.'],['Where is my information stored?','In this browser on this device, saved as you type. If you are signed in on golidee.com, it also syncs to your GOLIDE account so it follows you to other devices.'],['How long does it take?','Your first score takes about 20 minutes. A strong tailored application takes longer at first and gets faster as your evidence grows.'],['What if I have little work experience?','Use honest evidence from projects, study, volunteering, internships and responsibilities. Do not turn related exposure into professional experience.'],['How do I get support?','Use the Support area inside Easy With Golide on Whop and say which step you are stuck on.']];
+$('#faq').insertAdjacentHTML('beforeend',FAQ.map(([q,a])=>`<details><summary>${q}</summary><p>${a}</p></details>`).join(''));
+function resetIdle(){$('#resetArea').innerHTML='<button class="btn" type="button" id="resetBtn">Clear everything</button>';$('#resetBtn').onclick=resetAsk}
+function resetAsk(){$('#resetArea').innerHTML='<div class="confirm"><span>This can’t be undone.</span><button class="btn sm" type="button" id="resetYes" style="border-color:var(--bad);color:var(--bad)">Yes, clear it</button><button class="btn sm quiet" type="button" id="resetNo">Keep my work</button></div>';
+  $('#resetNo').onclick=resetIdle;
+  $('#resetYes').onclick=()=>{S=norm({});persist();buildScore();resetIdle();show('home');toast('Cleared')}}
+resetIdle();
+
+/* ---------- example ---------- */
+$('#loadExample').onclick=()=>{S=norm({score:{role:'Junior Data Analyst, Northwind Foods (example)',barrier:false,rows:[{req:'SQL for reporting',score:'2',proof:'Wrote five queries on a university sales dataset; presented weekly trends'},{req:'Advanced Excel',score:'3',proof:'Built a stock-tracking workbook used by a 6-person student society for a year'},{req:'Stakeholder communication',score:'1',proof:'Presented project findings to a class; no workplace stakeholders yet'},{req:'Degree in a quantitative field',score:'3',proof:'BSc Statistics, second-class upper'}]},
+  map:[{req:'SQL for reporting',strength:'Strong',evidence:'Wrote five SQL queries on a university sales dataset'},{req:'Dashboards (Power BI or Tableau)',strength:'Weak',evidence:'Completed a free Power BI course; one practice dashboard'},{req:'Stakeholder communication',strength:'Missing',evidence:'missing'}],
+  parts:{action:'Wrote five SQL queries',context:'on a 12-month university sales dataset',method:'and turned the output into a weekly trend chart',result:'to show which category grew fastest'},
+  bullets:['Built a stock-tracking Excel workbook for a 6-person student society, used weekly for a year.'],
+  apps:[{role:'Junior Data Analyst, Northwind Foods (example)',score:'9',status:'Interview',version:'cv-data-v3.pdf',date:'2026-10-12',next:'Prepare two SQL stories'},{role:'Reporting Assistant, Acme Logistics (example)',score:'7',status:'Response',version:'cv-data-v2.pdf',date:'2026-10-09',next:'Reply with availability'},{role:'Business Analyst, Contoso (example)',score:'5',status:'Applied',version:'cv-generic.pdf',date:'2026-10-06',next:'Follow up on 20 Oct'},{role:'Data Officer, Fabrikam (example)',score:'4',status:'Closed',version:'cv-generic.pdf',date:'2026-10-02',next:''}],
+  review:{pattern:'The two roles scored 7+ both replied. The generic CV got nothing.',experiment:'Only apply to roles scoring 7 or more, always with a tailored CV.'}});persist();buildScore();show('score');toast('Example loaded')};
+
+/* ---------- render ---------- */
+function render(id){({home:renderHome,score:fillScore,map:renderMap,write:renderWrite,track:renderTrack,review:renderReview,guide:renderGuide}[id]||(()=>{}))()}
+function refreshShared(){renderNav()}
+
+/* ---------- account sync (golidee.com only) ---------- */
+function setSync(on,text){$('#sync').classList.toggle('on',on);$('#syncText').textContent=text||(on?'Synced to your account':'Saved on this device');
+  $('#signIn').hidden=on||!LIVE;$('#railSync').textContent=on?(cloudUser?`Signed in as ${String(cloudUser.displayName||cloudUser.email||'').split(/\s+/)[0]}. Your work follows you.`:'Synced.'):(LIVE?'Sign in to keep it across devices.':'Buyers can sign in on golidee.com to keep it across devices.')}
+async function syncUp(){if(!cloudUser)return;try{const r=await fetch('/api/toolkit-state',{method:'PUT',headers:{'content-type':'application/json'},body:JSON.stringify({state:S})});if(r.ok){const j=await r.json();S.updatedAt=j.updatedAt||S.updatedAt;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}setSync(true)}else setSync(true,'Sync retrying')}catch(e){setSync(true,'Sync retrying')}}
+async function initAccount(){if(!LIVE){setSync(false);return}
+  $('#signIn').href='/login?returnTo='+encodeURIComponent(location.pathname+location.search);
+  try{const r=await fetch('/api/toolkit-state',{cache:'no-store',credentials:'same-origin'});if(r.status===401){setSync(false);return}if(!r.ok)throw 0;const j=await r.json();cloudUser=j.user||null;
+    const cloud=j.state,ct=Number(j.updatedAt||cloud?.updatedAt||0),lt=Number(S.updatedAt||0);
+    if(cloud&&ct>lt){S=norm(cloud);try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}buildScore();show(cur,true)}else if(lt){await syncUp()}setSync(true)}catch(e){setSync(false)}}
+
+/* ---------- boot ---------- */
+$('#previewBar').hidden=LIVE;
+buildScore();
+const h=location.hash.slice(1);show(ORDER.includes(h)?h:'home',true);
+initAccount();
+
+if(document.modelContext?.registerTool){try{document.modelContext.registerTool({name:'save_role_scorecard',title:'Save role scorecard',description:'Save four job requirements, scores, and evidence to the visible role scorecard.',inputSchema:{type:'object',properties:{role:{type:'string'},requirements:{type:'array',minItems:4,maxItems:4,items:{type:'object',properties:{requirement:{type:'string'},score:{type:'integer',minimum:0,maximum:3},evidence:{type:'string'}},required:['requirement','score','evidence'],additionalProperties:false}}},required:['role','requirements'],additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute(i){S.score={role:i.role,barrier:S.score.barrier,rows:i.requirements.map(x=>({req:x.requirement,score:String(x.score),proof:x.evidence}))};S=norm(S);persist();buildScore();show('score',true);return{saved:true,total:total()}}})?.catch?.(()=>{})}catch(e){}}
 })();
-</script></body></html>
+</script>
+
+</html>
