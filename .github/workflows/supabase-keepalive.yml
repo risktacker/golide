@@ -1,0 +1,34 @@
+name: Supabase keep-alive
+
+# Supabase pauses a free project after 7 days without API activity (2026-10-30: the
+# Golide Web Project was paused). Dashboard visits do not count, and a logged-in browser
+# keeps its session without calling Supabase, so the site's login project can look idle.
+# Every 2 days this makes real requests to the project's auth and database APIs.
+
+on:
+  schedule:
+    - cron: "17 6 */2 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Ping auth and database APIs
+        env:
+          URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          set -u
+          if [ -z "$URL" ] || [ -z "$KEY" ]; then echo "::error::Supabase secrets missing"; exit 1; fi
+          auth=$(curl -s -o /dev/null -w '%{http_code}' -H "apikey: $KEY" "$URL/auth/v1/health")
+          rest=$(curl -s -o /dev/null -w '%{http_code}' -H "apikey: $KEY" -H "Authorization: Bearer $KEY" "$URL/rest/v1/")
+          echo "auth health: $auth, database API: $rest"
+          if [ "$auth" != "200" ]; then
+            echo "::error::Supabase did not answer (HTTP $auth). The project may be paused: unpause it in the dashboard."
+            exit 1
+          fi
