@@ -3,11 +3,16 @@ name: Supabase keep-alive
 # Supabase pauses a free project after 7 days without API activity (2026-10-30: the
 # Golide Web Project was paused). Dashboard visits do not count, and a logged-in browser
 # keeps its session without calling Supabase, so the site's login project can look idle.
-# Every 2 days this makes real requests to the project's auth and database APIs.
+# Every day this makes real requests that reach the database.
+# 2026-11-13: the old pings (auth /health and the REST root with the key as a Bearer token) did not
+# count: /health never touches Postgres and the REST root answered 401 to the new publishable key,
+# so Supabase flagged the project again. Now: a password sign-in for a non-existent keep-alive
+# address (Auth looks the user up in Postgres and answers 400) and a database API query (apikey
+# header only), and the run fails if neither reached the database.
 
 on:
   schedule:
-    - cron: "17 6 */2 * *"
+    - cron: "17 6 * * *"
   workflow_dispatch:
 
 permissions:
@@ -26,9 +31,18 @@ jobs:
           set -u
           if [ -z "$URL" ] || [ -z "$KEY" ]; then echo "::error::Supabase secrets missing"; exit 1; fi
           auth=$(curl -s -o /dev/null -w '%{http_code}' -H "apikey: $KEY" "$URL/auth/v1/health")
-          rest=$(curl -s -o /dev/null -w '%{http_code}' -H "apikey: $KEY" -H "Authorization: Bearer $KEY" "$URL/rest/v1/")
-          echo "auth health: $auth, database API: $rest"
+          # a sign-in attempt for an address that does not exist: Auth queries the users table
+          login=$(curl -s -o /dev/null -w '%{http_code}' -X POST -H "apikey: $KEY" -H "Content-Type: application/json" \
+            -d '{"email":"keepalive-no-user@golidee.com","password":"not-a-real-password-0"}' \
+            "$URL/auth/v1/token?grant_type=password")
+          # a database API query (publishable key goes in the apikey header only)
+          rest=$(curl -s -o /dev/null -w '%{http_code}' -H "apikey: $KEY" "$URL/rest/v1/keepalive?select=*&limit=1")
+          echo "auth health: $auth, sign-in lookup: $login (400 = reached the database), database API: $rest"
           if [ "$auth" != "200" ]; then
             echo "::error::Supabase did not answer (HTTP $auth). The project may be paused: unpause it in the dashboard."
+            exit 1
+          fi
+          if [ "$login" != "400" ] && [ "$rest" != "200" ] && [ "$rest" != "404" ]; then
+            echo "::error::Neither request reached the database (sign-in $login, database API $rest): the project still looks idle to Supabase."
             exit 1
           fi
